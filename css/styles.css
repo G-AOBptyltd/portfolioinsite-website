@@ -1,5 +1,5 @@
 /* ============================================
-   PortfolioInSite â Product Website
+   PortfolioInSite — Product Website
    InSite Family Design System (Cyan/Teal variant)
    ============================================ */
 
@@ -434,7 +434,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.95rem;
 }
 .feature-list li::before {
-  content: 'â';
+  content: '✓';
   position: absolute;
   left: 0;
   color: var(--primary);
