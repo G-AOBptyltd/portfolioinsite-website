@@ -48,20 +48,46 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// Waitlist form handler
+// Waitlist form handler — submits to Netlify Forms
 const waitlistForm = document.getElementById('waitlist-form');
 if (waitlistForm) {
   waitlistForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = waitlistForm.querySelector('input[type="email"]').value;
     const btn = waitlistForm.querySelector('button');
-    btn.textContent = 'Added!';
-    btn.style.background = '#10b981';
-    setTimeout(() => {
-      btn.textContent = 'Notify Me';
-      btn.style.background = '';
-      waitlistForm.reset();
-    }, 3000);
+    const origText = btn.textContent;
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const formData = new FormData(waitlistForm);
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    })
+    .then(response => {
+      if (response.ok) {
+        btn.textContent = 'Added!';
+        btn.style.background = '#10b981';
+        waitlistForm.reset();
+        setTimeout(() => {
+          btn.textContent = origText;
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 4000);
+      } else {
+        throw new Error('Form submission failed');
+      }
+    })
+    .catch(error => {
+      btn.textContent = 'Error — try again';
+      btn.style.background = '#ef4444';
+      btn.disabled = false;
+      setTimeout(() => {
+        btn.textContent = origText;
+        btn.style.background = '';
+      }, 4000);
+    });
   });
 }
 
