@@ -269,8 +269,9 @@
       <div class="waitlist-card reveal">
         <h3 class="h3">Join the Waitlist</h3>
         <p>Get notified when PortfolioInSite launches on the Atlassian Marketplace. Early adopters help shape the product and receive priority pricing.</p>
-        <form class="waitlist-form" id="waitlist-form">
-          <input type="email" placeholder="you@company.com" required aria-label="Email address">
+        <form class="waitlist-form" id="waitlist-form" name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+          <input type="email" name="email" placeholder="you@company.com" required aria-label="Email address">
           <button type="submit" class="btn btn-primary">Notify Me</button>
         </form>
       </div>
@@ -321,8 +322,8 @@
         <div>
           <h4>Legal</h4>
           <ul class="footer-links">
-            <li><a href="pages/privacy.html">Privacy Policy</a></li>
-            <li><a href="pages/terms.html">Terms of Service</a></li>
+            <li><a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a></li>
             <li><a href="pages/sla.html">Service Level Agreement</a></li>
           </ul>
         </div>
