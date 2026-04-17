@@ -1,0 +1,36 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# ===== API Proxy =====
+# Proxy /api/cms to central AOB API (avoids CORS issues for client-side fetches)
+[[redirects]]
+  from = "/api/cms"
+  to = "https://api.agilityops.com.au/api/cms"
+  status = 200
+  force = true
+
+# ===== SPA-style Content Routes =====
+# /product/* → product detail page (dynamic slug routing)
+[[redirects]]
+  from = "/product/*"
+  to = "/pages/product.html"
+  status = 200
+
+# /content/* → content detail page (dynamic slug routing)
+[[redirects]]
+  from = "/content/*"
+  to = "/pages/content.html"
+  status = 200
+
+# ===== 404 Fallback =====
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
