@@ -2,7 +2,7 @@
 
 ## Project Identity
 
-Marketing website for PortfolioInSite, an AI-native portfolio governance platform for Jira Cloud. This site handles the product landing page, features showcase, documentation, privacy/terms, and waitlist conversion.
+Marketing website for PortfolioInSite, an AI-native portfolio governance platform for Jira Cloud. This site handles the product landing page, features showcase, documentation, and waitlist conversion. Legal pages (Privacy Policy, Terms of Service) are hosted on the parent company site at agilityops.com.au.
 
 **Owner:** Agility Ops Business Pty Ltd (AOB)
 **Domain:** https://portfolioinsite.com.au
@@ -45,10 +45,31 @@ PortfolioInSite is a 19-module portfolio governance platform built on Atlassian 
 ## Tech Stack
 
 - **Framework:** Static HTML/CSS/JS (no build tools)
+- **CMS:** Notion via AOB Central API (`https://api.agilityops.com.au/api/cms`)
+- **CMS Client:** `js/notion-cms.js` v2 (fetches from central API, SITE_SLUG = 'portfolioinsite')
 - **Fonts:** Inter + Plus Jakarta Sans (Google Fonts)
 - **Styling:** Custom CSS with CSS variables, responsive grid
 - **Hosting:** Netlify (auto-deploy from GitHub main branch)
 - **SEO:** OG tags, Twitter cards, canonical URLs, structured data
+
+## Central API Integration (April 2026)
+
+This site is connected to the AOB Centralised Payment Platform via the shared central API. Products and content are managed in Notion and served via brand-scoped API calls.
+
+**Key files:**
+- `js/notion-cms.js` — CMS client (SITE_SLUG = 'portfolioinsite')
+- `pages/product.html` — Dynamic product detail page (brand-scoped: `?type=products&brand=portfolioinsite`)
+- `pages/content.html` — Dynamic content detail page (site-scoped: `?type=content&site=portfolioinsite`)
+- `netlify.toml` — SPA redirects (`/product/*`, `/content/*`) + API proxy (`/api/cms`)
+
+**How brand-scoped filtering works:**
+- Products API: `?type=products&brand=portfolioinsite` returns only products whose Brand relation in Notion points to the PortfolioInSite site
+- Content API: `?type=content&site=portfolioinsite` returns only content assigned to PortfolioInSite
+- Each site only shows its own branded content — centralise, reuse, simplify
+
+**API proxy in netlify.toml:**
+- `/api/cms` → `https://api.agilityops.com.au/api/cms` (status 200, force)
+- Central API also has dynamic CORS from Sites DB (Domain must include `https://` prefix)
 
 ## Deployment (CRITICAL)
 
@@ -90,9 +111,9 @@ portfolioinsite-website/
     ├── features.html       — Module showcase with product screenshots
     ├── how-it-works.html   — Installation and setup guide
     ├── docs.html           — Documentation
-    ├── privacy.html        — Privacy policy
-    ├── terms.html          — Terms of service
-    └── sla.html            — Service level agreement
+    ├── privacy.html        — Local privacy policy (DEPRECATED — footer now links to agilityops.com.au)
+    ├── terms.html          — Local terms (DEPRECATED — footer now links to agilityops.com.au)
+    └── sla.html            — Service level agreement (still local)
 ```
 
 ## Image Guidelines
@@ -110,20 +131,50 @@ portfolioinsite-website/
 - Link back to parent brand: agilityops.com.au
 - Cross-link to sibling products: SprintINSite, FACT
 
+## Deployment History
+
+- **April 17, 2026:** Central API integration — added `js/notion-cms.js`, `pages/product.html`, `pages/content.html`, created `netlify.toml` with SPA redirects and API proxy. Part of AOB Centralised Payment Platform Phase 1.
+
 ## Related Repositories
 
 | Repo | Purpose |
 |------|---------|
 | `PortfolioInSite` | The actual Forge app (private, JavaScript) |
+| `aob-api` | Central API serving all AOB sites (Netlify Functions) |
 | `aob-corporate-hub` | AOB corporate website |
+| `fastact-website` | FACT Training website (first site on central API) |
 | `sprintinsite-website` | Sibling product website |
 | `Jira-Capacity-Point_TeamTracker` | Sibling product Forge app |
 
+## Legal Pages (Updated 6 March 2026)
+
+- **Privacy Policy and Terms of Service** are now served from the parent company site: `https://agilityops.com.au/pages/privacy.html` and `https://agilityops.com.au/pages/terms.html`
+- Footer links use `target="_blank"` to open in new tab
+- Local `pages/privacy.html` and `pages/terms.html` still exist in the repo but are deprecated — footer no longer links to them
+- **SLA** (`pages/sla.html`) remains local to this site
+
+## Netlify Forms (Updated 6 March 2026)
+
+- Waitlist form on `index.html` uses **Netlify Forms** with `data-netlify="true"` attribute
+- Form name: `waitlist`
+- **Setup requirement:** Form detection must be enabled in Netlify dashboard and a redeploy triggered after enabling
+- Form handler in `js/main.js` uses `fetch()` POST with `x-www-form-urlencoded` encoding
+
 ## Key Learnings
 
+- CORS: Central API Sites DB Domain field must include `https://` prefix for dynamic CORS to work
+- Central API has 5-minute in-memory cache TTL
+- Brand-scoped filtering: products use `brand=` param, content uses `site=` param (interchangeable in API)
 - Images were originally at repo root — moved to `/img/` directory March 2026
 - `PiSScenrioModel1.png` has a typo ("Scenrio") — keep filename as-is to avoid broken references
 - Features page uses alternating left/right layout for screenshot sections
 - Module badge colours: cyan (#06b6d4) for available, amber (#f59e0b) for "In UAT", green (#10b981) for platform
 - Dependency Mapping (M10) is in UAT — mark with amber badge, not "available"
 - Strategic Quadrant Map is a future standalone module — not currently screenshotted
+- **Legal page consolidation (6 Mar 2026):** Local privacy/terms pages had placeholder content (e.g. `[ABN Placeholder]`). Simplified by pointing footer links to the canonical pages on agilityops.com.au
+
+## Workflow Preferences
+
+- **GitHub uploads:** If bulk file uploads or image uploads to GitHub are needed, ask the user to do it directly — provide the file list and instructions rather than attempting complex browser-based uploads
+- **Test branches:** ALWAYS create a test branch for every website before making changes to `main`. Never commit directly to `main` — use a branch, verify, then merge. This prevents accidental breakage on live sites
+- **Deployment .txt files:** When GitHub connector isn't available, provide `<page>-PASTE-THIS.txt` files for manual paste into GitHub web editor

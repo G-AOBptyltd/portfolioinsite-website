@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Dynamic meta tags set by JS -->
+  <title>Loading... — PortfolioInSite</title>
+  <meta name="description" content="PortfolioInSite products — AI-native portfolio governance tools for Jira Cloud by Agility Ops.">
+  <meta name="robots" content="index, follow">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLJ1KPTDMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LLJ1KPTDMK');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <style>
+    /* === Product Detail Page Styles === */
+    .product-detail-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 120px 24px 100px;
+    }
+
+    .product-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray-400);
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+      transition: color 0.2s var(--ease);
+    }
+
+    .product-back:hover {
+      color: var(--primary);
+    }
+
+    .product-hero {
+      display: flex;
+      gap: 36px;
+      align-items: flex-start;
+      margin-bottom: 36px;
+    }
+
+    .product-screenshot {
+      width: 360px;
+      min-width: 280px;
+      height: 220px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .product-screenshot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+      background: var(--gray-50);
+    }
+
+    .product-screenshot .placeholder-icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+
+    .product-hero-text {
+      flex: 1;
+    }
+
+    .product-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .product-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .badge-type {
+      background: rgba(8, 145, 178, 0.08);
+      color: var(--primary);
+    }
+
+    .badge-platform {
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--blue);
+    }
+
+    .badge-status-live {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--green);
+    }
+
+    .badge-status-beta {
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--amber);
+    }
+
+    .badge-status-dev {
+      background: rgba(124, 58, 237, 0.08);
+      color: var(--violet);
+    }
+
+    .product-detail-wrap h1 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      margin-bottom: 8px;
+      line-height: 1.12;
+    }
+
+    .product-version {
+      font-size: 0.85rem;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+    }
+
+    .product-short-desc {
+      font-size: 1.05rem;
+      color: var(--gray-500);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .product-long-desc {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    .product-long-desc p { margin-bottom: 16px; }
+
+    .product-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+
+    .product-links .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.3s var(--ease);
+    }
+
+    .btn-primary-pis {
+      background: linear-gradient(135deg, var(--primary), var(--primary-bright));
+      color: white;
+      box-shadow: 0 4px 16px rgba(8, 145, 178, 0.3);
+    }
+
+    .btn-primary-pis:hover {
+      box-shadow: 0 6px 24px rgba(8, 145, 178, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline-pis {
+      border: 2px solid var(--gray-200);
+      color: var(--gray-600);
+      background: transparent;
+    }
+
+    .btn-outline-pis:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-sm { padding: 8px 20px; font-size: 0.82rem; }
+
+    .product-pricing-section {
+      margin-bottom: 36px;
+    }
+
+    .product-pricing-section h3 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .pricing-card {
+      padding: 24px;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+
+    .pricing-card:hover {
+      border-color: var(--primary-bright);
+      box-shadow: 0 4px 16px rgba(8, 145, 178, 0.08);
+    }
+
+    .pricing-card .pricing-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--gray-900);
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+
+    .pricing-card .pricing-cycle {
+      font-size: 0.78rem;
+      color: var(--gray-400);
+      margin-bottom: 12px;
+    }
+
+    .pricing-card .pricing-amount {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .pricing-card .pricing-amount .currency {
+      font-size: 1rem;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .pricing-card .pricing-desc {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .pricing-card .pricing-units {
+      font-size: 0.82rem;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+    }
+
+    .product-support {
+      padding: 20px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .product-support .support-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(8, 145, 178, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .product-support .support-text {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+
+    .product-support .support-text a {
+      color: var(--primary);
+    }
+
+    /* Loading / Error states */
+    .product-loading, .product-error {
+      text-align: center;
+      padding: 160px 24px 100px;
+      color: var(--gray-400);
+    }
+
+    .product-loading .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(8, 145, 178, 0.15);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .product-error h2 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+
+    .product-error p {
+      color: var(--gray-400);
+      margin-bottom: 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .product-detail-wrap { padding: 100px 16px 60px; }
+      .product-hero { flex-direction: column; }
+      .product-screenshot { width: 100%; min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation (matches PortfolioInSite site) -->
+  <nav class="nav scrolled" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">PI</div>
+        PortfolioInSite
+      </a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/pages/features.html">Features</a>
+        <a href="/pages/how-it-works.html">How It Works</a>
+        <a href="/pages/docs.html">Docs</a>
+        <a href="/#waitlist" class="nav-cta">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Loading state -->
+  <div id="product-loading" class="product-loading">
+    <div class="spinner"></div>
+    <p>Loading product...</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="product-error" class="product-error" style="display: none;">
+    <h2>Product not found</h2>
+    <p>The product you're looking for doesn't exist or has been removed.</p>
+    <a href="/" class="btn btn-primary-pis">Back to Home</a>
+  </div>
+
+  <!-- Product detail -->
+  <div id="product-detail" class="product-detail-wrap" style="display: none;">
+
+    <a href="/" class="product-back">&larr; Back to PortfolioInSite</a>
+
+    <div class="product-hero">
+      <div id="product-screenshot" class="product-screenshot">
+        <span class="placeholder-icon">&#128230;</span>
+      </div>
+      <div class="product-hero-text">
+        <div class="product-meta-row">
+          <span id="product-type-badge" class="product-badge badge-type">Extension</span>
+          <span id="product-platform-badge" class="product-badge badge-platform">Jira</span>
+          <span id="product-status-badge" class="product-badge badge-status-live">Live</span>
+        </div>
+        <h1 id="product-title"></h1>
+        <div id="product-version" class="product-version" style="display: none;"></div>
+        <p id="product-short-desc" class="product-short-desc"></p>
+      </div>
+    </div>
+
+    <div id="product-links" class="product-links"></div>
+    <div id="product-long-desc" class="product-long-desc" style="display: none;"></div>
+
+    <div id="product-pricing-section" class="product-pricing-section" style="display: none;">
+      <h3>Pricing</h3>
+      <div id="pricing-cards" class="pricing-cards"></div>
+    </div>
+
+    <div id="product-support" class="product-support" style="display: none;">
+      <div class="support-icon">&#128172;</div>
+      <div class="support-text">
+        Need help? Contact us at <a id="support-email-link" href=""></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (matches PortfolioInSite site) -->
+  <footer style="background: var(--gray-900); color: var(--gray-400); padding: 48px 24px; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px;">
+      <div style="max-width: 300px;">
+        <div style="font-family: var(--font-display); font-weight: 800; color: white; font-size: 1.15rem; margin-bottom: 8px;">PortfolioInSite</div>
+        <p style="font-size: 0.85rem; line-height: 1.6;">AI-native portfolio governance for Jira Cloud. Built by Agility Ops Business Pty Ltd.</p>
+      </div>
+      <div>
+        <div style="color: white; font-weight: 600; font-size: 0.9rem; margin-bottom: 12px;">Product</div>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+          <a href="/pages/features.html" style="color: var(--gray-400);">Features</a>
+          <a href="/pages/how-it-works.html" style="color: var(--gray-400);">How It Works</a>
+          <a href="/pages/docs.html" style="color: var(--gray-400);">Documentation</a>
+        </div>
+      </div>
+      <div>
+        <div style="color: white; font-weight: 600; font-size: 0.9rem; margin-bottom: 12px;">Legal</div>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+          <a href="https://agilityops.com.au/pages/privacy.html" target="_blank" style="color: var(--gray-400);">Privacy Policy</a>
+          <a href="https://agilityops.com.au/pages/terms.html" target="_blank" style="color: var(--gray-400);">Terms of Service</a>
+          <a href="/pages/sla.html" style="color: var(--gray-400);">SLA</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1200px; margin: 32px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 0.8rem;">
+      &copy; 2026 <a href="https://agilityops.com.au" target="_blank" rel="noopener" style="color: var(--primary-light);">Agility Ops Business Pty Ltd</a>. All rights reserved.
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // ============================================
+    // Product Detail Page — Dynamic Loader
+    // PortfolioInSite — brand-scoped via central API
+    // ============================================
+
+    const CMS_API = 'https://api.agilityops.com.au/api/cms';
+    const SITE_SLUG = 'portfolioinsite';
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    async function loadProduct() {
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      const slug = pathParts.length > 1 ? pathParts[pathParts.length - 1] : null;
+
+      if (!slug) { showError(); return; }
+
+      try {
+        const response = await fetch(`${CMS_API}?type=products&brand=${SITE_SLUG}`);
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
+        const json = await response.json();
+        const products = json.data || [];
+        const product = products.find(p => p.landingPageSlug === slug);
+
+        if (!product) { showError(); return; }
+
+        renderProduct(product);
+
+        if (product.pricingIds && product.pricingIds.length > 0) {
+          await loadPricing(product.pricingIds);
+        }
+      } catch (error) {
+        console.error('Failed to load product:', error);
+        showError();
+      }
+    }
+
+    function renderProduct(product) {
+      document.title = `${product.productName} — PortfolioInSite`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc && product.shortDescription) {
+        metaDesc.setAttribute('content', product.shortDescription.replace(/<[^>]*>/g, '').substring(0, 160));
+      }
+
+      const screenshotEl = document.getElementById('product-screenshot');
+      if (product.screenshotUrl) {
+        screenshotEl.innerHTML = `<img src="${escapeHtml(product.screenshotUrl)}" alt="${escapeHtml(product.productName)} screenshot" loading="lazy">`;
+      }
+
+      document.getElementById('product-type-badge').textContent = product.type || 'Product';
+      document.getElementById('product-platform-badge').textContent = product.platform || 'Web';
+
+      const statusBadge = document.getElementById('product-status-badge');
+      const status = (product.status || 'Live').toLowerCase();
+      statusBadge.textContent = product.status || 'Live';
+      if (status === 'beta') statusBadge.className = 'product-badge badge-status-beta';
+      else if (status === 'development' || status === 'coming soon') statusBadge.className = 'product-badge badge-status-dev';
+      else statusBadge.className = 'product-badge badge-status-live';
+
+      document.getElementById('product-title').textContent = product.productName;
+
+      if (product.version) {
+        const v = document.getElementById('product-version');
+        v.textContent = `Version ${product.version}`;
+        v.style.display = 'block';
+      }
+
+      if (product.shortDescription) document.getElementById('product-short-desc').innerHTML = product.shortDescription;
+      if (product.longDescription) {
+        const ld = document.getElementById('product-long-desc');
+        ld.innerHTML = product.longDescription;
+        ld.style.display = 'block';
+      }
+
+      const linksContainer = document.getElementById('product-links');
+      const links = [];
+      if (product.marketplaceUrl) links.push(`<a href="${escapeHtml(product.marketplaceUrl)}" class="btn btn-primary-pis" target="_blank" rel="noopener">Get It Now</a>`);
+      if (product.documentationUrl) links.push(`<a href="${escapeHtml(product.documentationUrl)}" class="btn btn-outline-pis" target="_blank" rel="noopener">Documentation</a>`);
+      if (links.length === 0) links.push(`<a href="/#waitlist" class="btn btn-primary-pis">Join Waitlist</a>`);
+      linksContainer.innerHTML = links.join('');
+
+      if (product.supportEmail) {
+        const se = document.getElementById('product-support');
+        const el = document.getElementById('support-email-link');
+        el.href = `mailto:${product.supportEmail}`;
+        el.textContent = product.supportEmail;
+        se.style.display = 'flex';
+      }
+
+      document.getElementById('product-loading').style.display = 'none';
+      document.getElementById('product-detail').style.display = 'block';
+    }
+
+    async function loadPricing(pricingIds) {
+      try {
+        const response = await fetch(`${CMS_API}?type=pricing&brand=${SITE_SLUG}`);
+        if (!response.ok) return;
+        const json = await response.json();
+        const allPricing = json.data || [];
+        const productPricing = allPricing.filter(p => pricingIds.includes(p.id));
+        if (productPricing.length === 0) return;
+
+        productPricing.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+        document.getElementById('pricing-cards').innerHTML = productPricing.map(p => `
+          <div class="pricing-card">
+            <div class="pricing-name">${escapeHtml(p.productName)}</div>
+            <div class="pricing-cycle">${escapeHtml(p.billingCycle || 'One-time')}</div>
+            <div class="pricing-amount">
+              <span class="currency">${p.currency || 'AUD'} </span>${p.price != null ? ('$' + p.price.toLocaleString('en-AU', { minimumFractionDigits: 2 })) : 'Free'}
+            </div>
+            ${p.description ? `<div class="pricing-desc">${p.description}</div>` : ''}
+            ${p.includedUnits ? `<div class="pricing-units">Includes ${p.includedUnits} units</div>` : ''}
+            ${p.stripePriceId
+              ? `<a href="#" class="btn btn-primary-pis btn-sm" onclick="alert('Stripe checkout coming soon!'); return false;">Subscribe</a>`
+              : `<a href="/#waitlist" class="btn btn-outline-pis btn-sm">Join Waitlist</a>`
+            }
+          </div>
+        `).join('');
+
+        document.getElementById('product-pricing-section').style.display = 'block';
+      } catch (e) {
+        console.warn('Could not load pricing:', e);
+      }
+    }
+
+    function showError() {
+      document.getElementById('product-loading').style.display = 'none';
+      document.getElementById('product-error').style.display = 'block';
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadProduct);
+    } else {
+      loadProduct();
+    }
+  </script>
+</body>
+</html>
