@@ -107,7 +107,11 @@ portfolioinsite-website/
 │   ├── AOBGallupColab.jpg      — Partnership photo
 │   ├── AOBEvents.jpg           — Events photo
 │   └── FACT/                   — FACT brand images
+├── tools/
+│   └── planinsite.html     — PlanInSite v3: PI Planning & Capacity Management (standalone tool)
 └── pages/
+    ├── product.html        — Dynamic product detail (central API)
+    ├── content.html        — Dynamic content detail (central API)
     ├── features.html       — Module showcase with product screenshots
     ├── how-it-works.html   — Installation and setup guide
     ├── docs.html           — Documentation
@@ -115,6 +119,23 @@ portfolioinsite-website/
     ├── terms.html          — Local terms (DEPRECATED — footer now links to agilityops.com.au)
     └── sla.html            — Service level agreement (still local)
 ```
+
+## InSite Suite Tools (Updated April 2026)
+
+InSite Suite tools are hosted as standalone HTML apps under `/tools/`. This site (portfolioinsite.app) hosts ForecastInSite, PlanInSite, and PortfolioInSite web tools.
+
+- **PlanInSite v3** (`/tools/planinsite`) — PI Planning & Capacity Management
+  - Import Jira/Advanced Roadmaps CSV data
+  - Team velocity and capacity configuration
+  - Backlog refinement with MoSCoW filtering
+  - PI loading board with sprint allocation
+  - Dashboard with analytics and charts
+  - Dark/light theme, fully client-side (no backend)
+
+- **ForecastInSite v4** (`/tools/forecastinsite`) — Lean Agile Financial Modelling (flagship)
+- **PortfolioInSite web** (`/tools/portfolioinsite`) — Portfolio Prioritisation & Health (web standalone)
+
+**Note:** SprintInSite and FlowInSite are hosted on sprintinsite.com, not here.
 
 ## Image Guidelines
 

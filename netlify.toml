@@ -29,6 +29,23 @@
   to = "/pages/content.html"
   status = 200
 
+# ===== Tools (PortfolioInSite Suite) =====
+# Clean URLs for InSite Suite tools hosted on portfolioinsite.app
+[[redirects]]
+  from = "/tools/planinsite"
+  to = "/tools/planinsite.html"
+  status = 200
+
+[[redirects]]
+  from = "/tools/forecastinsite"
+  to = "/tools/forecastinsite.html"
+  status = 200
+
+[[redirects]]
+  from = "/tools/portfolioinsite"
+  to = "/tools/portfolioinsite.html"
+  status = 200
+
 # ===== 404 Fallback =====
 [[redirects]]
   from = "/*"
