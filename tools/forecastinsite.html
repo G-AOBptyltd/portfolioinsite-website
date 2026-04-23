@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLJ1KPTDMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LLJ1KPTDMK');
+  </script>
+
+  <!-- PRIMARY META TAGS -->
+  <title>ForecastInSite — Dependency Mapping and Critical Path Visualisation</title>
+  <meta name="description" content="ForecastInSite: Dependency mapping and critical path visualisation for Jira. Visualise cross-team dependencies, identify blockers, and forecast delivery dates with confidence.">
+  <meta name="keywords" content="dependency mapping Jira, critical path analysis, cross-team dependencies, delivery forecasting, project dependencies">
+  <meta name="author" content="Agility Ops Business Pty Ltd">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://portfolioinsite.app/tools/forecastinsite">
+
+  <!-- OPEN GRAPH -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://portfolioinsite.app/tools/forecastinsite">
+  <meta property="og:title" content="ForecastInSite — Dependency Mapping & Critical Path">
+  <meta property="og:description" content="Visualise and manage cross-team dependencies before they become blockers. Map critical paths and forecast delivery dates.">
+  <meta property="og:locale" content="en_AU">
+
+  <!-- TWITTER -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ForecastInSite — Critical Path Analysis">
+  <meta name="twitter:description" content="Dependency mapping and critical path visualisation for Jira projects.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       PortfolioInSite Tool Pages — Design System
+       ============================================ */
+
+    /* -------- Root Variables -------- */
+    :root {
+      --navy: #0a0f1c;
+      --navy-mid: #111827;
+      --navy-light: #1a2332;
+      --primary: #0891b2;
+      --primary-bright: #06b6d4;
+      --primary-light: #22d3ee;
+      --primary-glow: #67e8f9;
+      --blue: #2563eb;
+      --blue-bright: #3b82f6;
+      --violet: #7c3aed;
+      --white: #ffffff;
+      --off-white: #fafbfc;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+      --shadow-xl: 0 24px 48px rgba(0,0,0,0.1);
+      --shadow-glow: 0 0 60px rgba(8,145,178,0.15);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --max-w: 1200px;
+      --max-w-narrow: 800px;
+    }
+
+    /* -------- Reset -------- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: var(--font-body);
+      color: var(--gray-700);
+      background: var(--white);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--gray-900);
+      letter-spacing: -0.03em;
+    }
+
+    /* -------- Typography -------- */
+    .h1 { font-size: clamp(2.5rem, 5.5vw, 4rem); }
+    .h2 { font-size: clamp(2rem, 4vw, 3rem); }
+    .h3 { font-size: clamp(1.35rem, 2.5vw, 1.75rem); }
+    .h4 { font-size: 1.15rem; font-weight: 700; }
+    .lead { font-size: clamp(1.1rem, 1.5vw, 1.25rem); line-height: 1.7; color: var(--gray-500); }
+    .overline {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* -------- Layout -------- */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .container-narrow { max-width: var(--max-w-narrow); margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-sm { padding: 60px 0; }
+    .section-lg { padding: 120px 0; }
+    .grid { display: grid; gap: 24px; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .text-center { text-align: center; }
+
+    /* -------- Section Headers -------- */
+    .section-head { margin-bottom: 64px; }
+    .section-head .overline { margin-bottom: 16px; display: block; }
+    .section-head h2 { margin-bottom: 16px; }
+    .section-head p { max-width: 580px; color: var(--gray-500); }
+    .section-head.text-center p { margin: 0 auto; }
+
+    /* -------- Navigation -------- */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: all 0.3s var(--ease);
+      background: transparent;
+    }
+    .nav.scrolled {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--gray-900);
+      transition: opacity 0.2s;
+    }
+    .nav.scrolled .nav-logo { color: var(--gray-900); }
+    .nav-logo:hover { opacity: 0.8; }
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-bright));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      transition: color 0.2s;
+    }
+    .nav.scrolled .nav-links a { color: var(--gray-600); }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-links a.active { color: var(--primary); }
+    .nav-cta {
+      background: var(--white) !important;
+      color: var(--primary) !important;
+      padding: 10px 24px !important;
+      border-radius: var(--radius-full) !important;
+      font-weight: 600 !important;
+      transition: all 0.2s var(--ease) !important;
+    }
+    .nav.scrolled .nav-cta {
+      background: var(--primary) !important;
+      color: var(--white) !important;
+    }
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(8,145,178,0.3) !important;
+    }
+
+    /* -------- Hero -------- */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 40%, #22d3ee 100%);
+      overflow: hidden;
+      padding: 120px 24px 80px;
+    }
+    .hero-bg-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; }
+    .hero-icon {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin: 0 auto 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .hero h1 {
+      color: var(--white);
+      margin-bottom: 16px;
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+    }
+    .hero-tagline {
+      font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+      color: rgba(255,255,255,0.9);
+      font-family: var(--font-display);
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.85);
+      font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+      line-height: 1.7;
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* -------- Buttons -------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.25s var(--ease);
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(8,145,178,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(8,145,178,0.4);
+    }
+    .btn-white {
+      background: var(--white);
+      color: var(--primary);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .btn-white:hover {
+      background: var(--gray-50);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .btn-lg {
+      padding: 16px 40px;
+      font-size: 1.05rem;
+    }
+
+    /* -------- Feature Cards -------- */
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      transition: all 0.3s var(--ease);
+    }
+    .feature-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 12px 32px rgba(8,145,178,0.08);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-card h3 {
+      margin-bottom: 12px;
+      color: var(--gray-900);
+    }
+    .feature-card p {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* -------- Features Section -------- */
+    .features-section { background: var(--gray-50); }
+
+    /* -------- Signup Section -------- */
+    .signup-section {
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 40%, #22d3ee 100%);
+      color: white;
+    }
+    .signup-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: var(--radius-xl);
+      padding: 60px 48px;
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+    }
+    .signup-card h3 {
+      color: var(--gray-900);
+      margin-bottom: 12px;
+    }
+    .signup-card-subtext {
+      color: var(--gray-600);
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .signup-form input {
+      padding: 14px 16px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .signup-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(8,145,178,0.1);
+    }
+    .signup-form button {
+      padding: 14px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+    }
+    .signup-form button:hover {
+      background: var(--primary-bright);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(8,145,178,0.3);
+    }
+    .signup-note {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      margin-top: 16px;
+    }
+
+    /* -------- Footer -------- */
+    .footer {
+      background: var(--navy-light);
+      color: var(--gray-400);
+      padding: 60px 0 20px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+      max-width: var(--max-w);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 24px;
+    }
+    .footer-brand {
+      grid-column: 1;
+    }
+    .footer-brand .nav-logo {
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .footer-brand p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .footer-brand a {
+      color: var(--primary-light);
+    }
+    .footer h4 {
+      color: var(--white);
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .footer-links a {
+      color: var(--gray-400);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: var(--primary-light);
+    }
+    .footer-bottom {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .footer a {
+      color: var(--primary-light);
+    }
+
+    /* -------- Responsive -------- */
+    @media (max-width: 768px) {
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 0.9rem; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+      .signup-card { padding: 40px 24px; }
+      .section { padding: 60px 0; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-logo { font-size: 1.1rem; }
+      .nav-links { gap: 8px; }
+      .nav-links a { display: none; }
+      .nav-cta { padding: 8px 16px !important; font-size: 0.9rem !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">PI</div>
+        PortfolioInSite
+      </a>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/#waitlist" class="nav-cta">Join Waitlist</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-content">
+      <div class="hero-icon">🔗</div>
+      <h1 class="h1">ForecastInSite</h1>
+      <div class="hero-tagline">Dependency mapping and critical path visualisation</div>
+      <p>Visualise and manage cross-team dependencies before they become blockers. ForecastInSite maps the relationships between epics, features, and teams — then calculates the critical path so you can forecast delivery dates with confidence.</p>
+      <div class="hero-actions">
+        <a href="#signup" class="btn btn-white btn-lg">Join the Beta</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="section features-section">
+    <div class="container">
+      <div class="section-head text-center">
+        <h2 class="h2">See dependencies before they become blockers</h2>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="feature-card">
+          <div class="feature-icon">🕸️</div>
+          <h3 class="h4">Dependency Maps</h3>
+          <p>Visual graph of all cross-team and cross-project dependencies. See the full web of work relationships at a glance with interactive visualisation.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3 class="h4">Critical Path Analysis</h3>
+          <p>Automatically identify the longest path to delivery. Understand which dependencies will have the most impact on your overall timeline.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚠️</div>
+          <h3 class="h4">Risk Identification</h3>
+          <p>Flag dependencies at risk before they impact timelines. Surface blockers and high-risk items automatically for proactive management.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3 class="h4">Timeline Forecasting</h3>
+          <p>Date range forecasts based on team velocity and dependency chains. Get accurate delivery predictions that account for all constraints.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Signup Section -->
+  <section class="section signup-section" id="signup">
+    <div class="container-narrow">
+      <div class="section-head text-center" style="margin-bottom: 48px; color: white;">
+        <h2 class="h2" style="color: white;">Get Early Access</h2>
+        <p style="color: rgba(255,255,255,0.85);">ForecastInSite is currently in beta. Sign up to be notified when it launches.</p>
+      </div>
+
+      <div class="signup-card">
+        <h3 class="h3">Join the Beta</h3>
+        <p class="signup-card-subtext">Be among the first to visualise and manage dependencies across your Jira portfolio.</p>
+        <form class="signup-form" method="POST" action="https://formspree.io/f/xyzyzgqk">
+          <input type="email" name="email" placeholder="you@company.com" required aria-label="Email address">
+          <button type="submit">Notify Me</button>
+        </form>
+        <p class="signup-note">No credit card required. We'll email you when access opens.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="nav-logo">
+          <div class="nav-logo-icon">PI</div>
+          PortfolioInSite
+        </a>
+        <p>Portfolio governance for Jira Cloud. Built by <a href="https://agilityops.com.au">Agility Ops Business Pty Ltd</a>.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#features">Features</a></li>
+          <li><a href="/#waitlist">Join Waitlist</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:support@portfolioinsite.app">support@portfolioinsite.app</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul class="footer-links">
+          <li><a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a></li>
+          <li><a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 <a href="https://agilityops.com.au" target="_blank" rel="noopener">Agility Ops Business Pty Ltd</a>. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Simple nav scroll effect
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && document.querySelector(href)) {
+          e.preventDefault();
+          document.querySelector(href).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
