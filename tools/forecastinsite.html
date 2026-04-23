@@ -1116,7 +1116,7 @@
   <div class="mo" id="impMod">
     <div class="md">
       <h2>Import Data</h2>
-      <p class="sub" style="color:var(--t2);font-size:13px;margin-bottom:24px">Bring your financial data into ForecastInSite from CSV, JSON, or Gandalf's Eye</p>
+      <p class="sub" style="color:var(--t2);font-size:13px;margin-bottom:24px">Bring your financial data into ForecastInSite from CSV, JSON, or PortfolioInSite</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
         <div class="iop sel" data-m="json" onclick="selImpMode('json')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
           <div style="font-weight:600;font-size:14px">JSON Backup</div>
@@ -1126,8 +1126,8 @@
           <div style="font-weight:600;font-size:14px">CSV Features</div>
           <div style="font-size:11px;color:var(--t2);margin-top:4px">Import feature list</div>
         </div>
-        <div class="iop" data-m="gandalf" onclick="selImpMode('gandalf')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
-          <div style="font-weight:600;font-size:14px">Gandalf's Eye</div>
+        <div class="iop" data-m="portfolioinsite" onclick="selImpMode('portfolioinsite')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
+          <div style="font-weight:600;font-size:14px">PortfolioInSite</div>
           <div style="font-size:11px;color:var(--t2);margin-top:4px">Import from browser storage</div>
         </div>
       </div>
@@ -1154,12 +1154,12 @@
         <div id="impCsvPreview" style="display:none;margin-top:12px;padding:12px;background:var(--bgi);border-radius:var(--r);font-size:12px;color:var(--t2)"></div>
       </div>
 
-      <!-- Gandalf's Eye import -->
-      <div id="impGandalf" style="display:none">
+      <!-- PortfolioInSite import -->
+      <div id="impPortfolioInSite" style="display:none">
         <div style="padding:16px;background:var(--bgi);border-radius:var(--r);border:1px solid var(--bdr)">
-          <p style="font-size:13px;color:var(--t2);margin-bottom:12px">This will read Gandalf's Eye v13 data from your browser's localStorage and import backlog items as ForecastInSite features.</p>
-          <div id="gandalfStatus" style="font-size:12px;color:var(--t3)"></div>
-          <button class="btn btn-p" onclick="detectGandalfData()" style="margin-top:12px;width:100%;justify-content:center">Detect Gandalf's Eye Data</button>
+          <p style="font-size:13px;color:var(--t2);margin-bottom:12px">This will read PortfolioInSite v13 data from your browser's localStorage and import backlog items as ForecastInSite features.</p>
+          <div id="portfolioinsiteStatus" style="font-size:12px;color:var(--t3)"></div>
+          <button class="btn btn-p" onclick="detectPortfolioInSiteData()" style="margin-top:12px;width:100%;justify-content:center">Detect PortfolioInSite Data</button>
         </div>
       </div>
 
@@ -1238,7 +1238,7 @@
 
   <script>
 // ============================================================================
-// MITHRIL V1 - Part 2: Core Data, State, & Helpers
+// FORECASTINSITE V1 - Part 2: Core Data, State, & Helpers
 // ============================================================================
 
 // ============================================================================
@@ -7693,7 +7693,7 @@ function rReporting() {
   allEntries.sort((a, b) => (b.month || '').localeCompare(a.month || ''));
 
   if (allEntries.length === 0) {
-    html += '<p style="color:var(--tx2);font-size:0.9em;text-align:center;padding:1rem">No operational data yet — use the form above to add entries, or re-import from Gandalf to auto-classify.</p>';
+    html += '<p style="color:var(--tx2);font-size:0.9em;text-align:center;padding:1rem">No operational data yet — use the form above to add entries, or re-import from PortfolioInSite to auto-classify.</p>';
   } else {
     html += '<div class="tw"><table class="dt"><thead><tr>';
     html += '<th>Month</th><th>Category</th><th style="text-align:right">Raised</th><th style="text-align:right">Resolved</th><th style="text-align:right">Open</th><th style="text-align:right">Avg Days</th><th>Actions</th>';
@@ -8642,7 +8642,7 @@ function rConfig() {
     <div class="sc">
       <div class="gs">
         <h3>Ticket Classification Rules</h3>
-        <p style="font-size:0.85rem;color:var(--tx2);margin-bottom:1rem">Define prefix patterns to auto-classify tickets from imported data (e.g. Gandalf's Eye). Each rule maps a ticket ID prefix to an operational category.</p>
+        <p style="font-size:0.85rem;color:var(--tx2);margin-bottom:1rem">Define prefix patterns to auto-classify tickets from imported data (e.g. PortfolioInSite). Each rule maps a ticket ID prefix to an operational category.</p>
         <div style="display:grid;grid-template-columns:1fr 120px 80px 40px;gap:0.5rem;margin-bottom:0.5rem;font-size:0.75rem;font-weight:600;color:var(--tx2)">
           <span>Category Name</span><span>Prefix</span><span>Colour</span><span></span>
         </div>
@@ -9210,7 +9210,7 @@ function selImpMode(mode) {
   });
   document.getElementById('impJson').style.display = mode === 'json' ? 'block' : 'none';
   document.getElementById('impCsv').style.display = mode === 'csv' ? 'block' : 'none';
-  document.getElementById('impGandalf').style.display = mode === 'gandalf' ? 'block' : 'none';
+  document.getElementById('impPortfolioInSite').style.display = mode === 'portfolioinsite' ? 'block' : 'none';
   impPendingData = null;
 }
 
@@ -9321,9 +9321,9 @@ function processImpCsvFile(file) {
   reader.readAsText(file);
 }
 
-// Gandalf's Eye import
-function detectGandalfData() {
-  const statusEl = document.getElementById('gandalfStatus');
+// PortfolioInSite import
+function detectPortfolioInSiteData() {
+  const statusEl = document.getElementById('portfolioinsiteStatus');
   const keys = ['ge_v13', 'ge_v12', 'ge_v11', 'blr_v9'];
   let found = null;
 
@@ -9344,7 +9344,7 @@ function detectGandalfData() {
     statusEl.innerHTML = `<strong style="color:var(--hi)">✓ Found ${found.items.length} items in ${found.key}</strong><br>
       Epics and Features will be imported as ForecastInSite features with story points and business value preserved.`;
 
-    // Convert Gandalf items to ForecastInSite features
+    // Convert PortfolioInSite items to ForecastInSite features
     const features = found.items
       .filter(item => ['Epic', 'Feature', 'SAFe Epic'].includes(item.type))
       .map(item => {
@@ -9375,12 +9375,12 @@ function detectGandalfData() {
         };
       });
 
-    impPendingData = { features, source: 'gandalf', rawItems: found.items };
+    impPendingData = { features, source: 'portfolioinsite', rawItems: found.items };
     statusEl.innerHTML += `<br><strong>${features.length} Epics/Features ready to import</strong>`;
-    statusEl.innerHTML += `<br><span style="font-size:0.8rem;color:var(--t2)">Import will auto-create teams and budgets from your Gandalf's Eye data, replacing sample data.</span>`;
+    statusEl.innerHTML += `<br><span style="font-size:0.8rem;color:var(--t2)">Import will auto-create teams and budgets from your PortfolioInSite data, replacing sample data.</span>`;
   } else {
-    statusEl.innerHTML = `<span style="color:var(--mid)">No Gandalf's Eye data found in this browser.</span><br>
-      Open Gandalf's Eye in the same browser first, then try again.`;
+    statusEl.innerHTML = `<span style="color:var(--mid)">No PortfolioInSite data found in this browser.</span><br>
+      Open PortfolioInSite in the same browser first, then try again.`;
   }
 }
 
@@ -9419,14 +9419,14 @@ function doImport() {
     renderAll();
     toast(`${features.length} features imported from CSV`, 'ok');
 
-  } else if (impMode === 'gandalf') {
-    // Gandalf's Eye: full smart import — replace sample data with complete dataset
+  } else if (impMode === 'portfolioinsite') {
+    // PortfolioInSite: full smart import — replace sample data with complete dataset
     const features = impPendingData.features || [];
     if (features.length === 0) { toast('No features found in import', 'err'); return; }
 
-    if (!confirm('This will replace sample data with a complete dataset built from your Gandalf\'s Eye backlog. Continue?')) return;
+    if (!confirm('This will replace sample data with a complete dataset built from your PortfolioInSite\'s Eye backlog. Continue?')) return;
 
-    // ── 1. Extract unique teams from Gandalf items ──
+    // ── 1. Extract unique teams from PortfolioInSite items ──
     const rawItems = impPendingData.rawItems || [];
     const teamNames = [...new Set(rawItems.map(i => i.team).filter(Boolean))];
     if (teamNames.length === 0) teamNames.push('Default Team');
@@ -9485,7 +9485,7 @@ function doImport() {
     newTeams.forEach(t => { teamNameToId[t.name] = t.id; });
 
     features.forEach(f => {
-      // Try to match feature to a team from the raw Gandalf data
+      // Try to match feature to a team from the raw PortfolioInSite data
       const rawItem = rawItems.find(ri => (ri.title || ri.id) === f.name);
       if (rawItem && rawItem.team && teamNameToId[rawItem.team]) {
         f.teamId = teamNameToId[rawItem.team];
@@ -9527,7 +9527,7 @@ function doImport() {
           actual: i === 1 ? Math.round(estCost * (0.9 + Math.random() * 0.2)) : 0,
           forecast: estCost,
           category: 'Team Delivery',
-          notes: `Auto-generated from Gandalf\'s Eye import`
+          notes: `Auto-generated from PortfolioInSite\'s Eye import`
         });
       }
     });
@@ -9612,7 +9612,7 @@ function doImport() {
     STATE.features = features;
     STATE.budgets = newBudgets;
     STATE.velocityHistory = newVelocity;
-    STATE.licences = []; // No licence data from Gandalf — start fresh
+    STATE.licences = []; // No licence data from PortfolioInSite — start fresh
     STATE.aiAgents = [];
     STATE.transitions = [];
     STATE.reporting = newReporting;
@@ -9679,7 +9679,7 @@ function doImport() {
 
     save();
     renderAll();
-    toast(`Imported ${features.length} features, ${newTeams.length} teams, ${newBudgets.length} budget lines from Gandalf's Eye`, 'ok');
+    toast(`Imported ${features.length} features, ${newTeams.length} teams, ${newBudgets.length} budget lines from PortfolioInSite`, 'ok');
   }
 
   closeImportModal();
