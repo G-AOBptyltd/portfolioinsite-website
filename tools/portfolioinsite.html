@@ -185,6 +185,114 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}
   <meta property="og:title" content="PortfolioInSite — Portfolio Dashboard">
 </head>
 <body>
+<!-- AOB Beta Access Gate -->
+<style>
+#aob-gate {
+  position: fixed; inset: 0; z-index: 999999;
+  background: linear-gradient(135deg, #0a4a5c 0%, #0891b2 50%, #06b6d4 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+#aob-gate .gate-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+}
+#aob-gate .gate-logo { font-size: 48px; margin-bottom: 16px; }
+#aob-gate h2 {
+  color: #fff; font-size: 22px; font-weight: 700;
+  margin: 0 0 8px; letter-spacing: -0.3px;
+}
+#aob-gate .gate-sub {
+  color: rgba(255,255,255,0.7); font-size: 14px;
+  margin: 0 0 32px; line-height: 1.5;
+}
+#aob-gate .gate-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.9);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 999px;
+  margin-bottom: 24px;
+}
+#aob-gate input[type=password] {
+  width: 100%; box-sizing: border-box;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  color: #fff; font-size: 15px;
+  outline: none; margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+#aob-gate input[type=password]::placeholder { color: rgba(255,255,255,0.4); }
+#aob-gate input[type=password]:focus { border-color: rgba(255,255,255,0.6); }
+#aob-gate .gate-btn {
+  width: 100%; padding: 14px;
+  background: #fff; color: #0891b2;
+  font-size: 15px; font-weight: 700;
+  border: none; border-radius: 8px;
+  cursor: pointer; transition: opacity 0.2s;
+  margin-bottom: 20px;
+}
+#aob-gate .gate-btn:hover { opacity: 0.9; }
+#aob-gate .gate-error {
+  display: none; color: #ffb3b3;
+  font-size: 13px; margin-bottom: 12px;
+}
+#aob-gate .gate-request {
+  color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;
+}
+#aob-gate .gate-request a {
+  color: rgba(255,255,255,0.8); text-decoration: underline;
+}
+#aob-gate.gate-hide {
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+</style>
+<div id="aob-gate">
+  <div class="gate-card">
+    <div class="gate-logo">📊</div>
+    <span class="gate-badge">Private Beta</span>
+    <h2>PortfolioInSite</h2>
+    <p class="gate-sub">This tool is in private beta.<br>Enter your access code to continue.</p>
+    <input type="password" id="gate-pwd" placeholder="Enter access code" onkeydown="if(event.key==='Enter')aobGateCheck()">
+    <p class="gate-error" id="gate-err">Incorrect code. Please try again.</p>
+    <button class="gate-btn" onclick="aobGateCheck()">Unlock Access</button>
+    <p class="gate-request">No access code? <a href="mailto:support@portfolioinsite.app">Request access →</a></p>
+  </div>
+</div>
+<script>
+(function(){
+  var SK='aob_gate_v1';
+  if(sessionStorage.getItem(SK)==='1'){document.getElementById('aob-gate').style.display='none';return;}
+  document.body.style.overflow='hidden';
+})();
+function aobGateCheck(){
+  var v=document.getElementById('gate-pwd').value;
+  var e=document.getElementById('gate-err');
+  if(v==='aob-beta-2026-@$@'){
+    sessionStorage.setItem('aob_gate_v1','1');
+    var g=document.getElementById('aob-gate');
+    g.classList.add('gate-hide');
+    document.body.style.overflow='';
+    setTimeout(function(){g.style.display='none';},400);
+  } else {
+    e.style.display='block';
+    document.getElementById('gate-pwd').value='';
+    document.getElementById('gate-pwd').focus();
+  }
+}
+</script>
+<!-- END AOB Beta Access Gate -->
 <header class="hdr">
 <div class="logo">
 <div class="logo-icon"><svg viewBox="0 0 32 32" fill="none">
