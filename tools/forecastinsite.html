@@ -2541,6 +2541,9 @@ let cmdBurnChartInstance = null;
 let cmdValueChartInstance = null;
 let budgetChartInstance = null;
 
+// Reporting chart instances — tracked so we can destroy before re-init
+let _rptCharts = {};
+
 // ============================================================================
 // TAB 1: COMMAND CENTRE — rCommand()
 // ============================================================================
@@ -4390,8 +4393,8 @@ function rFeatures() {
       render();
     });
 
-    // Initialize chart
-    initFeatureCharts();
+    // Initialize chart — delay so canvas has layout dimensions after innerHTML set
+    setTimeout(() => { initFeatureCharts(); }, 60);
   }
 
   function populateBucketDetails(feature) {
@@ -7833,7 +7836,9 @@ function rReporting() {
   if (mfPeriodInput && !mfPeriodInput.value) mfPeriodInput.value = nowMonth;
 
   // ── Render Charts ──
-  requestAnimationFrame(() => { renderReportingCharts(); });
+  // Use setTimeout instead of requestAnimationFrame — rAF fires before browser completes
+  // layout on dynamically-inserted canvas elements, causing Chart.js to see 0×0 dimensions.
+  setTimeout(() => { renderReportingCharts(); }, 60);
 }
 
 function addReportingEntry() {
@@ -8256,6 +8261,10 @@ function resolveJsonPath(obj, path) {
 }
 
 function renderReportingCharts() {
+  // Destroy any previous chart instances to avoid "canvas already in use" errors
+  Object.values(_rptCharts).forEach(c => { try { c.destroy(); } catch(e) {} });
+  _rptCharts = {};
+
   const teamColors = [
     '#0EA5E9','#14B8A6','#8B5CF6','#F59E0B','#EF4444','#EC4899',
     '#6366F1','#10B981','#F97316','#06B6D4','#84CC16','#A855F7',
@@ -8276,7 +8285,7 @@ function renderReportingCharts() {
 
   const featureCtx = document.getElementById('rptFeatureStatusChart');
   if (featureCtx) {
-    new Chart(featureCtx, {
+    _rptCharts.feature = new Chart(featureCtx, {
       type: 'doughnut',
       data: { labels: statusLabels, datasets: [{ data: statusData, backgroundColor: statusColors, borderWidth: 0 }] },
       options: {
@@ -8296,7 +8305,7 @@ function renderReportingCharts() {
       if (hist.length === 0) return 0;
       return hist[hist.length - 1].completed || 0;
     });
-    new Chart(velocityCtx, {
+    _rptCharts.velocity = new Chart(velocityCtx, {
       type: 'bar',
       data: {
         labels: teamNames,
@@ -8321,7 +8330,7 @@ function renderReportingCharts() {
     const featurePts = STATE.teams.map(t => {
       return STATE.features.filter(f => f.teamId === t.id).reduce((s, f) => s + (f.storyPoints || 0), 0);
     });
-    new Chart(spCtx, {
+    _rptCharts.sp = new Chart(spCtx, {
       type: 'bar',
       data: {
         labels: teamNames,
@@ -8344,7 +8353,7 @@ function renderReportingCharts() {
     const done = STATE.features.filter(f => f.status === 'Done').length;
     const inProg = STATE.features.filter(f => f.status === 'In Progress').length;
     const backlog = STATE.features.filter(f => f.status !== 'Done' && f.status !== 'In Progress').length;
-    new Chart(tpCtx, {
+    _rptCharts.tp = new Chart(tpCtx, {
       type: 'doughnut',
       data: {
         labels: ['Done', 'In Progress', 'Backlog'],
@@ -8366,7 +8375,7 @@ function renderReportingCharts() {
     const budgetedArr = periods.map(p => STATE.budgets.filter(b => b.period === p).reduce((s, b) => s + (b.budgeted || 0), 0));
     const actualArr = periods.map(p => STATE.budgets.filter(b => b.period === p).reduce((s, b) => s + (b.actual || 0), 0));
     const forecastArr = periods.map(p => STATE.budgets.filter(b => b.period === p).reduce((s, b) => s + (b.forecast || 0), 0));
-    new Chart(budgetCtx, {
+    _rptCharts.budget = new Chart(budgetCtx, {
       type: 'bar',
       data: {
         labels: periods,
@@ -8389,7 +8398,7 @@ function renderReportingCharts() {
   if (costCtx && STATE.teams.length > 0) {
     const tNames = STATE.teams.map(t => t.name);
     const tCosts = STATE.teams.map(t => calcTeamMonthlyCost(t.id));
-    new Chart(costCtx, {
+    _rptCharts.cost = new Chart(costCtx, {
       type: 'doughnut',
       data: {
         labels: tNames,
@@ -8409,7 +8418,7 @@ function renderReportingCharts() {
     const runRateData = periods.map(p => {
       return STATE.budgets.filter(b => b.period === p).reduce((s, b) => s + (b.actual || b.budgeted || 0), 0);
     });
-    new Chart(rrCtx, {
+    _rptCharts.rr = new Chart(rrCtx, {
       type: 'line',
       data: {
         labels: periods,
@@ -8438,7 +8447,7 @@ function renderReportingCharts() {
     const activeTeams = STATE.teams.filter(t => (t.sprintCapacity || 0) > 0);
     const tNames = activeTeams.map(t => t.name.length > 12 ? t.name.substring(0, 10) + '..' : t.name);
     const cppData = activeTeams.map(t => calcCostPerPoint(t.id));
-    new Chart(cppCtx, {
+    _rptCharts.cpp = new Chart(cppCtx, {
       type: 'bar',
       data: {
         labels: tNames,
