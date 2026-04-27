@@ -7236,9 +7236,9 @@ function rSizing() {
   html += '</div>';
 
   // Velocity chart
-  html += `<div class="chart-box" style="margin-bottom:1rem">
+  html += `<div class="chart-box" style="margin-bottom:1rem;position:relative;height:260px">
     <h3>Velocity Trend by Team</h3>
-    <canvas id="sizingVelocityChart" style="max-height:250px"></canvas>
+    <canvas id="sizingVelocityChart"></canvas>
   </div>`;
 
   // Forecast table
@@ -7393,15 +7393,15 @@ function rSizing() {
   html += '</tbody></table></div>';
 
   // Scatter chart: points vs cost for reference library
-  html += `<div class="chart-box" style="margin-top:1rem">
+  html += `<div class="chart-box" style="margin-top:1rem;position:relative;height:300px">
     <h3>Cost vs Size (Reference Library)</h3>
-    <canvas id="sizingScatterChart" style="max-height:280px"></canvas>
+    <canvas id="sizingScatterChart"></canvas>
   </div>`;
 
   html += '</div>';
 
   container.innerHTML = html;
-  setTimeout(() => { initSizingCharts(teamAggregates, history, refLib); }, 60);
+  setTimeout(() => { initSizingCharts(teamAggregates, history, refLib); }, 150);
 }
 
 // ── Quick Estimator calc ──
