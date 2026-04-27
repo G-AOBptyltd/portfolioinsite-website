@@ -2503,30 +2503,122 @@ function initSampleData() {
   ];
 
   // ========== REPORTING (operational ticket data from SNOW references) ==========
+  // Fields: raised = new tickets opened, resolved = tickets closed, open = net open, backlog = cumulative backlog
   STATE.reporting = {
     'Incidents': [
-      { month: '2025-07', open: 8, closed: 5, backlog: 3 },
-      { month: '2025-08', open: 12, closed: 9, backlog: 6 },
-      { month: '2025-09', open: 10, closed: 11, backlog: 5 },
-      { month: '2025-10', open: 15, closed: 12, backlog: 8 },
-      { month: '2025-11', open: 9, closed: 10, backlog: 7 },
-      { month: '2025-12', open: 11, closed: 8, backlog: 10 }
+      { month: '2025-07', raised: 8,  resolved: 5,  open: 3,  backlog: 3,  avgDays: 2.1 },
+      { month: '2025-08', raised: 12, resolved: 9,  open: 6,  backlog: 6,  avgDays: 1.9 },
+      { month: '2025-09', raised: 10, resolved: 11, open: 5,  backlog: 5,  avgDays: 1.7 },
+      { month: '2025-10', raised: 15, resolved: 12, open: 8,  backlog: 8,  avgDays: 2.3 },
+      { month: '2025-11', raised: 9,  resolved: 10, open: 7,  backlog: 7,  avgDays: 1.8 },
+      { month: '2025-12', raised: 11, resolved: 8,  open: 10, backlog: 10, avgDays: 2.5 }
     ],
     'Service Requests': [
-      { month: '2025-07', open: 22, closed: 18, backlog: 4 },
-      { month: '2025-08', open: 28, closed: 25, backlog: 7 },
-      { month: '2025-09', open: 25, closed: 22, backlog: 10 },
-      { month: '2025-10', open: 30, closed: 28, backlog: 12 },
-      { month: '2025-11', open: 26, closed: 24, backlog: 14 },
-      { month: '2025-12', open: 32, closed: 30, backlog: 16 }
+      { month: '2025-07', raised: 22, resolved: 18, open: 4,  backlog: 4,  avgDays: 3.2 },
+      { month: '2025-08', raised: 28, resolved: 25, open: 7,  backlog: 7,  avgDays: 2.9 },
+      { month: '2025-09', raised: 25, resolved: 22, open: 10, backlog: 10, avgDays: 3.1 },
+      { month: '2025-10', raised: 30, resolved: 28, open: 12, backlog: 12, avgDays: 2.7 },
+      { month: '2025-11', raised: 26, resolved: 24, open: 14, backlog: 14, avgDays: 3.0 },
+      { month: '2025-12', raised: 32, resolved: 30, open: 16, backlog: 16, avgDays: 2.8 }
     ],
     'Demands': [
-      { month: '2025-07', open: 5, closed: 3, backlog: 2 },
-      { month: '2025-08', open: 8, closed: 6, backlog: 4 },
-      { month: '2025-09', open: 6, closed: 5, backlog: 5 },
-      { month: '2025-10', open: 10, closed: 8, backlog: 7 },
-      { month: '2025-11', open: 7, closed: 6, backlog: 8 },
-      { month: '2025-12', open: 14, closed: 10, backlog: 12 }
+      { month: '2025-07', raised: 5,  resolved: 3,  open: 2,  backlog: 2,  avgDays: 8.5 },
+      { month: '2025-08', raised: 8,  resolved: 6,  open: 4,  backlog: 4,  avgDays: 9.2 },
+      { month: '2025-09', raised: 6,  resolved: 5,  open: 5,  backlog: 5,  avgDays: 7.8 },
+      { month: '2025-10', raised: 10, resolved: 8,  open: 7,  backlog: 7,  avgDays: 8.1 },
+      { month: '2025-11', raised: 7,  resolved: 6,  open: 8,  backlog: 8,  avgDays: 9.0 },
+      { month: '2025-12', raised: 14, resolved: 10, open: 12, backlog: 12, avgDays: 7.5 }
+    ]
+  };
+
+  // ========== METRIC DATA (historical snapshots for Metric Trends charts) ==========
+  STATE.metricData = {
+    _current: {
+      'Delivery::Cycle Time': 4.2,
+      'Delivery::Lead Time': 12.5,
+      'Delivery::Time to Market': 28,
+      'Delivery::Burn-Down': 87,
+      'Delivery::Velocity': 84,
+      'Delivery::Commitment Ratio': 91,
+      'Operations::Cycle Time': 2.8,
+      'Operations::Support Lead Time': 3.1,
+      'Operations::Time to Resolve': 1.9,
+      'Systems Performance::System Uptime': 99.7,
+      'Systems Performance::System Stability': 8.4,
+      'Systems Performance::System Reliability': 99.3,
+      'Quality::Testing Defect Rate': 3.2,
+      'Quality::Defect Leakage': 2,
+      'Quality::Test Pass Rate': 94.1,
+      'DevOps & Culture::Utilisation & Capacity': 82,
+      'DevOps & Culture::Agile Maturity': 3.8,
+      'DevOps & Culture::Skills Coverage': 78,
+      'Financial::Opex Variance': -12000,
+      'Financial::Optimisation Rate': 14,
+      'Financial::Cost Recharge Variance': 5000,
+      'Strategic & Risk::Product Reuse Count': 6,
+      'Strategic & Risk::Tech Debt Items': 24,
+      'Strategic & Risk::IT Risk Score': 3.2,
+      'Strategic & Risk::Data Privacy Breaches': 0,
+      'Customer Satisfaction::Customer Rating': 4.1,
+      'Customer Satisfaction::NPS Score': 42
+    },
+    history: [
+      {
+        period: 'PI 24.3',
+        capturedAt: '2024-09-30',
+        values: {
+          'Delivery::Cycle Time': 6.8, 'Delivery::Lead Time': 18.2, 'Delivery::Time to Market': 42, 'Delivery::Burn-Down': 72, 'Delivery::Velocity': 72, 'Delivery::Commitment Ratio': 78,
+          'Operations::Cycle Time': 4.1, 'Operations::Support Lead Time': 5.2, 'Operations::Time to Resolve': 3.1,
+          'Systems Performance::System Uptime': 98.9, 'Systems Performance::System Stability': 6.8, 'Systems Performance::System Reliability': 98.1,
+          'Quality::Testing Defect Rate': 6.8, 'Quality::Defect Leakage': 7, 'Quality::Test Pass Rate': 88.2,
+          'DevOps & Culture::Utilisation & Capacity': 70, 'DevOps & Culture::Agile Maturity': 2.9, 'DevOps & Culture::Skills Coverage': 62,
+          'Financial::Opex Variance': -48000, 'Financial::Optimisation Rate': 6, 'Financial::Cost Recharge Variance': 18000,
+          'Strategic & Risk::Product Reuse Count': 2, 'Strategic & Risk::Tech Debt Items': 48, 'Strategic & Risk::IT Risk Score': 6.1, 'Strategic & Risk::Data Privacy Breaches': 0,
+          'Customer Satisfaction::Customer Rating': 3.4, 'Customer Satisfaction::NPS Score': 18
+        }
+      },
+      {
+        period: 'PI 24.4',
+        capturedAt: '2024-12-20',
+        values: {
+          'Delivery::Cycle Time': 5.9, 'Delivery::Lead Time': 16.0, 'Delivery::Time to Market': 36, 'Delivery::Burn-Down': 79, 'Delivery::Velocity': 79, 'Delivery::Commitment Ratio': 83,
+          'Operations::Cycle Time': 3.5, 'Operations::Support Lead Time': 4.4, 'Operations::Time to Resolve': 2.6,
+          'Systems Performance::System Uptime': 99.1, 'Systems Performance::System Stability': 7.4, 'Systems Performance::System Reliability': 98.7,
+          'Quality::Testing Defect Rate': 5.1, 'Quality::Defect Leakage': 5, 'Quality::Test Pass Rate': 90.8,
+          'DevOps & Culture::Utilisation & Capacity': 74, 'DevOps & Culture::Agile Maturity': 3.2, 'DevOps & Culture::Skills Coverage': 67,
+          'Financial::Opex Variance': -31000, 'Financial::Optimisation Rate': 9, 'Financial::Cost Recharge Variance': 12500,
+          'Strategic & Risk::Product Reuse Count': 3, 'Strategic & Risk::Tech Debt Items': 39, 'Strategic & Risk::IT Risk Score': 5.0, 'Strategic & Risk::Data Privacy Breaches': 0,
+          'Customer Satisfaction::Customer Rating': 3.7, 'Customer Satisfaction::NPS Score': 26
+        }
+      },
+      {
+        period: 'PI 25.1',
+        capturedAt: '2025-03-28',
+        values: {
+          'Delivery::Cycle Time': 5.1, 'Delivery::Lead Time': 14.3, 'Delivery::Time to Market': 31, 'Delivery::Burn-Down': 84, 'Delivery::Velocity': 84, 'Delivery::Commitment Ratio': 87,
+          'Operations::Cycle Time': 3.1, 'Operations::Support Lead Time': 3.8, 'Operations::Time to Resolve': 2.2,
+          'Systems Performance::System Uptime': 99.5, 'Systems Performance::System Stability': 8.0, 'Systems Performance::System Reliability': 99.0,
+          'Quality::Testing Defect Rate': 4.0, 'Quality::Defect Leakage': 3, 'Quality::Test Pass Rate': 92.5,
+          'DevOps & Culture::Utilisation & Capacity': 78, 'DevOps & Culture::Agile Maturity': 3.5, 'DevOps & Culture::Skills Coverage': 73,
+          'Financial::Opex Variance': -19000, 'Financial::Optimisation Rate': 11, 'Financial::Cost Recharge Variance': 8000,
+          'Strategic & Risk::Product Reuse Count': 4, 'Strategic & Risk::Tech Debt Items': 32, 'Strategic & Risk::IT Risk Score': 4.1, 'Strategic & Risk::Data Privacy Breaches': 0,
+          'Customer Satisfaction::Customer Rating': 3.9, 'Customer Satisfaction::NPS Score': 33
+        }
+      },
+      {
+        period: 'PI 25.2',
+        capturedAt: '2025-06-27',
+        values: {
+          'Delivery::Cycle Time': 4.2, 'Delivery::Lead Time': 12.5, 'Delivery::Time to Market': 28, 'Delivery::Burn-Down': 87, 'Delivery::Velocity': 84, 'Delivery::Commitment Ratio': 91,
+          'Operations::Cycle Time': 2.8, 'Operations::Support Lead Time': 3.1, 'Operations::Time to Resolve': 1.9,
+          'Systems Performance::System Uptime': 99.7, 'Systems Performance::System Stability': 8.4, 'Systems Performance::System Reliability': 99.3,
+          'Quality::Testing Defect Rate': 3.2, 'Quality::Defect Leakage': 2, 'Quality::Test Pass Rate': 94.1,
+          'DevOps & Culture::Utilisation & Capacity': 82, 'DevOps & Culture::Agile Maturity': 3.8, 'DevOps & Culture::Skills Coverage': 78,
+          'Financial::Opex Variance': -12000, 'Financial::Optimisation Rate': 14, 'Financial::Cost Recharge Variance': 5000,
+          'Strategic & Risk::Product Reuse Count': 6, 'Strategic & Risk::Tech Debt Items': 24, 'Strategic & Risk::IT Risk Score': 3.2, 'Strategic & Risk::Data Privacy Breaches': 0,
+          'Customer Satisfaction::Customer Rating': 4.1, 'Customer Satisfaction::NPS Score': 42
+        }
+      }
     ]
   };
 }
@@ -3708,7 +3800,7 @@ function rBudget() {
     filter.addEventListener('change', rBudget);
   }
 
-  initBudgetCharts();
+  setTimeout(() => { initBudgetCharts(); }, 60);
 }
 
 function renderBudgetTable(budgets) {
@@ -5086,7 +5178,7 @@ function rValue() {
     document.getElementById('valueContent').innerHTML = contentHtml;
 
     // Initialize chart
-    initValueCharts();
+    setTimeout(() => { initValueCharts(); }, 60);
   }
 
   render();
@@ -7309,7 +7401,7 @@ function rSizing() {
   html += '</div>';
 
   container.innerHTML = html;
-  initSizingCharts(teamAggregates, history, refLib);
+  setTimeout(() => { initSizingCharts(teamAggregates, history, refLib); }, 60);
 }
 
 // ── Quick Estimator calc ──
@@ -8303,7 +8395,7 @@ function renderReportingCharts() {
     const completedData = STATE.teams.map(t => {
       const hist = STATE.velocityHistory.filter(v => v.teamId === t.id);
       if (hist.length === 0) return 0;
-      return hist[hist.length - 1].completed || 0;
+      return hist[hist.length - 1].pointsDelivered || hist[hist.length - 1].completed || 0;
     });
     _rptCharts.velocity = new Chart(velocityCtx, {
       type: 'bar',
