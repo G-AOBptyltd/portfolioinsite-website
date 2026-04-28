@@ -2659,8 +2659,8 @@ function rCommand() {
 
   container.innerHTML = html;
 
-  // Initialize charts after DOM is ready
-  initCommandCharts();
+  // Initialize charts after DOM is ready — setTimeout ensures browser has completed layout
+  setTimeout(() => { initCommandCharts(); }, 200);
 }
 
 // ============================================================================
@@ -2712,7 +2712,7 @@ function renderCommandFC() {
   html += `
     <div class="chart-box" style="margin-bottom:2rem">
       <h3>Budget Burn by Team</h3>
-      <canvas id="cmdBurnChart" style="max-height:300px"></canvas>
+      <div style="position:relative;height:260px"><canvas id="cmdBurnChart"></canvas></div>
     </div>
   `;
 
@@ -2776,7 +2776,7 @@ function renderCommandPM() {
   html += `
     <div class="chart-box" style="margin-bottom:2rem">
       <h3>Value Delivered by Team</h3>
-      <canvas id="cmdValueChart" style="max-height:300px"></canvas>
+      <div style="position:relative;height:260px"><canvas id="cmdValueChart"></canvas></div>
     </div>
   `;
 
@@ -3048,7 +3048,7 @@ function initBudgetBurnChart(ctx) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: true, position: 'top' } },
       scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + (v / 1000).toFixed(0) + 'k' } } }
     }
@@ -3078,7 +3078,7 @@ function initValueDeliveryChart(ctx) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: true, position: 'right' } }
     }
   });
@@ -3785,7 +3785,7 @@ function rBudget() {
   html += `
     <div class="chart-box" style="margin-bottom:2rem;margin-top:2rem">
       <h3>Budget vs Actual vs Forecast</h3>
-      <canvas id="budgetChart" style="max-height:300px"></canvas>
+      <div style="position:relative;height:260px"><canvas id="budgetChart"></canvas></div>
     </div>
   `;
 
@@ -3800,7 +3800,7 @@ function rBudget() {
     filter.addEventListener('change', rBudget);
   }
 
-  setTimeout(() => { initBudgetCharts(); }, 60);
+  setTimeout(() => { initBudgetCharts(); }, 200);
 }
 
 function renderBudgetTable(budgets) {
@@ -4109,7 +4109,7 @@ function initBudgetCharts() {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: true, position: 'top' } },
       scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + (v / 1000).toFixed(0) + 'k' } } }
     }
@@ -4297,7 +4297,7 @@ function rFeatures() {
 
       <div class="chart-box">
         <h3>Feature Cost Distribution</h3>
-        <canvas id="featureCostChart" width="400" height="300"></canvas>
+        <div style="position:relative;height:280px"><canvas id="featureCostChart"></canvas></div>
       </div>
     `;
 
@@ -4486,7 +4486,7 @@ function rFeatures() {
     });
 
     // Initialize chart — delay so canvas has layout dimensions after innerHTML set
-    setTimeout(() => { initFeatureCharts(); }, 60);
+    setTimeout(() => { initFeatureCharts(); }, 200);
   }
 
   function populateBucketDetails(feature) {
@@ -4847,6 +4847,7 @@ function initFeatureCharts() {
     options: {
       indexAxis: 'y',
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false }
       },
@@ -4949,7 +4950,7 @@ function rValue() {
 
       <div class="chart-box">
         <h3>Value vs Cost Analysis</h3>
-        <canvas id="valueChart" width="400" height="300"></canvas>
+        <div style="position:relative;height:280px"><canvas id="valueChart"></canvas></div>
       </div>
     `;
 
@@ -5178,7 +5179,7 @@ function rValue() {
     document.getElementById('valueContent').innerHTML = contentHtml;
 
     // Initialize chart
-    setTimeout(() => { initValueCharts(); }, 60);
+    setTimeout(() => { initValueCharts(); }, 200);
   }
 
   render();
@@ -5212,6 +5213,7 @@ function initValueCharts() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false }
       },
@@ -5539,7 +5541,7 @@ function renderThoughtLeadership() {
         </div>
       </div>
       <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(233, 30, 99, 0.1); border-radius: 4px;" id="innovationSummary"></div>
-      <div style="height: 250px;">
+      <div style="position:relative;height:250px;">
         <canvas id="innovChart"></canvas>
       </div>
     </div>
@@ -5779,13 +5781,11 @@ function updateInnovationAccounting() {
     <strong>Innovation batting average: ${fmtPct(battingAverage / 100)} of hypotheses validated</strong>
   `;
 
-  // Pie chart
-  const canvas = document.getElementById('innovChart');
-  if (canvas) {
-    if (innovChartInst) {
-      innovChartInst.destroy();
-    }
-
+  // Pie chart — use setTimeout so canvas has measurable dimensions after DOM insert
+  setTimeout(() => {
+    const canvas = document.getElementById('innovChart');
+    if (!canvas) return;
+    if (innovChartInst) { try { innovChartInst.destroy(); } catch(e) {} }
     const ctx = canvas.getContext('2d');
     innovChartInst = new Chart(ctx, {
       type: 'doughnut',
@@ -5798,12 +5798,13 @@ function updateInnovationAccounting() {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom' }
         }
       }
     });
-  }
+  }, 200);
 }
 // ============================================================================
 // TAB 7: AI WORKFORCE
@@ -6135,7 +6136,7 @@ function rAI() {
     <div class="sc">
       <div class="gs">
         <h3>Transition Cost Trajectory</h3>
-        <canvas id="transitionChart" style="max-width: 100%; height: 300px;"></canvas>
+        <div style="position:relative;height:280px"><canvas id="transitionChart"></canvas></div>
       </div>
     </div>
   `;
@@ -6190,7 +6191,7 @@ function rAI() {
 
   // Initialize transition chart if needed
   if (STATE.transitions.length > 0) {
-    setTimeout(() => initTransitionChart(), 100);
+    setTimeout(() => initTransitionChart(), 200);
   }
 }
 
@@ -7401,7 +7402,7 @@ function rSizing() {
   html += '</div>';
 
   container.innerHTML = html;
-  setTimeout(() => { initSizingCharts(teamAggregates, history, refLib); }, 150);
+  setTimeout(() => { initSizingCharts(teamAggregates, history, refLib); }, 200);
 }
 
 // ── Quick Estimator calc ──
@@ -7930,7 +7931,7 @@ function rReporting() {
   // ── Render Charts ──
   // Use setTimeout instead of requestAnimationFrame — rAF fires before browser completes
   // layout on dynamically-inserted canvas elements, causing Chart.js to see 0×0 dimensions.
-  setTimeout(() => { renderReportingCharts(); }, 60);
+  setTimeout(() => { renderReportingCharts(); }, 200);
 }
 
 function addReportingEntry() {
