@@ -1072,24 +1072,32 @@
 </div>
 <script>
 (function(){
-  var SK='aob_gate_v1';
-  if(sessionStorage.getItem(SK)==='1'){document.getElementById('aob-gate').style.display='none';return;}
+  var TC='PLN';
+  function getStored(){try{var d=localStorage.getItem('aob_lic_'+TC);if(d)return JSON.parse(d);}catch(x){}var m=document.cookie.match(new RegExp('aob_lic_'+TC+'=([^;]+)'));if(m){try{return JSON.parse(decodeURIComponent(m[1]));}catch(x){}}return null;}
+  var s=getStored();
+  if(s){var ex=new Date(s.expires.substring(0,4)+'-'+s.expires.substring(4,6)+'-'+s.expires.substring(6,8));if(ex>new Date()){document.getElementById('aob-gate').style.display='none';return;}}
+  if(sessionStorage.getItem('aob_gate_v1')==='1'){document.getElementById('aob-gate').style.display='none';return;}
   document.body.style.overflow='hidden';
 })();
+function aobGateHash(p){var h=0;for(var i=0;i<p.length;i++){h=((h<<5)-h+p.charCodeAt(i))|0;}var s=Math.abs(h).toString(16).toUpperCase();while(s.length<4)s='0'+s;return s.substring(0,4);}
 function aobGateCheck(){
-  var v=document.getElementById('gate-pwd').value;
+  var TC='PLN';
+  var v=document.getElementById('gate-pwd').value.trim().toUpperCase();
   var e=document.getElementById('gate-err');
-  if(v==='aob-beta-2026-@$@'){
-    sessionStorage.setItem('aob_gate_v1','1');
-    var g=document.getElementById('aob-gate');
-    g.classList.add('gate-hide');
-    document.body.style.overflow='';
-    setTimeout(function(){g.style.display='none';},400);
-  } else {
-    e.style.display='block';
-    document.getElementById('gate-pwd').value='';
-    document.getElementById('gate-pwd').focus();
-  }
+  e.style.display='none';
+  var parts=v.split('-');
+  if(parts.length!==4){e.textContent='Invalid key format.';e.style.display='block';return;}
+  var pc=parts[0],cid=parts[1],exp=parts[2],kh=parts[3];
+  if(pc!==TC&&pc!=='INS'){e.textContent='This key is for a different tool.';e.style.display='block';return;}
+  var expD=new Date(exp.substring(0,4)+'-'+exp.substring(4,6)+'-'+exp.substring(6,8));
+  if(isNaN(expD.getTime())||expD<new Date()){e.textContent='This access code has expired.';e.style.display='block';return;}
+  var computed=aobGateHash(pc+'-'+cid+'-'+exp);
+  if(computed!==kh){e.textContent='Incorrect code. Please try again.';e.style.display='block';document.getElementById('gate-pwd').value='';document.getElementById('gate-pwd').focus();return;}
+  var ld=JSON.stringify({key:v,customer:cid,expires:exp,activated:new Date().toISOString()});
+  try{localStorage.setItem('aob_lic_'+TC,ld);}catch(x){}
+  document.cookie='aob_lic_'+TC+'='+encodeURIComponent(ld)+'; expires='+expD.toUTCString()+'; path=/; SameSite=Lax';
+  sessionStorage.setItem('aob_gate_v1','1');
+  var g=document.getElementById('aob-gate');g.classList.add('gate-hide');document.body.style.overflow='';setTimeout(function(){g.style.display='none';},400);
 }
 </script>
 <!-- END AOB Beta Access Gate -->
@@ -1408,7 +1416,7 @@ function aobGateCheck(){
 <div id="licStatusArea"></div>
 <div style="margin-top:16px">
 <label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px">Licence Key</label>
-<input class="lic-input" id="licKeyInput" placeholder="RVD-XXXXXXXX-YYYYMMDD-XXXX" maxlength="30" spellcheck="false" autocomplete="off">
+<input class="lic-input" id="licKeyInput" placeholder="PLN-XXXXXXXX-YYYYMMDD-XXXX" maxlength="30" spellcheck="false" autocomplete="off">
 </div>
 <div style="display:flex;gap:8px;margin-top:16px">
 <button class="btn btn-p" onclick="activateLicence()" style="flex:1;justify-content:center">Activate</button>
@@ -3587,7 +3595,7 @@ function aobGateCheck(){
 
         // ---- LICENCE SYSTEM ----
         var LIC_STORAGE_KEY = 'planinsite_licence';
-        var LIC_PRODUCT = 'RVD';
+        var LIC_PRODUCT = 'PLN';
         var LIC_TRIAL_DAYS = 90;
         
         function getLicState() {
