@@ -976,7 +976,7 @@
   <meta property="og:title" content="ForecastInSite — Dependency Mapping Tool">
 </head>
 
-<body>
+<script>/* DEMO MODE */sessionStorage.setItem("aob_gate_v1","1");</script><body>
 <!-- AOB Beta Access Gate -->
 <style>
 #aob-gate {
@@ -1280,6 +1280,11 @@ function aobGateCheck(){
         </div>
       </div>
 
+      <div style="border-top:1px solid var(--bdr);margin-top:20px;padding-top:16px">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:6px">Demo Data</h3>
+        <p style="font-size:12px;color:var(--t2);margin-bottom:10px">Reset to the 6-team default dataset — clears current data and reloads.</p>
+        <button class="btn" style="background:var(--ac);border-color:var(--ac);color:#fff;width:100%;justify-content:center" onclick="loadSampleData()">⚡ Load Sample Data</button>
+      </div>
       <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px">
         <button class="btn" onclick="closeImportModal()">Cancel</button>
         <button class="btn btn-g" id="impDoBtn" onclick="doImport()" style="background:var(--hi);border-color:var(--hi);color:#fff">Import</button>
@@ -2069,10 +2074,10 @@ function initSampleData() {
   STATE.aiAgents = [];
   STATE.transitions = [];
 
-  // ========== TEAMS (6 Innovation Hub squads from CSV) ==========
+  // ========== TEAMS (6 INSITE squads) ==========
   const teamVertex = {
     id: gid('team'),
-    name: 'IH-Vertex',
+    name: 'Nexus',
     type: 'Scrum',
     piCapacity: 125,
     sprintCapacity: 25,
@@ -2082,7 +2087,7 @@ function initSampleData() {
 
   const teamPulse = {
     id: gid('team'),
-    name: 'IH-Pulse',
+    name: 'Meridian',
     type: 'Scrum',
     piCapacity: 140,
     sprintCapacity: 28,
@@ -2092,7 +2097,7 @@ function initSampleData() {
 
   const teamNebula = {
     id: gid('team'),
-    name: 'IH-Nebula',
+    name: 'Atlas',
     type: 'Scrum',
     piCapacity: 150,
     sprintCapacity: 30,
@@ -2102,7 +2107,7 @@ function initSampleData() {
 
   const teamCatalyst = {
     id: gid('team'),
-    name: 'IH-Catalyst',
+    name: 'Solaris',
     type: 'Scrum',
     piCapacity: 130,
     sprintCapacity: 26,
@@ -2112,7 +2117,7 @@ function initSampleData() {
 
   const teamHorizon = {
     id: gid('team'),
-    name: 'IH-Horizon',
+    name: 'Horizon',
     type: 'Scrum',
     piCapacity: 130,
     sprintCapacity: 26,
@@ -2122,7 +2127,7 @@ function initSampleData() {
 
   const teamAtlas = {
     id: gid('team'),
-    name: 'IH-Atlas',
+    name: 'Orion',
     type: 'Scrum',
     piCapacity: 140,
     sprintCapacity: 28,
@@ -2132,58 +2137,58 @@ function initSampleData() {
 
   STATE.teams = [teamVertex, teamPulse, teamNebula, teamCatalyst, teamHorizon, teamAtlas];
 
-  // ========== TEAM MEMBERS — IH-VERTEX ==========
-  const memV1 = { id: gid('mem'), name: 'Quinn Silva', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memV2 = { id: gid('mem'), name: 'Morgan Novak', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memV3 = { id: gid('mem'), name: 'Oakley Petrov', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memV4 = { id: gid('mem'), name: 'Noel Silva', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-04-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memV5 = { id: gid('mem'), name: 'Drew Petrov', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-07-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memV6 = { id: gid('mem'), name: 'Sam Okafor', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-02-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — NEXUS ==========
+  const memV1 = { id: gid('mem'), name: 'Ryan Park', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memV2 = { id: gid('mem'), name: 'Fatima Al-Hassan', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memV3 = { id: gid('mem'), name: 'Jack Moreau', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memV4 = { id: gid('mem'), name: 'Alex Kim', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-04-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memV5 = { id: gid('mem'), name: 'Jamie Torres', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-07-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memV6 = { id: gid('mem'), name: 'Morgan Lee', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamVertex.id, startDate: '2024-02-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamVertex.members = [memV1.id, memV2.id, memV3.id, memV4.id, memV5.id, memV6.id];
 
-  // ========== TEAM MEMBERS — IH-PULSE ==========
-  const memP1 = { id: gid('mem'), name: 'Blake Brennan', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memP2 = { id: gid('mem'), name: 'Drew Larsson', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-02-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memP3 = { id: gid('mem'), name: 'Logan Gupta', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memP4 = { id: gid('mem'), name: 'Riley Dumont', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memP5 = { id: gid('mem'), name: 'Taylor Okafor', role: 'QA Engineer', employmentType: 'Contractor', costRate: 150, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2025-01-01', endDate: '2026-12-31', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memP6 = { id: gid('mem'), name: 'Kendall Gupta', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — MERIDIAN ==========
+  const memP1 = { id: gid('mem'), name: 'Omar Bakr', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memP2 = { id: gid('mem'), name: 'Sophie Walsh', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-02-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memP3 = { id: gid('mem'), name: 'Ethan Brooks', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memP4 = { id: gid('mem'), name: 'Logan Patel', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memP5 = { id: gid('mem'), name: 'Riley Gupta', role: 'QA Engineer', employmentType: 'Contractor', costRate: 150, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2025-01-01', endDate: '2026-12-31', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memP6 = { id: gid('mem'), name: 'Avery Nakamura', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamPulse.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamPulse.members = [memP1.id, memP2.id, memP3.id, memP4.id, memP5.id, memP6.id];
 
-  // ========== TEAM MEMBERS — IH-NEBULA ==========
-  const memN1 = { id: gid('mem'), name: 'Hayden Gupta', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memN2 = { id: gid('mem'), name: 'Dakota Nakamura', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memN3 = { id: gid('mem'), name: 'Casey Torres', role: 'Developer', employmentType: 'Contractor', costRate: 150, costFrequency: 'daily', ftePercentage: 80, teamId: teamNebula.id, startDate: '2025-03-01', endDate: '2026-06-30', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memN4 = { id: gid('mem'), name: 'Jordan Gupta', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memN5 = { id: gid('mem'), name: 'Skyler Kowalski', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-09-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memN6 = { id: gid('mem'), name: 'Remy Johansson', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-07-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — ATLAS ==========
+  const memN1 = { id: gid('mem'), name: 'Marcus Webb', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memN2 = { id: gid('mem'), name: 'Chen Liu', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memN3 = { id: gid('mem'), name: 'Aisha Patel', role: 'Developer', employmentType: 'Contractor', costRate: 150, costFrequency: 'daily', ftePercentage: 80, teamId: teamNebula.id, startDate: '2025-03-01', endDate: '2026-06-30', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memN4 = { id: gid('mem'), name: 'Sam Torres', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memN5 = { id: gid('mem'), name: 'Remy Nakamura', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-09-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memN6 = { id: gid('mem'), name: 'Jordan Park', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamNebula.id, startDate: '2024-07-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamNebula.members = [memN1.id, memN2.id, memN3.id, memN4.id, memN5.id, memN6.id];
 
-  // ========== TEAM MEMBERS — IH-CATALYST ==========
-  const memC1 = { id: gid('mem'), name: 'Emerson Eriksson', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memC2 = { id: gid('mem'), name: 'Peyton Yamamoto', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-03-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memC3 = { id: gid('mem'), name: 'Skyler Petrov', role: 'Developer', employmentType: 'Contractor', costRate: 140, costFrequency: 'daily', ftePercentage: 80, teamId: teamCatalyst.id, startDate: '2025-02-01', endDate: '2026-06-30', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memC4 = { id: gid('mem'), name: 'Logan Kim', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memC5 = { id: gid('mem'), name: 'Harper Okafor', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memC6 = { id: gid('mem'), name: 'Peyton Nakamura', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — SOLARIS ==========
+  const memC1 = { id: gid('mem'), name: 'Priya Nair', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memC2 = { id: gid('mem'), name: 'Dev Malik', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-03-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memC3 = { id: gid('mem'), name: 'Zoe Hartmann', role: 'Developer', employmentType: 'Contractor', costRate: 140, costFrequency: 'daily', ftePercentage: 80, teamId: teamCatalyst.id, startDate: '2025-02-01', endDate: '2026-06-30', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memC4 = { id: gid('mem'), name: 'Taylor Chen', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memC5 = { id: gid('mem'), name: 'Casey Kowalski', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memC6 = { id: gid('mem'), name: 'Hayden Silva', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamCatalyst.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamCatalyst.members = [memC1.id, memC2.id, memC3.id, memC4.id, memC5.id, memC6.id];
 
-  // ========== TEAM MEMBERS — IH-HORIZON ==========
-  const memH1 = { id: gid('mem'), name: 'Alex Nakamura', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memH2 = { id: gid('mem'), name: 'Peyton Costa', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-02-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memH3 = { id: gid('mem'), name: 'Avery Petrov', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memH4 = { id: gid('mem'), name: 'Drew Kowalski', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-09-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memH5 = { id: gid('mem'), name: 'Cameron Nakamura', role: 'QA Engineer', employmentType: 'Consultant', costRate: 120, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2025-01-01', endDate: '2026-12-31', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memH6 = { id: gid('mem'), name: 'Peyton Johansson', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — HORIZON ==========
+  const memH1 = { id: gid('mem'), name: 'Chloe Dubois', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memH2 = { id: gid('mem'), name: 'Nate Rivera', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-02-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memH3 = { id: gid('mem'), name: 'Yuki Sato', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-06-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memH4 = { id: gid('mem'), name: 'Blake Kim', role: 'DevOps Engineer', employmentType: 'FTE', costRate: 900, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-09-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memH5 = { id: gid('mem'), name: 'Drew Santos', role: 'QA Engineer', employmentType: 'Consultant', costRate: 120, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2025-01-01', endDate: '2026-12-31', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memH6 = { id: gid('mem'), name: 'Emerson Park', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamHorizon.id, startDate: '2024-04-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamHorizon.members = [memH1.id, memH2.id, memH3.id, memH4.id, memH5.id, memH6.id];
 
-  // ========== TEAM MEMBERS — IH-ATLAS ==========
-  const memA1 = { id: gid('mem'), name: 'Jamie Gupta', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memA2 = { id: gid('mem'), name: 'Taylor Patel', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memA3 = { id: gid('mem'), name: 'Sam Johansson', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memA4 = { id: gid('mem'), name: 'Peyton Silva', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memA5 = { id: gid('mem'), name: 'Harper Chen', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-04-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
-  const memA6 = { id: gid('mem'), name: 'Remy Chen', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-02-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  // ========== TEAM MEMBERS — ORION ==========
+  const memA1 = { id: gid('mem'), name: 'Elena Vasquez', role: 'Tech Lead', employmentType: 'FTE', costRate: 1100, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-01-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memA2 = { id: gid('mem'), name: 'Kofi Mensah', role: 'Senior Developer', employmentType: 'FTE', costRate: 950, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-03-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memA3 = { id: gid('mem'), name: 'Tara Singh', role: 'Developer', employmentType: 'FTE', costRate: 750, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-05-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memA4 = { id: gid('mem'), name: 'Dakota Chen', role: 'QA Engineer', employmentType: 'FTE', costRate: 700, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-08-01', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memA5 = { id: gid('mem'), name: 'Skyler Torres', role: 'Business Analyst', employmentType: 'FTE', costRate: 850, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-04-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
+  const memA6 = { id: gid('mem'), name: 'Parker Lee', role: 'Scrum Master', employmentType: 'FTE', costRate: 800, costFrequency: 'daily', ftePercentage: 100, teamId: teamAtlas.id, startDate: '2024-02-15', endDate: '', aiLicenceCost: 0, aiComputeCost: 0, aiProductivityMultiplier: 1.0 };
   teamAtlas.members = [memA1.id, memA2.id, memA3.id, memA4.id, memA5.id, memA6.id];
 
   STATE.members = [
@@ -2461,7 +2466,7 @@ function initSampleData() {
     { id: gid('tr'), date: '2025-11-01', type: 'ai-augment', teamId: teamPulse.id, description: 'PipelineBot deployed for CI/CD automation', impactedRole: 'DevOps Engineer', costDelta: -650, productivityDelta: 45 },
     { id: gid('tr'), date: '2025-12-01', type: 'ai-augment', teamId: teamHorizon.id, description: 'DocuMind for automated documentation generation', impactedRole: 'Business Analyst', costDelta: -300, productivityDelta: 20 },
     { id: gid('tr'), date: '2026-01-15', type: 'ai-augment', teamId: teamCatalyst.id, description: 'FraudShield ML — advanced anomaly detection deployed', impactedRole: 'Senior Developer', costDelta: -2920, productivityDelta: 55 },
-    { id: gid('tr'), date: '2026-02-01', type: 'role-change', teamId: teamVertex.id, description: 'Drew Petrov upskilled from QA to QA Automation Lead', impactedRole: 'QA Engineer', costDelta: 200, productivityDelta: 15 },
+    { id: gid('tr'), date: '2026-02-01', type: 'role-change', teamId: teamVertex.id, description: 'Jamie Torres upskilled from QA to QA Automation Lead', impactedRole: 'QA Engineer', costDelta: 200, productivityDelta: 15 },
     { id: gid('tr'), date: '2026-03-01', type: 'ai-augment', teamId: teamAtlas.id, description: 'InsightBot v2 upgrade — enhanced predictive analytics', impactedRole: 'Business Analyst', costDelta: -200, productivityDelta: 10 }
   ];
 
@@ -2499,16 +2504,16 @@ function initSampleData() {
 
   // ========== REFERENCE LIBRARY (completed features for comparison) ==========
   STATE.referenceLibrary = [
-    { id: 'ref-1', name: 'Payment Gateway v1', type: 'Integration', team: 'IH-Vertex', points: 38, actualCost: 76000, sprints: 3, pi: 'PI 24.2', businessValue: 8, outcome: 'Achieved' },
-    { id: 'ref-2', name: 'Customer Data Migration', type: 'Migration', team: 'IH-Pulse', points: 45, actualCost: 92000, sprints: 4, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' },
-    { id: 'ref-3', name: 'Compliance Reporting Module', type: 'Compliance', team: 'IH-Catalyst', points: 52, actualCost: 105000, sprints: 5, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' },
-    { id: 'ref-4', name: 'Real-time Data Pipeline', type: 'Data Pipeline', team: 'IH-Nebula', points: 40, actualCost: 82000, sprints: 3, pi: 'PI 24.4', businessValue: 8, outcome: 'Achieved' },
-    { id: 'ref-5', name: 'Inventory Dashboard v2', type: 'Dashboard', team: 'IH-Horizon', points: 30, actualCost: 62000, sprints: 3, pi: 'PI 24.4', businessValue: 6, outcome: 'Partial' },
-    { id: 'ref-6', name: 'Fraud Detection Pipeline', type: 'Analytics', team: 'IH-Atlas', points: 35, actualCost: 71000, sprints: 3, pi: 'PI 25.1', businessValue: 9, outcome: 'Achieved' },
-    { id: 'ref-7', name: 'Cloud Migration Phase 1', type: 'Migration', team: 'IH-Vertex', points: 55, actualCost: 112000, sprints: 5, pi: 'PI 25.1', businessValue: 8, outcome: 'Achieved' },
-    { id: 'ref-8', name: 'Data Quality Checks', type: 'Data Pipeline', team: 'IH-Nebula', points: 28, actualCost: 56000, sprints: 2, pi: 'PI 25.1', businessValue: 6, outcome: 'In Progress' },
-    { id: 'ref-9', name: 'Supplier Integration Hub', type: 'Integration', team: 'IH-Pulse', points: 42, actualCost: 86000, sprints: 4, pi: 'PI 24.4', businessValue: 7, outcome: 'Achieved' },
-    { id: 'ref-10', name: 'BI Analytics Platform', type: 'Analytics', team: 'IH-Atlas', points: 32, actualCost: 65000, sprints: 3, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' }
+    { id: 'ref-1', name: 'iOS Platform Migration', type: 'Integration', team: 'Nexus', points: 38, actualCost: 76000, sprints: 3, pi: 'PI 24.2', businessValue: 8, outcome: 'Achieved' },
+    { id: 'ref-2', name: 'Backend API Gateway v3', type: 'Migration', team: 'Meridian', points: 45, actualCost: 92000, sprints: 4, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' },
+    { id: 'ref-3', name: 'Data Governance Framework', type: 'Compliance', team: 'Solaris', points: 52, actualCost: 105000, sprints: 5, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' },
+    { id: 'ref-4', name: 'Zero Trust Security Rollout', type: 'Data Pipeline', team: 'Atlas', points: 40, actualCost: 82000, sprints: 3, pi: 'PI 24.4', businessValue: 8, outcome: 'Achieved' },
+    { id: 'ref-5', name: 'Design System v2', type: 'Dashboard', team: 'Horizon', points: 30, actualCost: 62000, sprints: 3, pi: 'PI 24.4', businessValue: 6, outcome: 'Partial' },
+    { id: 'ref-6', name: 'Analytics Platform Rebuild', type: 'Analytics', team: 'Orion', points: 35, actualCost: 71000, sprints: 3, pi: 'PI 25.1', businessValue: 9, outcome: 'Achieved' },
+    { id: 'ref-7', name: 'Platform-as-a-Product Phase 1', type: 'Migration', team: 'Nexus', points: 55, actualCost: 112000, sprints: 5, pi: 'PI 25.1', businessValue: 8, outcome: 'Achieved' },
+    { id: 'ref-8', name: 'Lakehouse Migration Phase 1', type: 'Data Pipeline', team: 'Atlas', points: 28, actualCost: 56000, sprints: 2, pi: 'PI 25.1', businessValue: 6, outcome: 'In Progress' },
+    { id: 'ref-9', name: 'Event-Driven Architecture', type: 'Integration', team: 'Meridian', points: 42, actualCost: 86000, sprints: 4, pi: 'PI 24.4', businessValue: 7, outcome: 'Achieved' },
+    { id: 'ref-10', name: 'Executive Dashboard v2', type: 'Analytics', team: 'Orion', points: 32, actualCost: 65000, sprints: 3, pi: 'PI 24.3', businessValue: 7, outcome: 'Achieved' }
   ];
 
   // ========== REPORTING (operational ticket data from SNOW references) ==========
@@ -10422,6 +10427,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initLicence();
 });
 
+</script>
+
+<script>
+/* v2: Demo Data — clears forecastinsite localStorage and reloads default data */
+function loadSampleData() {
+  if (!confirm('This will clear all current data and reload the default 6-team sample dataset. Continue?')) return;
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('forecastinsite'))
+    .forEach(k => localStorage.removeItem(k));
+  closeImportModal();
+  window.location.reload();
+}
 </script>
 </body>
 </html>

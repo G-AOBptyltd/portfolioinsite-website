@@ -184,7 +184,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}
   <meta property="og:url" content="https://portfolioinsite.app/tools/portfolioinsite">
   <meta property="og:title" content="PortfolioInSite — Portfolio Dashboard">
 </head>
-<body>
+<script>/* DEMO MODE */sessionStorage.setItem("aob_gate_v1","1");</script><body>
 <!-- AOB Beta Access Gate -->
 <style>
 #aob-gate {
@@ -479,10 +479,15 @@ function aobGateCheck(){
 </div>
 </div>
 <div class="mf" style="margin-top:12px"><label>Story Points Field (JSON)</label><input id="cfEff" value="story_points" style="font-family:'JetBrains Mono',monospace;font-size:12px"></div>
+<div style="border-top:1px solid var(--bdr);margin-top:16px;padding-top:16px">
+<h3 style="font-size:14px;font-weight:700;margin-bottom:6px">Demo Data</h3>
+<p style="font-size:12px;color:var(--t2);margin-bottom:10px">Load a 10-team sample dataset — no import needed.</p>
+<button class="btn" style="background:var(--ac);border-color:var(--ac);color:#fff;width:100%;justify-content:center" onclick="loadSampleData()">⚡ Load Sample Data</button>
+<div id="sampleStatus" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
+</div>
 <div class="ma">
 <button class="btn" onclick="closeMod()">Cancel</button>
 <button class="btn btn-g" onclick="doImport()">Import</button>
-<button class="btn btn-sm" onclick="loadSample()" style="margin-right:auto">Load Sample Data</button>
 </div>
 </div>
 </div>
@@ -3522,23 +3527,28 @@ async function syncJira(){
 // SAMPLE DATA
 function loadSample(){
   D=[
-    {id:'PORT-1',title:'Migrate legacy data warehouse to cloud',assignee:'Sarah Chen',reporter:'Mike Hayes',component:'Data Platform',effort:21,type:'Epic',status:'In Progress',created:'2025-11-01T10:00:00Z',updated:'2026-02-15T10:00:00Z',parent:'',targetStart:'2025-11-01',targetEnd:'2026-06-30',team:'Platform',piAssignment:'PI 25.1',fixVersion:'Q2 2026',labels:'migration,cloud',scores:{q1:21,q2:0,q3:5,q4:5,q5:5}},
-    {id:'PORT-2',title:'Design new data model for customer 360 view',assignee:'James Wilson',reporter:'Sarah Chen',component:'Data Platform',effort:8,type:'Feature',status:'To Do',created:'2025-12-15T10:00:00Z',parent:'PORT-1',targetStart:'2026-01-15',targetEnd:'2026-03-30',team:'Platform',piAssignment:'PI 25.2',fixVersion:'Q1 2026',labels:'data-model',scores:{q1:8,q2:0,q3:5,q4:3,q5:5}},
-    {id:'PORT-3',title:'Build ETL pipeline for CRM data source',assignee:'Maria Garcia',reporter:'James Wilson',component:'Data Platform',effort:13,type:'Story',status:'In Progress',created:'2026-01-05T10:00:00Z',parent:'PORT-1',targetStart:'2026-02-01',targetEnd:'2026-04-15',team:'Platform',piAssignment:'PI 25.2',fixVersion:'',labels:'etl',scores:{q1:13,q2:0,q3:3,q4:1,q5:5}},
-    {id:'PORT-4',title:'GDPR data subject access request automation',assignee:'Sarah Chen',reporter:'Legal Team',component:'Compliance',effort:5,type:'Story',status:'To Do',created:'2026-02-01T10:00:00Z',parent:'PORT-10',targetStart:'2026-03-01',targetEnd:'2026-04-30',team:'Compliance',piAssignment:'PI 25.2',fixVersion:'Q2 2026',labels:'gdpr,compliance',scores:{q1:5,q2:5,q3:3,q4:5,q5:5}},
-    {id:'PORT-5',title:'Decommission Oracle 11g reporting server',assignee:'Tom Barrett',reporter:'Mike Hayes',component:'Infrastructure',effort:3,type:'Task',status:'Done',created:'2025-10-15T10:00:00Z',updated:'2025-12-20T10:00:00Z',parent:'PORT-1',targetStart:'',targetEnd:'',team:'Infrastructure',piAssignment:'PI 25.1',fixVersion:'',labels:'decommission',scores:{q1:3,q2:5,q3:1,q4:5,q5:5}},
-    {id:'PORT-6',title:'Update data dictionary documentation',assignee:'Lisa Park',reporter:'Maria Garcia',component:'Documentation',effort:2,type:'Task',status:'To Do',created:'2025-08-20T10:00:00Z',parent:'',targetStart:'',targetEnd:'',team:'Platform',piAssignment:'',fixVersion:'',labels:'docs',scores:{q1:2,q2:0,q3:1,q4:1,q5:5}},
-    {id:'PORT-7',title:'Real-time data quality monitoring with alerting',assignee:'James Wilson',reporter:'Sarah Chen',component:'Analytics',effort:8,type:'Story',status:'In Progress',created:'2025-09-10T10:00:00Z',updated:'2026-02-18T10:00:00Z',parent:'PORT-9',targetStart:'2026-01-01',targetEnd:'2026-04-30',team:'Analytics',piAssignment:'PI 25.1',fixVersion:'',labels:'monitoring,quality',scores:{q1:8,q2:5,q3:3,q4:5,q5:5}},
-    {id:'PORT-8',title:'Fix broken ETL pipeline for finance',assignee:'Tom Barrett',reporter:'Finance Team',component:'Data Platform',effort:1,type:'Bug',status:'In Progress',created:'2026-02-10T10:00:00Z',parent:'PORT-1',targetStart:'2026-02-10',targetEnd:'2026-02-28',team:'Platform',piAssignment:'PI 25.2',fixVersion:'Hotfix',labels:'bug,finance',scores:{q1:1,q2:5,q3:5,q4:5,q5:5}},
-    {id:'PORT-9',title:'Self-service analytics portal with dashboards',assignee:'Maria Garcia',reporter:'Mike Hayes',component:'Analytics',effort:21,type:'Epic',status:'To Do',created:'2025-12-01T10:00:00Z',parent:'',targetStart:'2026-04-01',targetEnd:'2026-09-30',team:'Analytics',piAssignment:'PI 25.3',fixVersion:'Q3 2026',labels:'analytics,portal',scores:{q1:21,q2:0,q3:5,q4:5,q5:0}},
-    {id:'PORT-10',title:'Regulatory compliance automation suite',assignee:'Sarah Chen',reporter:'Legal Team',component:'Compliance',effort:13,type:'Feature',status:'In Progress',created:'2025-07-01T10:00:00Z',updated:'2026-02-15T10:00:00Z',parent:'',targetStart:'2025-07-01',targetEnd:'2026-06-30',team:'Compliance',piAssignment:'PI 25.1',fixVersion:'Q2 2026',labels:'compliance,automation',scores:{q1:13,q2:5,q3:5,q4:5,q5:5}},
-    {id:'PORT-11',title:'Automate monthly board reporting pack',assignee:'Maria Garcia',reporter:'Mike Hayes',component:'Analytics',effort:5,type:'Story',status:'Done',created:'2026-01-20T10:00:00Z',updated:'2026-02-05T10:00:00Z',parent:'PORT-9',targetStart:'',targetEnd:'',team:'Analytics',piAssignment:'PI 25.1',fixVersion:'',labels:'reporting',scores:{q1:5,q2:0,q3:3,q4:1,q5:5}},
-    {id:'PORT-12',title:'Security audit — database access controls',assignee:'James Wilson',reporter:'Security Team',component:'Security',effort:3,type:'Task',status:'In Progress',created:'2025-11-20T10:00:00Z',parent:'PORT-10',targetStart:'2026-01-15',targetEnd:'2026-03-15',team:'Security',piAssignment:'PI 25.2',fixVersion:'',labels:'security,audit',scores:{q1:3,q2:5,q3:1,q4:5,q5:5}},
-    {id:'PORT-13',title:'Snowflake cost optimisation — query governance',assignee:'Lisa Park',reporter:'Tom Barrett',component:'Infrastructure',effort:5,type:'Story',status:'To Do',created:'2026-02-15T10:00:00Z',parent:'PORT-1',targetStart:'',targetEnd:'',team:'Infrastructure',piAssignment:'',fixVersion:'',labels:'cost,snowflake',scores:{q1:5,q2:0,q3:3,q4:1,q5:5}},
-    {id:'PORT-14',title:'Implement SSO for analytics portal',assignee:'Tom Barrett',reporter:'Security Team',component:'Security',effort:2,type:'Sub-task',status:'To Do',created:'2026-02-18T10:00:00Z',parent:'PORT-9',targetStart:'',targetEnd:'',team:'Security',piAssignment:'PI 25.3',fixVersion:'',labels:'sso,security',scores:{q1:2,q2:5,q3:1,q4:3,q5:5}},
-    {id:'PORT-15',title:'Data lineage tracking POC with dbt',assignee:'James Wilson',reporter:'Maria Garcia',component:'Data Platform',effort:8,type:'Feature',status:'To Do',created:'2026-01-10T10:00:00Z',parent:'PORT-1',targetStart:'2026-05-01',targetEnd:'2026-07-31',team:'Platform',piAssignment:'PI 25.3',fixVersion:'Q3 2026',labels:'lineage,dbt',scores:{q1:8,q2:0,q3:3,q4:3,q5:0}}
+    {id:'AIAOB-3001',title:'iOS Platform Rebuild — onboarding and core screens',assignee:'Jordan Lee',reporter:'Chloe Dubois',component:'Mobile',effort:21,type:'Epic',status:'In Progress',created:'2025-11-01T10:00:00Z',updated:'2026-03-01T10:00:00Z',parent:'',targetStart:'2025-11-01',targetEnd:'2026-06-30',team:'Artemis',piAssignment:'PI FY26-Q1',fixVersion:'Q2 FY26',labels:'mobile,ios',scores:{q1:21,q2:0,q3:5,q4:5,q5:5}},
+    {id:'AIAOB-3002',title:'Biometric login and passkey authentication',assignee:'Mia Tran',reporter:'Jordan Lee',component:'Mobile',effort:8,type:'Feature',status:'In Progress',created:'2025-12-01T10:00:00Z',parent:'AIAOB-3001',targetStart:'2026-02-01',targetEnd:'2026-04-15',team:'Artemis',piAssignment:'PI FY26-Q1',fixVersion:'',labels:'auth,mobile',scores:{q1:8,q2:5,q3:5,q4:3,q5:5}},
+    {id:'AIAOB-3003',title:'Zero Trust network access rollout — all environments',assignee:'Priya Nair',reporter:'Dev Malik',component:'Security',effort:21,type:'Epic',status:'In Progress',created:'2025-10-15T10:00:00Z',updated:'2026-02-20T10:00:00Z',parent:'',targetStart:'2025-10-01',targetEnd:'2026-07-31',team:'Solaris',piAssignment:'PI FY26-Q1',fixVersion:'Q3 FY26',labels:'security,zero-trust',scores:{q1:21,q2:5,q3:5,q4:5,q5:5}},
+    {id:'AIAOB-3004',title:'SOC 2 Type II evidence collection and audit prep',assignee:'Zoe Hartmann',reporter:'Priya Nair',component:'Compliance',effort:13,type:'Feature',status:'In Progress',created:'2025-11-20T10:00:00Z',parent:'AIAOB-3003',targetStart:'2026-01-15',targetEnd:'2026-04-30',team:'Solaris',piAssignment:'PI FY26-Q1',fixVersion:'Q2 FY26',labels:'compliance,soc2',scores:{q1:13,q2:5,q3:3,q4:5,q5:5}},
+    {id:'AIAOB-3005',title:'Lakehouse migration — bronze and silver layers',assignee:'Marcus Webb',reporter:'Chen Liu',component:'Data Platform',effort:21,type:'Epic',status:'In Progress',created:'2025-09-01T10:00:00Z',updated:'2026-03-10T10:00:00Z',parent:'',targetStart:'2025-09-01',targetEnd:'2026-08-31',team:'Atlas',piAssignment:'PI FY26-Q1',fixVersion:'Q3 FY26',labels:'data,migration',scores:{q1:21,q2:0,q3:5,q4:3,q5:5}},
+    {id:'AIAOB-3006',title:'dbt model refactor — orders and customer domains',assignee:'Chen Liu',reporter:'Marcus Webb',component:'Data Platform',effort:8,type:'Story',status:'Done',created:'2026-01-10T10:00:00Z',updated:'2026-02-28T10:00:00Z',parent:'AIAOB-3005',targetStart:'2026-01-10',targetEnd:'2026-03-15',team:'Atlas',piAssignment:'PI FY26-Q1',fixVersion:'',labels:'dbt,data',scores:{q1:8,q2:0,q3:3,q4:1,q5:5}},
+    {id:'AIAOB-3007',title:'AI-powered support assistant — GPT-4 integration',assignee:'Sarah Chen',reporter:'Tom Harley',component:'Customer Support',effort:13,type:'Feature',status:'In Progress',created:'2026-01-01T10:00:00Z',parent:'',targetStart:'2026-02-01',targetEnd:'2026-05-31',team:'Apex',piAssignment:'PI FY26-Q2',fixVersion:'Q2 FY26',labels:'ai,support',scores:{q1:13,q2:5,q3:5,q4:5,q5:5}},
+    {id:'AIAOB-3008',title:'Self-service portal redesign and SSO rollout',assignee:'Lena Russo',reporter:'Sarah Chen',component:'Customer Support',effort:8,type:'Story',status:'To Do',created:'2026-02-01T10:00:00Z',parent:'AIAOB-3007',targetStart:'2026-04-01',targetEnd:'2026-05-31',team:'Apex',piAssignment:'PI FY26-Q2',fixVersion:'Q2 FY26',labels:'portal,sso',scores:{q1:8,q2:5,q3:3,q4:5,q5:5}},
+    {id:'AIAOB-3009',title:'Platform-as-a-product — Kubernetes and GitOps foundation',assignee:'Ryan Park',reporter:'Fatima Al-Hassan',component:'Infrastructure',effort:21,type:'Epic',status:'In Progress',created:'2025-08-01T10:00:00Z',updated:'2026-02-15T10:00:00Z',parent:'',targetStart:'2025-08-01',targetEnd:'2026-09-30',team:'Nexus',piAssignment:'PI FY26-Q1',fixVersion:'Q3 FY26',labels:'platform,k8s',scores:{q1:21,q2:0,q3:5,q4:5,q5:0}},
+    {id:'AIAOB-3010',title:'FinOps framework — cost tagging and anomaly detection',assignee:'Fatima Al-Hassan',reporter:'Ryan Park',component:'Infrastructure',effort:8,type:'Feature',status:'To Do',created:'2026-02-15T10:00:00Z',parent:'AIAOB-3009',targetStart:'2026-05-01',targetEnd:'2026-07-31',team:'Nexus',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'finops,cost',scores:{q1:8,q2:0,q3:3,q4:3,q5:0}},
+    {id:'AIAOB-3011',title:'Design system v3 — component overhaul and dark mode',assignee:'Chloe Dubois',reporter:'Nate Rivera',component:'Design',effort:13,type:'Epic',status:'In Progress',created:'2025-12-01T10:00:00Z',updated:'2026-03-05T10:00:00Z',parent:'',targetStart:'2025-12-01',targetEnd:'2026-06-30',team:'Horizon',piAssignment:'PI FY26-Q1',fixVersion:'Q2 FY26',labels:'design-system',scores:{q1:13,q2:0,q3:5,q4:3,q5:5}},
+    {id:'AIAOB-3012',title:'API gateway and GraphQL federation — backend services',assignee:'Omar Bakr',reporter:'Sophie Walsh',component:'Backend',effort:21,type:'Epic',status:'In Progress',created:'2025-07-01T10:00:00Z',updated:'2026-03-01T10:00:00Z',parent:'',targetStart:'2025-07-01',targetEnd:'2026-06-30',team:'Meridian',piAssignment:'PI FY26-Q1',fixVersion:'Q2 FY26',labels:'api,backend',scores:{q1:21,q2:5,q3:5,q4:5,q5:5}},
+    {id:'AIAOB-3013',title:'Agentic AI framework — autonomous workflow POC',assignee:'Nia Foster',reporter:'Arjun Sharma',component:'AI/ML',effort:21,type:'Epic',status:'In Progress',created:'2026-01-15T10:00:00Z',parent:'',targetStart:'2026-02-01',targetEnd:'2026-08-31',team:'Quantum',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'ai,agents',scores:{q1:21,q2:0,q3:5,q4:5,q5:0}},
+    {id:'AIAOB-3014',title:'AI-assisted release risk analysis and deployment copilot',assignee:'Ben Kowalski',reporter:'Rosa Diaz',component:'DevOps',effort:13,type:'Feature',status:'To Do',created:'2026-02-01T10:00:00Z',parent:'',targetStart:'2026-04-01',targetEnd:'2026-07-31',team:'Ember',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'devops,ai',scores:{q1:13,q2:0,q3:5,q4:3,q5:0}},
+    {id:'AIAOB-3015',title:'GenAI analytics assistant and autonomous insight generation',assignee:'Elena Vasquez',reporter:'Kofi Mensah',component:'Analytics',effort:21,type:'Epic',status:'In Progress',created:'2026-01-01T10:00:00Z',parent:'',targetStart:'2026-02-01',targetEnd:'2026-09-30',team:'Orion',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'analytics,ai',scores:{q1:21,q2:0,q3:5,q4:5,q5:0}},
+    {id:'AIAOB-3016',title:'Fix broken ETL pipeline — customer events feed',assignee:'Aisha Patel',reporter:'Marcus Webb',component:'Data Platform',effort:3,type:'Bug',status:'Done',created:'2026-03-01T10:00:00Z',updated:'2026-03-05T10:00:00Z',parent:'AIAOB-3005',targetStart:'2026-03-01',targetEnd:'2026-03-07',team:'Atlas',piAssignment:'PI FY26-Q2',fixVersion:'Hotfix',labels:'bug,data',scores:{q1:3,q2:5,q3:5,q4:5,q5:5}},
+    {id:'AIAOB-3017',title:'DORA metrics dashboard and deployment frequency tracking',assignee:'Rosa Diaz',reporter:'Ben Kowalski',component:'DevOps',effort:5,type:'Story',status:'Done',created:'2025-12-15T10:00:00Z',updated:'2026-02-10T10:00:00Z',parent:'',targetStart:'',targetEnd:'',team:'Ember',piAssignment:'PI FY26-Q1',fixVersion:'',labels:'metrics,devops',scores:{q1:5,q2:0,q3:3,q4:1,q5:5}},
+    {id:'AIAOB-3018',title:'Churn prediction model v2 — feature engineering',assignee:'Arjun Sharma',reporter:'Nia Foster',component:'AI/ML',effort:8,type:'Feature',status:'In Progress',created:'2026-01-20T10:00:00Z',parent:'AIAOB-3013',targetStart:'2026-03-01',targetEnd:'2026-05-31',team:'Quantum',piAssignment:'PI FY26-Q2',fixVersion:'',labels:'ml,churn',scores:{q1:8,q2:0,q3:3,q4:3,q5:0}},
+    {id:'AIAOB-3019',title:'Executive dashboard and KPI tree — board reporting',assignee:'Tara Singh',reporter:'Elena Vasquez',component:'Analytics',effort:8,type:'Story',status:'Done',created:'2026-01-05T10:00:00Z',updated:'2026-02-20T10:00:00Z',parent:'AIAOB-3015',targetStart:'',targetEnd:'',team:'Orion',piAssignment:'PI FY26-Q1',fixVersion:'',labels:'reporting,kpi',scores:{q1:8,q2:0,q3:3,q4:1,q5:5}},
+    {id:'AIAOB-3020',title:'Streaming pipeline — Kafka setup and CDC at scale',assignee:'Jack Moreau',reporter:'Ryan Park',component:'Infrastructure',effort:13,type:'Feature',status:'To Do',created:'2026-02-20T10:00:00Z',parent:'AIAOB-3009',targetStart:'2026-05-01',targetEnd:'2026-08-31',team:'Nexus',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'streaming,kafka',scores:{q1:13,q2:0,q3:5,q4:3,q5:0}}
   ];
-  save();render();toast('Loaded 15 sample items with v10 data','ok');
+  save();render();toast('Loaded 20 sample items — 10 teams, AIAOB-3xxx','ok');
 }
 
 
@@ -3677,4 +3687,12 @@ function activateLicence() {
 // Init
 load();loadCfg();loadTheme();initTabSwitching();render();showSyncBtn();
 initLicence();
-</script></body></html>
+</script>
+<script>
+/* v2: Demo Data alias — calls loadSample() then closes modal */
+function loadSampleData() {
+  loadSample();
+  closeMod();
+}
+</script>
+</body></html>

@@ -984,7 +984,7 @@
   <meta property="og:url" content="https://portfolioinsite.app/tools/planinsite">
   <meta property="og:title" content="PlanInSite — PI Planning Tool">
 </head>
-<body>
+<script>/* DEMO MODE */sessionStorage.setItem("aob_gate_v1","1");</script><body>
 <!-- AOB Beta Access Gate -->
 <style>
 #aob-gate {
@@ -1207,6 +1207,13 @@ function aobGateCheck(){
                     <button class="btn btn-secondary" onclick="importJSON()" style="flex:1">📂 Restore JSON Backup</button>
                     <button class="btn" onclick="if(confirm('Clear ALL data? This removes teams, items, and PI commitments.')){localStorage.removeItem('planinsite_data_v3');MEM_ITEMS=[];location.reload()}" style="flex:1;color:var(--red);border-color:var(--red)">🗑 Reset All Data</button>
                 </div>
+            </div>
+
+            <div class="card" style="border-left:3px solid var(--ac,#0EA5E9);border-radius:0 8px 8px 0">
+                <div class="card-title">⚡ Demo Data</div>
+                <p style="font-size:12px;color:var(--t2);margin:8px 0 12px">Load a 10-team PI plan — no import needed. Runs in replace mode.</p>
+                <button class="btn btn-primary" onclick="loadSampleData()" style="width:100%">⚡ Load Sample Data</button>
+                <div id="sampleStatus" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
             </div>
 
             <!-- Session reminder -->
@@ -2404,7 +2411,7 @@ function aobGateCheck(){
                 let points = parseInt(get('storyPoints')) || 0;
                 if (points > 10000) points = 0;
 
-                // Team: from explicit Team column. Handle "DO - COPS, DO - Vanguard" → take first team, strip "DO - " prefix
+                // Team: from explicit Team column. Handle "DO - Nexus, DO - Atlas" → take first team, strip "DO - " prefix
                 let teamRaw = get('team');
                 let team = teamRaw.split(',')[0].trim().replace(/^DO\s*-\s*/i, '').trim();
 
@@ -2544,7 +2551,7 @@ function aobGateCheck(){
                 }
             });
 
-            // Merge overlapping prefixes (e.g. "Vanguard" absorbs "Vanguard FY26")
+            // Merge overlapping prefixes (e.g. "Artemis" absorbs "Artemis FY26")
             const prefixes = Object.keys(teamMap).sort((a, b) => a.length - b.length);
             for (let i = 0; i < prefixes.length; i++) {
                 for (let j = i + 1; j < prefixes.length; j++) {
@@ -3738,5 +3745,57 @@ function aobGateCheck(){
             }, 3000);
         }
     </script>
+
+<script>
+/* v2: Demo Data — loads 30-item PI plan across all 10 teams */
+function loadSampleData() {
+  const csv = `Key,Summary,Assignee,Issue Type,Story Points,Sprint,Status,Team,Epic Link
+AIAOB-1001,iOS Platform Rebuild — onboarding and core screens,Jordan Lee,Epic,21,PI FY26-Q1,In Progress,Artemis,
+AIAOB-1002,Biometric login and passkey authentication,Mia Tran,Feature,8,PI FY26-Q1,In Progress,Artemis,AIAOB-1001
+AIAOB-1003,Mobile notification framework,Sam Okafor,Story,5,PI FY26-Q1,To Do,Artemis,AIAOB-1001
+AIAOB-1004,Zero Trust network access rollout,Priya Nair,Epic,21,PI FY26-Q1,In Progress,Solaris,
+AIAOB-1005,SOC 2 Type II evidence collection and audit prep,Zoe Hartmann,Feature,13,PI FY26-Q1,In Progress,Solaris,AIAOB-1004
+AIAOB-1006,Vulnerability scanning automation,Dev Malik,Story,8,PI FY26-Q1,To Do,Solaris,AIAOB-1004
+AIAOB-1007,Lakehouse migration — bronze and silver layers,Marcus Webb,Epic,21,PI FY26-Q1,In Progress,Atlas,
+AIAOB-1008,dbt model refactor — orders and customer domains,Chen Liu,Story,8,PI FY26-Q1,Done,Atlas,AIAOB-1007
+AIAOB-1009,Data quality framework — core implementation,Aisha Patel,Feature,13,PI FY26-Q1,In Progress,Atlas,AIAOB-1007
+AIAOB-1010,AI-powered support assistant — GPT-4 integration,Sarah Chen,Epic,13,PI FY26-Q1,In Progress,Apex,
+AIAOB-1011,Self-service portal redesign and SSO rollout,Lena Russo,Feature,8,PI FY26-Q1,To Do,Apex,AIAOB-1010
+AIAOB-1012,Support queue automation and tagging,Tom Harley,Story,5,PI FY26-Q1,To Do,Apex,AIAOB-1010
+AIAOB-1013,Platform-as-a-product — Kubernetes and GitOps foundation,Ryan Park,Epic,21,PI FY26-Q2,In Progress,Nexus,
+AIAOB-1014,FinOps framework — cost tagging and anomaly detection,Fatima Al-Hassan,Feature,8,PI FY26-Q2,To Do,Nexus,AIAOB-1013
+AIAOB-1015,Streaming pipeline — Kafka setup and CDC at scale,Jack Moreau,Story,13,PI FY26-Q2,To Do,Nexus,AIAOB-1013
+AIAOB-1016,Design system v3 — component overhaul and dark mode,Chloe Dubois,Epic,13,PI FY26-Q1,In Progress,Horizon,
+AIAOB-1017,Component library overhaul — tokens and variants,Nate Rivera,Feature,8,PI FY26-Q1,In Progress,Horizon,AIAOB-1016
+AIAOB-1018,Accessibility audit — WCAG 2.1 AA compliance,Yuki Sato,Story,5,PI FY26-Q1,To Do,Horizon,AIAOB-1016
+AIAOB-1019,API gateway and GraphQL federation — backend services,Omar Bakr,Epic,21,PI FY26-Q1,In Progress,Meridian,
+AIAOB-1020,gRPC migration — internal services,Sophie Walsh,Feature,13,PI FY26-Q1,In Progress,Meridian,AIAOB-1019
+AIAOB-1021,Rate limiting and throttling layer,Ethan Brooks,Story,5,PI FY26-Q1,To Do,Meridian,AIAOB-1019
+AIAOB-1022,Agentic AI framework — autonomous workflow POC,Nia Foster,Epic,21,PI FY26-Q2,In Progress,Quantum,
+AIAOB-1023,Churn prediction model v2 — feature engineering,Arjun Sharma,Feature,8,PI FY26-Q2,In Progress,Quantum,AIAOB-1022
+AIAOB-1024,LLM fine-tuning pipeline — domain adaptation,Nia Foster,Story,13,PI FY26-Q2,To Do,Quantum,AIAOB-1022
+AIAOB-1025,DORA metrics dashboard and deployment frequency tracking,Rosa Diaz,Epic,5,PI FY26-Q1,Done,Ember,
+AIAOB-1026,AI-assisted release risk analysis and deployment copilot,Ben Kowalski,Feature,13,PI FY26-Q2,To Do,Ember,AIAOB-1025
+AIAOB-1027,Deployment pipeline hardening — rollback automation,Rosa Diaz,Story,8,PI FY26-Q1,In Progress,Ember,AIAOB-1025
+AIAOB-1028,GenAI analytics assistant and autonomous insight generation,Elena Vasquez,Epic,21,PI FY26-Q2,In Progress,Orion,
+AIAOB-1029,Executive dashboard and KPI tree — board reporting,Tara Singh,Feature,8,PI FY26-Q1,Done,Orion,AIAOB-1028
+AIAOB-1030,Anomaly detection and automated alerting,Kofi Mensah,Story,13,PI FY26-Q2,To Do,Orion,AIAOB-1028`;
+  const parsed = parseCSVContent(csv);
+  if (!parsed || !parsed.items || !parsed.items.length) {
+    const el = document.getElementById('sampleStatus');
+    if (el) el.textContent = '\u26a0 Could not parse sample data.';
+    return;
+  }
+  window._pendingParsedItems = parsed.items;
+  const modeEl = document.getElementById('importMode');
+  if (modeEl) modeEl.value = 'replace';
+  importData();
+  const el = document.getElementById('sampleStatus');
+  if (el) {
+    el.textContent = '\u2713 30 sample items loaded across 10 teams.';
+    el.style.color = 'var(--green, #10B981)';
+  }
+}
+</script>
 </body>
 </html>
