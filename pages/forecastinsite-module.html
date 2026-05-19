@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLJ1KPTDMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LLJ1KPTDMK');
+  </script>
+  <title id="page-title">ForecastInSite Module | PortfolioInSite</title>
+  <meta name="description" id="page-desc" content="ForecastInSite module teaser — lean agile financial modelling for enterprise teams.">
+  <link rel="canonical" id="page-canonical" href="https://portfolioinsite.com.au/forecastinsite/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* ── Layout ── */
+    .mod-hero {
+      background: linear-gradient(135deg, #0c1a2e 0%, #0e4f6b 60%, #06b6d4 100%);
+      padding: 80px 0 60px;
+      color: #fff;
+    }
+    .mod-hero .breadcrumb { margin-bottom: 20px; }
+    .mod-hero .breadcrumb a,
+    .mod-hero .breadcrumb span { color: rgba(255,255,255,0.7); font-size: 14px; }
+    .mod-hero .breadcrumb a:hover { color: #fff; }
+    .mod-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .mod-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 13px; font-weight: 500; color: #fff;
+    }
+    .mod-chip::before { content: '✓'; color: #06b6d4; font-weight: 700; }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .badge-tool { background: rgba(6,182,212,0.2); color: #06b6d4; border: 1px solid rgba(6,182,212,0.4); }
+    .badge-free { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
+    .badge-paid { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+
+    /* ── Content sections ── */
+    .mod-body { padding: 60px 0; }
+    .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+    @media(max-width:768px){ .mod-grid { grid-template-columns: 1fr; } }
+
+    .caps-card {
+      background: var(--gray-50, #f8fafc);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 12px; padding: 28px;
+    }
+    .caps-card h4 { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #06b6d4; margin-bottom: 16px; }
+    .caps-card ul { list-style: none; padding: 0; margin: 0; }
+    .caps-card ul li { padding: 8px 0; border-bottom: 1px solid var(--border, #e2e8f0); font-size: 15px; color: var(--text, #1e293b); display: flex; gap: 10px; }
+    .caps-card ul li:last-child { border-bottom: none; }
+    .caps-card ul li::before { content: '→'; color: #06b6d4; font-weight: 700; flex-shrink: 0; }
+
+    .problem-card {
+      background: #fff8ed;
+      border-left: 4px solid #f59e0b;
+      border-radius: 0 12px 12px 0;
+      padding: 24px 28px; margin: 32px 0;
+    }
+    .problem-card p { margin: 0; font-size: 15px; color: #92400e; line-height: 1.6; }
+    .problem-card strong { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #b45309; margin-bottom: 8px; }
+
+    /* ── Video slot ── */
+    .video-wrap {
+      background: #0c1a2e;
+      border-radius: 16px; overflow: hidden;
+      aspect-ratio: 16/9; margin: 40px 0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-placeholder {
+      text-align: center; color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+    .video-placeholder .play-icon { font-size: 56px; margin-bottom: 12px; display: block; }
+    .video-placeholder p { font-size: 14px; margin: 0; }
+
+    /* ── Gate section ── */
+    .gate-section { position: relative; margin: 40px 0; border-radius: 16px; overflow: hidden; }
+    .gate-inner { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.7; padding: 32px; background: var(--gray-50, #f8fafc); border: 1px solid var(--border,#e2e8f0); border-radius: 16px; }
+    .gate-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.98) 60%); z-index: 1; border-radius: 16px; }
+    .gate-card { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; text-align: center; padding: 32px 24px 40px; }
+    .gate-card h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #0c1a2e; }
+    .gate-card p { color: #64748b; font-size: 15px; margin-bottom: 20px; }
+    .btn-unlock {
+      display: inline-block; padding: 12px 28px;
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: #fff; font-weight: 700; font-size: 15px;
+      border-radius: 8px; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .btn-unlock:hover { opacity: .85; }
+
+    /* ── Steps ── */
+    .steps-list { margin: 0; padding: 0; list-style: none; }
+    .steps-list li {
+      display: grid; grid-template-columns: 40px 1fr;
+      gap: 16px; padding: 20px 0;
+      border-bottom: 1px solid var(--border,#e2e8f0);
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg,#06b6d4,#0891b2);
+      color: #fff; font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; font-size: 15px; font-weight: 600; color: #0c1a2e; margin-bottom: 4px; }
+    .step-body p { font-size: 14px; color: #64748b; margin: 0; line-height: 1.6; }
+
+    /* ── Tips ── */
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    @media(max-width:600px){ .tips-grid { grid-template-columns: 1fr; } }
+    .tip-card { background: #fff; border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 18px 20px; }
+    .tip-card strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #0c1a2e; }
+    .tip-card p { font-size: 13px; color: #64748b; margin: 0; line-height: 1.5; }
+
+    /* ── Related ── */
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; margin-top: 20px; }
+    .related-link {
+      display: block; padding: 14px 18px;
+      background: #fff; border: 1px solid var(--border,#e2e8f0);
+      border-radius: 10px; text-decoration: none;
+      font-size: 14px; font-weight: 600; color: #0c1a2e;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .related-link:hover { border-color: #06b6d4; box-shadow: 0 2px 12px rgba(6,182,212,.15); }
+    .related-link span { display: block; font-size: 12px; color: #94a3b8; font-weight: 400; margin-top: 2px; }
+
+    /* ── Bottom CTA ── */
+    .mod-cta {
+      background: linear-gradient(135deg, #0c1a2e, #0e4f6b);
+      border-radius: 20px; padding: 56px 40px;
+      text-align: center; margin: 60px 0;
+    }
+    .mod-cta h2 { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .mod-cta p { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 28px; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary-cta {
+      padding: 14px 28px; background: #06b6d4; color: #fff;
+      font-weight: 700; font-size: 15px; border-radius: 8px;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .btn-primary-cta:hover { opacity: .85; }
+    .btn-outline-cta {
+      padding: 14px 28px; background: transparent;
+      color: rgba(255,255,255,0.85); font-weight: 600; font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 8px;
+      text-decoration: none; transition: border-color .2s;
+    }
+    .btn-outline-cta:hover { border-color: rgba(255,255,255,0.7); }
+
+    .h-section { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 22px; font-weight: 700; color: #0c1a2e; margin: 48px 0 16px; }
+    .divider { border: none; border-top: 1px solid var(--border,#e2e8f0); margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav scrolled" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <div class="nav-logo-icon">FI</div>
+        ForecastInSite
+      </a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="/playbook">Playbook</a>
+        <a href="../pages/docs.html">Docs</a>
+        <a href="/tools/forecastinsite" class="nav-cta">Try Free</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="mod-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span> / </span>
+        <a href="/tools/forecastinsite">ForecastInSite</a>
+        <span> / </span>
+        <span id="hero-breadcrumb">Module</span>
+      </div>
+
+      <div class="badge-row" id="hero-badges">
+        <span class="badge badge-tool">ForecastInSite</span>
+        <span class="badge badge-paid" id="tier-badge">Paid Module</span>
+      </div>
+
+      <h1 id="hero-title" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.15;">Module</h1>
+      <p id="hero-sub" style="font-size:18px;color:rgba(255,255,255,0.85);max-width:640px;margin:0;line-height:1.6;"></p>
+
+      <div class="mod-chips" id="hero-chips"></div>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="mod-body">
+    <div class="container">
+
+      <!-- Overview -->
+      <p id="overview-text" style="font-size:17px;line-height:1.75;color:#374151;max-width:760px;"></p>
+
+      <!-- Capabilities + Problem -->
+      <div class="mod-grid">
+        <div class="caps-card">
+          <h4>Key Capabilities</h4>
+          <ul id="caps-list"></ul>
+        </div>
+        <div>
+          <div class="problem-card">
+            <strong>Without this module…</strong>
+            <p id="problem-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video slot -->
+      <div class="video-wrap" id="video-wrap">
+        <div class="video-placeholder" id="video-placeholder">
+          <span class="play-icon">▶</span>
+          <p id="vid-label">Video walkthrough coming soon</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: How to use -->
+      <h2 class="h-section">How to use this module</h2>
+      <div class="gate-section">
+        <div class="gate-inner" id="gate-steps-inner">
+          <ol class="steps-list" id="steps-preview"></ol>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4 id="gate-heading">Unlock the full step-by-step guide</h4>
+          <p>The complete practitioner walkthrough is included in the ForecastInSite Playbook — available with a paid licence.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing & Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: Practitioner tips -->
+      <h2 class="h-section">Practitioner tips</h2>
+      <div class="gate-section">
+        <div class="gate-inner">
+          <div class="tips-grid" id="tips-preview"></div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4>Unlock practitioner tips</h4>
+          <p>Real-world tips from enterprise PMO practitioners — included in the full Playbook.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing & Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Related modules -->
+      <h2 class="h-section">Related modules</h2>
+      <div class="related-grid" id="related-grid"></div>
+
+      <!-- Bottom CTA -->
+      <div class="mod-cta">
+        <h2>Ready to try ForecastInSite?</h2>
+        <p>90-day free trial. No credit card required. Start forecasting in minutes.</p>
+        <div class="cta-buttons">
+          <a href="/tools/forecastinsite" class="btn-primary-cta">Try Free — 90 Days</a>
+          <a href="/playbook" class="btn-outline-cta">Read the Playbook</a>
+          <a href="/pricing" class="btn-outline-cta">View Pricing</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="nav-logo" style="color: var(--white); margin-bottom: 0;">
+            <div class="nav-logo-icon">FI</div>
+            ForecastInSite
+          </a>
+          <p>Lean agile financial modelling for enterprise teams. Built by <a href="https://agilityops.com.au" style="color: var(--primary-light);">Agility Ops Business Pty Ltd</a>.</p>
+        </div>
+        <div>
+          <h4>Tool</h4>
+          <ul class="footer-links">
+            <li><a href="/tools/forecastinsite">Launch Tool</a></li>
+            <li><a href="/playbook">Playbook</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul class="footer-links">
+            <li><a href="../pages/features.html">Features</a></li>
+            <li><a href="../pages/how-it-works.html">How It Works</a></li>
+            <li><a href="../pages/docs.html">Docs</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a></li>
+            <li><a href="sla.html">SLA</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 <a href="https://agilityops.com.au">Agility Ops Business Pty Ltd</a>. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+  // ── Module data ──────────────────────────────────────────────────────────────
+  const MODULES = {
+    'getting-started': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Getting Started',
+      breadcrumb: 'Getting Started',
+      sub: 'Everything you need to go from zero to forecasting in under 10 minutes.',
+      chips: ['Quick setup', 'Demo data included', 'Role-based views', 'Local storage'],
+      overview: 'ForecastInSite is designed to be immediately useful. Load the demo data with a single click and explore a fully-populated model spanning 6 teams, 4 Program Increments, and realistic budget scenarios. Switch between Financial Controller, Portfolio Manager, and Delivery Manager views to see how each role experiences the same data differently.',
+      caps: [
+        'Three role-optimised tab sets — Financial Controller, Portfolio Manager, Delivery Manager',
+        'Pre-loaded demo data: 6 teams, 4 PIs, realistic budget and velocity figures',
+        'Single-click demo activation — no configuration required',
+        'Full JSON import/export for sharing sessions with colleagues',
+        'Persistent local storage — your last session is always waiting',
+        'Dark and light theme with system preference detection'
+      ],
+      problem: 'Most forecasting tools require hours of setup before you see any value. ForecastInSite loads a working model in one click so you can evaluate the tool with real scenarios, not empty screens.',
+      vid: 'getting-started.mp4',
+      vidLabel: '⏱ ~90 seconds · Tool orientation and demo data walkthrough',
+      gateH4: 'Unlock the full onboarding guide',
+      steps: [
+        { t: 'Launch the tool', b: 'Navigate to /tools/forecastinsite. The tool loads instantly in your browser — no install, no login.' },
+        { t: 'Load demo data', b: 'Click "Load Demo" in the top toolbar. Six pre-configured teams and four PIs populate immediately.' },
+        { t: 'Select your role', b: 'Choose Financial Controller, Portfolio Manager, or Delivery Manager from the role selector to see your tailored view.' },
+        { t: 'Explore the tabs', b: 'Each role has a curated set of tabs. Navigate through them to understand what data each module surfaces.' },
+        { t: 'Import your own data', b: 'Use the JSON import to bring in your real team and project data. Export at any time to save your session.' }
+      ],
+      tips: [
+        { t: '💡 Start with demo data', b: 'Even experienced users benefit from exploring the demo before importing real data. It shows you what "good" looks like.' },
+        { t: '💡 Try all three roles', b: 'Switch roles to understand how your stakeholders experience the same portfolio data — great for alignment conversations.' },
+        { t: '💡 Export before closing', b: 'Local storage persists, but exporting JSON gives you a portable backup you can share or reopen on any device.' },
+        { t: '💡 Dark mode for demos', b: 'Dark mode renders better on projectors and large screens — switch before your next steering committee presentation.' }
+      ],
+      related: [
+        { slug: 'command-centre', label: 'Command Centre', desc: 'Your financial overview dashboard' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Build your team model' },
+        { slug: 'roles-guide', label: 'Roles Guide', desc: 'Understand each role view' }
+      ]
+    },
+
+    'roles-guide': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Roles Guide',
+      breadcrumb: 'Roles Guide',
+      sub: 'Three role-optimised views — Financial Controller, Portfolio Manager, and Delivery Manager — each showing the data that matters most for their decisions.',
+      chips: ['3 role views', 'Tailored tab sets', 'Same data, different lens', 'Instant switching'],
+      overview: 'ForecastInSite surfaces the same underlying data through three distinct lenses. The Financial Controller sees cost, burn, variance, and investment mix. The Portfolio Manager sees value, flow, and strategic allocation. The Delivery Manager sees velocity, capacity, and sprint-level execution. Switching roles takes one click — no re-entry of data.',
+      caps: [
+        'Financial Controller: budget vs actuals, burn rate, cost per point, overhead allocation',
+        'Portfolio Manager: value stream efficiency, feature economics, investment mix, scenario modelling',
+        'Delivery Manager: team velocity, capacity utilisation, sprint allocation, RAID log, milestones',
+        'Instant role switching — same data set, different tab configuration',
+        'Role-appropriate KPI cards on each dashboard',
+        'No data re-entry when changing roles'
+      ],
+      problem: 'Most tools force every stakeholder through the same interface. Financial controllers drown in sprint data; delivery managers get lost in P&L views. Role-based tabs eliminate the noise.',
+      vid: 'roles-guide.mp4',
+      vidLabel: '⏱ ~60 seconds · Role switching and tab overview',
+      gateH4: 'Unlock the full roles guide',
+      steps: [
+        { t: 'Identify your primary role', b: 'Choose Financial Controller, Portfolio Manager, or Delivery Manager based on your primary responsibilities.' },
+        { t: 'Explore your default tabs', b: 'Each role opens with a curated set of tabs. The Command Centre is shared across all roles as the central dashboard.' },
+        { t: 'Switch roles to build empathy', b: 'Click the role selector and switch to another role to see what your stakeholders see — critical for alignment meetings.' },
+        { t: 'Use the right role for the right meeting', b: 'Switch to Financial Controller mode before a budget review; switch to Delivery Manager for sprint planning discussions.' }
+      ],
+      tips: [
+        { t: '💡 Role = meeting prep', b: 'Switch to the role that matches your meeting audience before you open the tool for a presentation.' },
+        { t: '💡 Delivery Managers start here', b: 'If you\'re new to ForecastInSite, the Delivery Manager role has the smallest tab set — easiest to orient.' },
+        { t: '💡 Portfolio Managers own scenario modelling', b: 'The Capacity Planner and scenario views are most valuable for Portfolio Managers planning future PIs.' },
+        { t: '💡 Financial Controllers love the Reporting tab', b: 'The Reporting module generates exec-ready outputs specifically tuned for Financial Controller presentations.' }
+      ],
+      related: [
+        { slug: 'getting-started', label: 'Getting Started', desc: 'Tool orientation' },
+        { slug: 'command-centre', label: 'Command Centre', desc: 'Shared financial dashboard' },
+        { slug: 'reporting', label: 'Reporting', desc: 'Executive outputs' }
+      ]
+    },
+
+    'command-centre': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Command Centre',
+      breadcrumb: 'Command Centre',
+      sub: 'Four live KPI cards, budget burn charts, cost-per-point trends, and over-budget team alerts — your financial overview at a glance.',
+      chips: ['Live KPI cards', 'Budget burn chart', 'Cost per point', 'RAG status'],
+      overview: 'The Command Centre is the shared dashboard available to all roles. It surfaces the four metrics every program needs to track — Total Budget, Total Spend, Variance ($ and %), and Forecast Accuracy — updated live as any figure changes. Below the KPI cards, a grouped bar chart shows Budgeted vs Actual vs Forecast for every team. The Top 5 Over-Budget Teams table flags problems early with RAG status.',
+      caps: [
+        'Four live KPI cards: Total Budget, Total Spend, Variance ($/%),  Forecast Accuracy',
+        'Budget Burn by Team — grouped bar chart: Budgeted, Actual, Forecast per team',
+        'Top 5 Over-Budget Teams table with RAG (Red/Amber/Green) status indicators',
+        'Cost Per Point Trend — which teams are becoming more or less expensive over time',
+        'PI selector to switch between Program Increments instantly',
+        'All figures update live as you edit team or budget data in other tabs'
+      ],
+      problem: 'Without a central view, program financials live in spreadsheets that are always out of date. The Command Centre gives everyone — from delivery managers to CFOs — a single source of truth that updates in real time.',
+      vid: 'command-centre.mp4',
+      vidLabel: '⏱ ~60 seconds · KPI cards, burn chart, and team RAG overview',
+      gateH4: 'Unlock the full Command Centre guide',
+      steps: [
+        { t: 'Open Command Centre', b: 'It\'s the first tab in every role view. Available to Financial Controller, Portfolio Manager, and Delivery Manager.' },
+        { t: 'Review the KPI cards', b: 'Check Total Budget, Total Spend, Variance, and Forecast Accuracy for the selected PI.' },
+        { t: 'Read the burn chart', b: 'Identify teams where Actual exceeds Budgeted — these are your early warning signals.' },
+        { t: 'Check the Top 5 Over-Budget table', b: 'Teams in RED need immediate attention. Teams in AMBER need a conversation this sprint.' },
+        { t: 'Track Cost Per Point trends', b: 'Rising cost per point over multiple PIs signals productivity decline or team cost increase — act before it compounds.' }
+      ],
+      tips: [
+        { t: '💡 Bookmark for daily standup', b: 'The Command Centre is the right starting point for any daily or weekly program review meeting.' },
+        { t: '💡 Amber is an action item', b: 'Don\'t wait for RED. Amber teams should be discussed this sprint, not next PI.' },
+        { t: '💡 Cost Per Point tells the real story', b: 'A team can be under budget but have rising cost per point — they\'re delivering less value per dollar over time.' },
+        { t: '💡 Switch PIs to compare', b: 'Use the PI selector to compare current PI performance against the previous one — trend visibility is more valuable than snapshots.' }
+      ],
+      related: [
+        { slug: 'budget-actuals', label: 'Budget & Actuals', desc: 'Detailed budget management' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team cost configuration' },
+        { slug: 'reporting', label: 'Reporting', desc: 'Export for leadership' }
+      ]
+    },
+
+    'teams-capacity': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Teams & Capacity',
+      breadcrumb: 'Teams & Capacity',
+      sub: 'Build your team model with FTE members, contractors, and AI agents. Real-time cost projections as you configure each team.',
+      chips: ['FTE & contractors', 'AI agents', 'Cost projections', 'Employment type badges'],
+      overview: 'The Teams & Capacity module is where you build the cost model that underpins every financial calculation in ForecastInSite. Create delivery teams, add members with daily or monthly rates, and model AI agents as first-class contributors with licence cost, compute cost, and productivity multiplier. All figures are converted to consistent monthly totals automatically.',
+      caps: [
+        'Create unlimited delivery teams with name, Agile Release Train, and primary role',
+        'Add FTE members and contractors with daily or monthly cost rates',
+        'Model AI agents with licence cost, compute cost, and productivity multiplier',
+        'Real-time monthly team cost totals and PI-level projections',
+        'Employment type badges: FTE / Contractor / AI Agent for instant composition visibility',
+        'Inline add, edit, and delete — no forms, no modals',
+        'Team cost feeds directly into budget variance and cost-per-point calculations'
+      ],
+      problem: 'Spreadsheet-based team rosters go stale the moment someone joins, leaves, or changes rate. ForecastInSite keeps your cost model live and connected to every other calculation in the tool.',
+      vid: 'teams-capacity.mp4',
+      vidLabel: '⏱ ~90 seconds · Building a team, adding members, modelling AI agents',
+      gateH4: 'Unlock the full Teams & Capacity guide',
+      steps: [
+        { t: 'Create your first team', b: 'Click "+ Add Team", enter a name, select the Agile Release Train, and set the primary role.' },
+        { t: 'Add team members', b: 'Use inline add to enter each member\'s name, employment type, and cost rate. Daily rates are converted to monthly automatically.' },
+        { t: 'Add AI agents (optional)', b: 'Model any AI agents on the team with a licence cost, compute cost per month, and a productivity multiplier.' },
+        { t: 'Review cost projections', b: 'The real-time total shows monthly team cost and PI-level projection as you build.' },
+        { t: 'Repeat for all teams', b: 'Complete all delivery teams before moving to Budget & Actuals — the cost model must be complete before variance calculations are meaningful.' }
+      ],
+      tips: [
+        { t: '💡 Use monthly rates for contractors', b: 'If a contractor charges a daily rate, multiply by 20 working days for a consistent monthly figure.' },
+        { t: '💡 AI agents change the maths', b: 'A 1.3x productivity multiplier on an AI agent means 30% more effective capacity — model this explicitly so it shows in your cost-per-point.' },
+        { t: '💡 Build teams before budgets', b: 'Always complete Teams & Capacity before Budget & Actuals. The cost model is the foundation.' },
+        { t: '💡 Group by ART', b: 'If you run multiple Agile Release Trains, assigning teams to ARTs enables ART-level rollup reporting in the Command Centre.' }
+      ],
+      related: [
+        { slug: 'budget-actuals', label: 'Budget & Actuals', desc: 'Set and track budgets' },
+        { slug: 'command-centre', label: 'Command Centre', desc: 'See cost in context' },
+        { slug: 'ai-workforce', label: 'AI Workforce', desc: 'AI agent modelling deep dive' }
+      ]
+    },
+
+    'budget-actuals': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Budget & Actuals',
+      breadcrumb: 'Budget & Actuals',
+      sub: 'Set team-level budgets per PI, track actuals in real time, and catch variance before it becomes a problem.',
+      chips: ['PI-level budgets', 'Real-time variance', 'RAG status', 'Period comparison'],
+      overview: 'Budget & Actuals gives you the financial control layer that program managers need. Set a budget for each team per Program Increment, enter actuals as they come in, and watch the variance calculate automatically with RAG status. Period-over-period comparison lets you track whether teams are improving or drifting.',
+      caps: [
+        'Set team-level budgets per Program Increment',
+        'Track actuals with automatic variance calculation and RAG status',
+        'Period-over-period comparison across multiple PIs',
+        'Forecast-to-completion modelling based on current burn rate',
+        'Variance drill-down to individual team level',
+        'Budget figures feed Command Centre KPI cards in real time'
+      ],
+      problem: 'Without a structured budget vs actuals view, program managers discover overspend at the end of the PI — too late to act. Real-time variance with RAG status means you catch drift in the current sprint, not the next review.',
+      vid: 'budget-actuals.mp4',
+      vidLabel: '⏱ ~60 seconds · Setting budgets, entering actuals, reading variance',
+      gateH4: 'Unlock the full Budget & Actuals guide',
+      steps: [
+        { t: 'Set PI budgets', b: 'For each team, enter the approved budget for the current Program Increment.' },
+        { t: 'Enter actuals weekly', b: 'As sprint costs are confirmed, update actuals. The variance and RAG status recalculate immediately.' },
+        { t: 'Review RAG status', b: 'RED = over budget. AMBER = within 10% of budget limit. GREEN = on track. Address AMBER teams proactively.' },
+        { t: 'Run forecast-to-completion', b: 'Based on current burn rate, the tool projects end-of-PI spend for each team.' },
+        { t: 'Compare to previous PI', b: 'Use the period comparison to see whether teams are improving budget discipline over time.' }
+      ],
+      tips: [
+        { t: '💡 Enter actuals every sprint', b: 'Weekly or fortnightly actuals give you enough signal to intervene before end-of-PI surprises.' },
+        { t: '💡 AMBER is your action window', b: 'Teams in AMBER still have time to course-correct. Teams in RED rarely recover within a PI.' },
+        { t: '💡 Forecast-to-completion is probabilistic', b: 'The forecast assumes current burn rate continues. If you know a large cost is coming, factor it in manually.' },
+        { t: '💡 Budget discipline improves with visibility', b: 'Teams that can see their own budget status in real time consistently perform better than those that can\'t.' }
+      ],
+      related: [
+        { slug: 'command-centre', label: 'Command Centre', desc: 'Aggregated financial view' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team cost model' },
+        { slug: 'reporting', label: 'Reporting', desc: 'Generate budget reports' }
+      ]
+    },
+
+    'feature-economics': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Feature Economics',
+      breadcrumb: 'Feature Economics',
+      sub: 'Track features with business value scores, delivery costs, and revenue realisation. Know what you\'re paying per point delivered.',
+      chips: ['Value scoring', 'Cost per feature', 'Revenue tracking', 'Incomplete feature flags'],
+      overview: 'Feature Economics connects delivery effort to business value. Track each feature\'s story point estimate, delivery cost, and business value score. Mark features as revenue-generating and track actual revenue realised. The cost-per-point calculation reveals which teams are delivering the most value per dollar — a metric most PMOs have never had access to.',
+      caps: [
+        'Track features with business value score, story point estimate, and delivery cost',
+        'Mark features as revenue-generating and track actual revenue realised',
+        'Automatic cost-per-point calculation per feature and per team',
+        'Incomplete feature tracking — cost sunk on features not yet delivered',
+        'Feature ROI ratio: value generated vs cost to deliver',
+        'PI-level feature economics summary for steering committee'
+      ],
+      problem: 'Delivery teams measure velocity. Finance teams measure cost. Neither connects to business value. Feature Economics bridges the gap — showing what each delivered feature actually cost and what it returned.',
+      vid: 'feature-economics.mp4',
+      vidLabel: '⏱ ~75 seconds · Adding features, tracking value and cost, reading ROI',
+      gateH4: 'Unlock the full Feature Economics guide',
+      steps: [
+        { t: 'Add your features', b: 'Enter each feature with its name, owning team, story point estimate, and business value score (1–10).' },
+        { t: 'Set delivery cost', b: 'The tool can auto-calculate based on team cost-per-point, or you can enter a direct cost.' },
+        { t: 'Flag revenue-generating features', b: 'Mark features that directly generate revenue and enter the actual revenue realised once delivered.' },
+        { t: 'Track completion', b: 'Mark features as complete or incomplete. Incomplete features flag sunk cost with no value returned yet.' },
+        { t: 'Review economics summary', b: 'The PI-level summary shows total cost, total value, average ROI, and cost-per-point by team.' }
+      ],
+      tips: [
+        { t: '💡 Business value is a conversation', b: 'Scoring business value 1–10 forces the product owner and sponsor to agree on relative importance — the scoring exercise has value beyond the number.' },
+        { t: '💡 Incomplete features are your risk', b: 'A feature that\'s 80% done and not delivered has 100% of the cost and 0% of the value. Flag these early.' },
+        { t: '💡 Use ROI to defend prioritisation', b: 'When asked why a feature was deprioritised, an ROI ratio is a more defensible answer than "the team didn\'t have capacity."' },
+        { t: '💡 Cost-per-point varies by team', b: 'Senior teams often have a higher cost-per-point but also higher value-per-point. Feature Economics makes this visible.' }
+      ],
+      related: [
+        { slug: 'value-stream', label: 'Value Stream', desc: 'Flow and throughput metrics' },
+        { slug: 'budget-actuals', label: 'Budget & Actuals', desc: 'Team-level cost tracking' },
+        { slug: 'capacity-planner', label: 'Capacity Planner', desc: 'Future PI planning' }
+      ]
+    },
+
+    'value-stream': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Value Stream',
+      breadcrumb: 'Value Stream',
+      sub: 'Flow metrics, throughput analysis, and value stream efficiency ratios across your delivery teams.',
+      chips: ['Flow metrics', 'Throughput', 'Cycle time', 'WIP analysis'],
+      overview: 'The Value Stream module surfaces lean flow metrics that reveal whether your delivery system is healthy or accumulating waste. Track throughput, cycle time, and WIP by team. The value stream efficiency ratio — value delivered vs capacity consumed — is the single number that tells a Portfolio Manager whether the portfolio is performing or just busy.',
+      caps: [
+        'Value stream efficiency ratio: value delivered vs capacity consumed',
+        'Flow metrics: throughput, cycle time, and WIP by team',
+        'Cross-team value contribution analysis',
+        'PI-over-PI value trend to identify improvement or degradation',
+        'WIP limit breach detection and alerting',
+        'Flow debt accumulation tracking'
+      ],
+      problem: 'High velocity doesn\'t equal high value. Teams can complete a lot of work that doesn\'t move the business forward. The Value Stream module separates busyness from value delivery.',
+      vid: 'value-stream.mp4',
+      vidLabel: '⏱ ~60 seconds · Reading flow metrics and efficiency ratios',
+      gateH4: 'Unlock the full Value Stream guide',
+      steps: [
+        { t: 'Review the efficiency ratio', b: 'The top-line value stream efficiency ratio is the headline metric. Above 70% is healthy; below 50% signals systemic issues.' },
+        { t: 'Check throughput by team', b: 'Compare features delivered per sprint across teams. Consistent teams are more predictable and easier to plan around.' },
+        { t: 'Identify WIP breaches', b: 'Teams exceeding their WIP limits accumulate context-switching cost that shows up as increased cycle time.' },
+        { t: 'Compare PI-over-PI trends', b: 'Is efficiency improving? Degrading? The trend is more important than any single PI\'s number.' },
+        { t: 'Feed insights to Capacity Planner', b: 'Low-throughput teams with high WIP should have their capacity commitments reduced in the next PI plan.' }
+      ],
+      tips: [
+        { t: '💡 Efficiency ratio is a system metric', b: 'A low efficiency ratio is rarely one team\'s fault — it usually points to dependency bottlenecks or governance overhead.' },
+        { t: '💡 WIP is a lever, not a symptom', b: 'Reducing WIP limits actively improves flow. It\'s a management decision, not a team performance issue.' },
+        { t: '💡 Cycle time predicts delivery dates', b: 'Average cycle time × feature backlog size = realistic delivery forecast. It\'s more accurate than story point velocity alone.' },
+        { t: '💡 Present trend, not snapshot', b: 'A single PI\'s efficiency ratio is interesting. Three PIs of declining efficiency is an action item for the steering committee.' }
+      ],
+      related: [
+        { slug: 'feature-economics', label: 'Feature Economics', desc: 'Value vs cost per feature' },
+        { slug: 'productivity', label: 'Productivity', desc: 'Velocity and capacity metrics' },
+        { slug: 'capacity-planner', label: 'Capacity Planner', desc: 'Plan future PI capacity' }
+      ]
+    },
+
+    'productivity': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Productivity',
+      breadcrumb: 'Productivity',
+      sub: 'Velocity tracking, capacity utilisation, and AI productivity contribution — the metrics delivery managers live by.',
+      chips: ['Velocity tracking', 'Capacity utilisation', 'AI contribution', 'Sprint trends'],
+      overview: 'The Productivity module gives Delivery Managers the metrics they need to understand team performance over time. Track velocity per team across PIs and sprints. Measure capacity utilisation — how much of available capacity is actually being consumed productively. Model AI agent productivity contribution separately so the value of automation is explicitly visible.',
+      caps: [
+        'Velocity tracking per team across PIs and sprints',
+        'Capacity utilisation rate — planned vs actual capacity consumed',
+        'AI agent productivity contribution isolated and modelled separately',
+        'Sprint-over-sprint velocity trend charts',
+        'Team productivity index for cross-team comparison',
+        'Predictability score — how consistently does each team hit their sprint commitment'
+      ],
+      problem: 'Velocity without context is noise. A team with 40 points per sprint that misses every sprint commitment is less productive than a team with 30 points that consistently delivers. Productivity in ForecastInSite measures consistency, not just throughput.',
+      vid: 'productivity.mp4',
+      vidLabel: '⏱ ~60 seconds · Velocity trends, utilisation, and AI contribution',
+      gateH4: 'Unlock the full Productivity guide',
+      steps: [
+        { t: 'Enter sprint velocity', b: 'For each team and sprint, enter the story points committed and delivered.' },
+        { t: 'Review the predictability score', b: 'Consistent delivery against commitment is worth more than high but variable velocity.' },
+        { t: 'Check capacity utilisation', b: 'Teams significantly below 80% utilisation have hidden capacity. Teams above 95% are at risk of burnout and quality issues.' },
+        { t: 'Isolate AI contribution', b: 'If your teams use AI agents, the productivity module separates their contribution from human team members.' },
+        { t: 'Compare across PIs', b: 'Is each team becoming more or less productive over time? Multi-PI trends reveal whether interventions are working.' }
+      ],
+      tips: [
+        { t: '💡 Predictability > velocity', b: 'A team that reliably delivers 30 points is more valuable for PI planning than one that averages 40 but swings between 20 and 60.' },
+        { t: '💡 95%+ utilisation is fragile', b: 'Teams with no slack can\'t absorb unplanned work. This looks efficient until something goes wrong.' },
+        { t: '💡 AI contribution needs honest modelling', b: 'If an AI agent contributes 20% productivity gain, model it as 20% — don\'t round up to make the numbers look better.' },
+        { t: '💡 Use trends for performance conversations', b: 'A declining velocity trend over three PIs is a coaching conversation, not a performance management one — find the systemic cause first.' }
+      ],
+      related: [
+        { slug: 'value-stream', label: 'Value Stream', desc: 'Flow and throughput' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team composition and cost' },
+        { slug: 'ai-workforce', label: 'AI Workforce', desc: 'AI agent modelling' }
+      ]
+    },
+
+    'ai-workforce': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'AI Workforce',
+      breadcrumb: 'AI Workforce',
+      sub: 'Model AI agents as first-class team members with licence cost, compute cost, and productivity multiplier — see the ROI of your automation investment.',
+      chips: ['AI agent modelling', 'Licence + compute cost', 'Productivity multiplier', 'Automation ROI'],
+      overview: 'The AI Workforce module is ForecastInSite\'s answer to a question most PMOs can\'t yet answer: what is your AI investment actually returning? Model each AI agent with its licence cost, compute cost per month, and a productivity multiplier. The module calculates effective capacity added and cost per effective point — letting you compare the economics of human vs AI delivery.',
+      caps: [
+        'Model AI agents as first-class team members alongside FTEs and contractors',
+        'Licence cost + compute cost per month for total AI running cost',
+        'Productivity multiplier to model effective capacity contribution',
+        'Effective capacity calculation: human baseline × (1 + multiplier)',
+        'Cost per effective point comparison: human teams vs AI-augmented teams',
+        'PI-level AI ROI summary: cost in vs productivity out'
+      ],
+      problem: 'Organisations are spending on AI agents without a framework to measure the return. The AI Workforce module makes the ROI calculation explicit — not a marketing claim, but a modelled, tracked figure tied to actual delivery data.',
+      vid: 'ai-workforce.mp4',
+      vidLabel: '⏱ ~75 seconds · Adding AI agents, setting multipliers, reading ROI',
+      gateH4: 'Unlock the full AI Workforce guide',
+      steps: [
+        { t: 'Add an AI agent to a team', b: 'In Teams & Capacity, click "+ Add Member" and select "AI Agent" as the employment type.' },
+        { t: 'Set the cost', b: 'Enter the monthly licence cost (e.g. Copilot seat) and compute cost. These are combined into a total monthly AI cost.' },
+        { t: 'Set the productivity multiplier', b: 'Enter a multiplier based on your observed or expected productivity gain. 1.2 = 20% productivity increase.' },
+        { t: 'Review effective capacity', b: 'The AI Workforce tab shows the effective capacity added by each AI agent and the team-level productivity impact.' },
+        { t: 'Compare to human cost', b: 'The cost-per-effective-point comparison shows whether AI augmentation is cheaper or more expensive than equivalent human capacity.' }
+      ],
+      tips: [
+        { t: '💡 Start conservative with multipliers', b: 'It\'s better to underestimate AI productivity and be pleasantly surprised than to over-promise and under-deliver.' },
+        { t: '💡 Track multipliers over time', b: 'As teams get better at working with AI agents, the productivity multiplier should increase — update it each PI.' },
+        { t: '💡 Include onboarding cost', b: 'The first PI of AI agent adoption often has a negative multiplier due to setup and learning curve. Model this honestly.' },
+        { t: '💡 Present to CFOs as ROI, not technology', b: 'Frame AI investment as cost-per-point delivered vs the alternative. CFOs respond to economics, not technology enthusiasm.' }
+      ],
+      related: [
+        { slug: 'productivity', label: 'Productivity', desc: 'Velocity and utilisation' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team cost model' },
+        { slug: 'licences-overhead', label: 'Licences & Overhead', desc: 'Full overhead tracking' }
+      ]
+    },
+
+    'licences-overhead': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Licences & Overhead',
+      breadcrumb: 'Licences & Overhead',
+      sub: 'Track software licences, tooling costs, and overhead allocations across your program. The costs hiding in the shadows of your budget.',
+      chips: ['Licence tracking', 'Overhead allocation', 'True cost visibility', 'Per-team breakdown'],
+      overview: 'Every program has costs that don\'t show up in team payroll — software licences, tooling subscriptions, infrastructure overhead, and shared service allocations. Licences & Overhead brings these into the model so your cost-per-point calculations reflect the true cost of delivery, not just the human cost.',
+      caps: [
+        'Track software licences per team with monthly cost and seat count',
+        'Allocate shared overhead costs (infrastructure, shared services) across teams',
+        'Overhead allocation methods: per-seat, fixed split, or proportional to team size',
+        'True cost-per-point calculation including all overhead',
+        'Year-on-year licence cost trend to identify subscription creep',
+        'Licence rationalisation dashboard — identify unused or duplicate tools'
+      ],
+      problem: 'Teams look cheaper than they are because tooling and overhead aren\'t included in the delivery cost model. Licences & Overhead closes this gap — giving finance and program leadership the true cost of running the program.',
+      vid: 'licences-overhead.mp4',
+      vidLabel: '⏱ ~60 seconds · Adding licences, allocating overhead, reading true cost',
+      gateH4: 'Unlock the full Licences & Overhead guide',
+      steps: [
+        { t: 'Catalogue your licences', b: 'Add each software licence with its monthly cost and the teams that use it.' },
+        { t: 'Set the allocation method', b: 'Choose per-seat, fixed-split, or proportional allocation for shared tools.' },
+        { t: 'Add infrastructure overhead', b: 'Enter any shared infrastructure costs (cloud, CI/CD, monitoring) and allocate them across teams.' },
+        { t: 'Review true cost-per-point', b: 'The updated cost-per-point figure now includes human cost + licence cost + overhead allocation.' },
+        { t: 'Identify rationalisation opportunities', b: 'The licence dashboard shows which tools are used by only one team or duplicated across teams.' }
+      ],
+      tips: [
+        { t: '💡 Most programs underestimate overhead by 20–30%', b: 'Tooling, infrastructure, and shared services typically add 20–30% to the true delivery cost. Model it before the CFO finds it.' },
+        { t: '💡 Proportional allocation is fairest', b: 'Allocating shared costs proportional to team size prevents large teams from being subsidised by small ones.' },
+        { t: '💡 Review licences every PI', b: 'Licence sprawl accumulates fast. A quarterly audit of the licence catalogue catches subscriptions that outlived their purpose.' },
+        { t: '💡 Use for budget negotiations', b: 'A true cost model with overhead included is far more defensible in a budget negotiation than a headcount-only view.' }
+      ],
+      related: [
+        { slug: 'budget-actuals', label: 'Budget & Actuals', desc: 'Budget tracking' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team cost base' },
+        { slug: 'ai-workforce', label: 'AI Workforce', desc: 'AI agent costs' }
+      ]
+    },
+
+    'relative-sizing': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Relative Sizing',
+      breadcrumb: 'Relative Sizing',
+      sub: 'Fibonacci-based relative sizing with team calibration. Consistent estimation across teams and PIs.',
+      chips: ['Fibonacci sizing', 'Team calibration', 'Cross-team consistency', 'Historical anchors'],
+      overview: 'Relative Sizing brings structured estimation into ForecastInSite. Using Fibonacci sequence sizing (1, 2, 3, 5, 8, 13, 21), teams estimate features relative to historical anchors — ensuring consistency across teams and PIs. The calibration module identifies teams that systematically over- or under-estimate, allowing velocity calculations to be normalised.',
+      caps: [
+        'Fibonacci sequence sizing (1, 2, 3, 5, 8, 13, 21) with custom scale support',
+        'Historical anchor stories for consistent reference across teams',
+        'Cross-team sizing calibration to normalise velocity comparisons',
+        'Estimation variance detection — flag stories that differ significantly from similar past work',
+        'PI-level sizing accuracy: estimated vs actual story points delivered',
+        'Velocity normalisation based on historical sizing accuracy'
+      ],
+      problem: 'Story points are meaningless for comparison when Team A estimates generously and Team B estimates conservatively. Relative Sizing introduces calibration anchors so a "5" means the same thing across the program.',
+      vid: 'relative-sizing.mp4',
+      vidLabel: '⏱ ~60 seconds · Setting anchors, sizing features, reviewing calibration',
+      gateH4: 'Unlock the full Relative Sizing guide',
+      steps: [
+        { t: 'Set reference stories', b: 'Choose 3–5 representative past stories as calibration anchors across the Fibonacci scale.' },
+        { t: 'Estimate new features', b: 'Size new features relative to the anchors — "Is this bigger or smaller than our known 5-pointer?"' },
+        { t: 'Review cross-team calibration', b: 'The calibration dashboard identifies teams whose estimates consistently drift from program norms.' },
+        { t: 'Track sizing accuracy', b: 'After each PI, compare estimated to actual story points per feature to measure estimation discipline.' },
+        { t: 'Apply normalisation', b: 'Use the normalisation factor in velocity calculations to enable fair cross-team comparison.' }
+      ],
+      tips: [
+        { t: '💡 Anchors are more important than the scale', b: 'The Fibonacci numbers themselves don\'t matter — what matters is that everyone is sizing relative to the same reference points.' },
+        { t: '💡 Calibration is a team sport', b: 'Calibration sessions (like Planning Poker) improve estimation discipline more than any tool feature.' },
+        { t: '💡 Track estimation accuracy over time', b: 'Teams that measure their estimation accuracy improve it. Teams that don\'t, don\'t.' },
+        { t: '💡 Don\'t compare raw velocity without normalisation', b: 'A team with 50 points that over-estimates by 30% is actually delivering the same as a team with 35 normalised points.' }
+      ],
+      related: [
+        { slug: 'productivity', label: 'Productivity', desc: 'Velocity and utilisation' },
+        { slug: 'capacity-planner', label: 'Capacity Planner', desc: 'PI planning and allocation' },
+        { slug: 'value-stream', label: 'Value Stream', desc: 'Flow and throughput' }
+      ]
+    },
+
+    'reporting': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Reporting',
+      breadcrumb: 'Reporting',
+      sub: 'Executive-ready outputs from your live ForecastInSite data. Steering committee reports, financial summaries, and program health snapshots.',
+      chips: ['Exec-ready outputs', 'Steering reports', 'Financial summary', 'Health snapshot'],
+      overview: 'The Reporting module generates structured outputs from your live ForecastInSite data — no copy-paste, no manual assembly. Generate a steering committee financial summary, a program health snapshot, or a PI completion report. All outputs draw from the same data model driving your Command Centre and Charts — so reports are always current.',
+      caps: [
+        'Steering committee financial summary: budget, actuals, variance, forecast-to-completion',
+        'Program health snapshot: velocity trends, RAG status, top risks',
+        'PI completion report: features delivered, value realised, cost-per-point',
+        'Team performance summary for leadership review',
+        'Export to PDF or structured text for presentation embedding',
+        'Report templates configurable per role (Financial Controller, Portfolio Manager, Delivery Manager)'
+      ],
+      problem: 'Steering committee reports take hours to assemble manually. By the time they\'re done, the data has moved. The Reporting module generates the same output in seconds from live data — and it\'s always current.',
+      vid: 'reporting.mp4',
+      vidLabel: '⏱ ~60 seconds · Generating a steering committee report',
+      gateH4: 'Unlock the full Reporting guide',
+      steps: [
+        { t: 'Select your report type', b: 'Choose from Steering Committee, Program Health, PI Completion, or Team Performance.' },
+        { t: 'Select the PI scope', b: 'Choose the current PI, a specific past PI, or a PI-over-PI comparison.' },
+        { t: 'Review the generated output', b: 'The report renders immediately from your live data — review it before exporting.' },
+        { t: 'Export', b: 'Export to PDF for presentation, or copy structured text for embedding in Confluence or email.' },
+        { t: 'Schedule for recurring delivery', b: 'Set a reporting cadence (weekly, fortnightly) and the report will remind you when it\'s due.' }
+      ],
+      tips: [
+        { t: '💡 Generate before every steering meeting', b: 'Make it a habit — open Reporting, generate the summary, and review it 10 minutes before the steering committee starts.' },
+        { t: '💡 Let the data tell the story', b: 'Resist the urge to edit the numbers before presenting. If the variance is red, present it red — hiding it erodes trust.' },
+        { t: '💡 Use PI Completion as a retrospective input', b: 'The PI Completion report is the best data input for a program-level retrospective. Features delivered vs planned tells the real story.' },
+        { t: '💡 Team Performance for 1-1s', b: 'The Team Performance summary is useful for delivery lead conversations — grounded in data, not perception.' }
+      ],
+      related: [
+        { slug: 'command-centre', label: 'Command Centre', desc: 'Live financial dashboard' },
+        { slug: 'budget-actuals', label: 'Budget & Actuals', desc: 'Budget and variance detail' },
+        { slug: 'milestones', label: 'Milestones', desc: 'Milestone tracking for reports' }
+      ]
+    },
+
+    'capacity-planner': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Capacity Planner',
+      breadcrumb: 'Capacity Planner',
+      sub: 'Plan your next PI with velocity-based capacity modelling, leave adjustments, and team allocation targets.',
+      chips: ['PI planning', 'Velocity-based capacity', 'Leave adjustment', 'Allocation targets'],
+      overview: 'The Capacity Planner takes the historical velocity and capacity data from your current model and uses it to plan the next Program Increment. Account for planned leave, public holidays, and team changes. Set allocation targets per team and see whether the next PI\'s feature backlog is achievable given available capacity.',
+      caps: [
+        'Velocity-based capacity calculation for the next PI from historical data',
+        'Leave and public holiday adjustment per team and sprint',
+        'Team change modelling — add or remove members for the upcoming PI',
+        'Allocation target setting: what % of capacity goes to new features vs BAU vs tech debt',
+        'Feature backlog fit analysis: can the next PI backlog fit in available capacity',
+        'Capacity buffer recommendations based on historical variability'
+      ],
+      problem: 'PI planning without a capacity model is guesswork. Teams commit to backlogs based on optimistic availability, then spend the PI doing triage. The Capacity Planner anchors commitments to evidence.',
+      vid: 'capacity-planner.mp4',
+      vidLabel: '⏱ ~90 seconds · Planning a PI, adjusting for leave, checking backlog fit',
+      gateH4: 'Unlock the full Capacity Planner guide',
+      steps: [
+        { t: 'Load historical velocity', b: 'The Capacity Planner pre-fills with your last 3 PIs of velocity data. Review and adjust for known anomalies.' },
+        { t: 'Adjust for upcoming leave', b: 'Enter planned leave and public holidays for each team. The available capacity figure recalculates automatically.' },
+        { t: 'Model team changes', b: 'Add new starters, remove departures, and adjust contractor allocations for the next PI.' },
+        { t: 'Set allocation targets', b: 'Define what percentage of capacity is committed to new features, BAU, tech debt, and unplanned work.' },
+        { t: 'Check backlog fit', b: 'Compare your estimated PI backlog size against available capacity. If it doesn\'t fit, prioritise before the PI starts.' }
+      ],
+      tips: [
+        { t: '💡 Reserve 15–20% for unplanned work', b: 'Programs that plan to 100% capacity consistently underdeliver. Reserve capacity explicitly.' },
+        { t: '💡 Use 3-PI average velocity, not best PI', b: 'Planning from your best velocity will disappoint. Use the average — it accounts for normal variability.' },
+        { t: '💡 Model team changes before PI planning', b: 'New starters contribute at 50% in their first sprint and 75% in their second. Don\'t count them at 100%.' },
+        { t: '💡 Backlog fit is a prioritisation trigger', b: 'If the backlog is 120% of capacity, you have a prioritisation problem to solve before PI planning — not during it.' }
+      ],
+      related: [
+        { slug: 'productivity', label: 'Productivity', desc: 'Velocity data source' },
+        { slug: 'relative-sizing', label: 'Relative Sizing', desc: 'Consistent estimation' },
+        { slug: 'raid-log', label: 'RAID Log', desc: 'Risks that affect capacity' }
+      ]
+    },
+
+    'raid-log': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'RAID Log',
+      breadcrumb: 'RAID Log',
+      sub: 'Risks, Assumptions, Issues, and Dependencies — tracked, owned, and surfaced before they derail delivery.',
+      chips: ['RAID tracking', 'Ownership assignment', 'Impact scoring', 'Escalation triggers'],
+      overview: 'The RAID Log module brings structured risk governance into ForecastInSite. Log Risks, Assumptions, Issues, and Dependencies with owner, impact score, likelihood, and due date. The module surfaces items approaching their due date, flags unowned items, and calculates an overall program risk score for the steering committee dashboard.',
+      caps: [
+        'Log Risks, Assumptions, Issues, and Dependencies with full metadata',
+        'Owner assignment with due date tracking',
+        'Impact and likelihood scoring (1–5) with auto-calculated risk rating',
+        'Status tracking: Open, In Progress, Resolved, Escalated',
+        'Aging alerts for overdue or unactioned items',
+        'Program risk score: weighted aggregate for steering committee reporting',
+        'RAID items feed directly into the Reporting module'
+      ],
+      problem: 'RAID logs live in spreadsheets that no one updates and no one reads. When a risk eventuates, the response is always "it was in the RAID log." ForecastInSite surfaces RAID items in the workflow — where decisions are made, not where they\'re forgotten.',
+      vid: 'raid-log.mp4',
+      vidLabel: '⏱ ~60 seconds · Adding RAID items, setting ownership, reading risk score',
+      gateH4: 'Unlock the full RAID Log guide',
+      steps: [
+        { t: 'Add a RAID item', b: 'Click "+ Add Item", select the type (Risk/Assumption/Issue/Dependency), and enter the description.' },
+        { t: 'Score impact and likelihood', b: 'Rate impact and likelihood on a 1–5 scale. The risk rating calculates automatically.' },
+        { t: 'Assign an owner and due date', b: 'Every RAID item must have an owner. Unowned items are flagged in the aging report.' },
+        { t: 'Review the program risk score', b: 'The aggregate risk score appears on the Command Centre and in reports. Track it weekly.' },
+        { t: 'Escalate or resolve', b: 'Move items to Escalated if they\'ve exceeded the owner\'s authority to resolve. Resolved items stay in the audit trail.' }
+      ],
+      tips: [
+        { t: '💡 Review RAID weekly, not quarterly', b: 'A RAID log reviewed quarterly is a post-mortem waiting to happen. Build a 10-minute RAID review into your weekly program meeting.' },
+        { t: '💡 Unowned = unmanaged', b: 'Any RAID item without an owner is effectively unmanaged. The aging alert is the tool\'s way of telling you this.' },
+        { t: '💡 Assumptions are the most dangerous', b: 'Assumptions that turn out to be wrong are the most common cause of PI failure. Review and validate assumptions at each sprint review.' },
+        { t: '💡 Dependencies need two owners', b: 'Every dependency has a requestor and a provider. Log both — not just the team waiting on the deliverable.' }
+      ],
+      related: [
+        { slug: 'milestones', label: 'Milestones', desc: 'Key dates and gates' },
+        { slug: 'capacity-planner', label: 'Capacity Planner', desc: 'Risks affect capacity' },
+        { slug: 'reporting', label: 'Reporting', desc: 'RAID feeds steering reports' }
+      ]
+    },
+
+    'milestones': {
+      tier: 'paid', tierLabel: 'Paid Module',
+      title: 'Milestones',
+      breadcrumb: 'Milestones',
+      sub: 'Key dates, delivery gates, and critical path markers — tracked against your PI calendar with RAG status.',
+      chips: ['Milestone tracking', 'RAG status', 'PI calendar', 'Gate management'],
+      overview: 'The Milestones module brings delivery gate management into ForecastInSite. Track key dates — PI boundaries, steering committee reviews, release gates, and regulatory deadlines — with owner, status, and dependencies. RAG status calculated from due date proximity keeps the program honest about what\'s at risk.',
+      caps: [
+        'Log milestones with type, due date, owner, and dependencies',
+        'RAG status auto-calculated from due date proximity and completion status',
+        'PI calendar view showing all milestones in timeline context',
+        'Critical path identification — milestones that, if missed, delay subsequent gates',
+        'Milestone completion tracking with actual vs planned date recording',
+        'Milestones feed Reporting module for steering committee summaries'
+      ],
+      problem: 'Delivery gate dates slip because no one is watching all of them simultaneously. The Milestones module surfaces everything at risk in a single view — not buried in individual team plans.',
+      vid: 'milestones.mp4',
+      vidLabel: '⏱ ~60 seconds · Adding milestones, reading the PI calendar, checking critical path',
+      gateH4: 'Unlock the full Milestones guide',
+      steps: [
+        { t: 'Add your PI milestones', b: 'Enter each key date: PI planning, sprint reviews, steering committee meetings, release gates, regulatory deadlines.' },
+        { t: 'Set dependencies', b: 'Link milestones that are dependent on each other. The critical path is calculated from these dependencies.' },
+        { t: 'Assign owners', b: 'Every milestone needs an accountable owner. Unowned milestones are flagged.' },
+        { t: 'Review the PI calendar', b: 'The calendar view shows all milestones in timeline context — easy to spot crowded weeks or dangerous gaps.' },
+        { t: 'Track completion', b: 'Mark milestones complete when done. Record actual vs planned dates to improve future PI milestone planning.' }
+      ],
+      tips: [
+        { t: '💡 Fewer milestones, more discipline', b: 'A milestone for everything is a milestone for nothing. Limit milestones to genuine decision points and gates.' },
+        { t: '💡 Critical path is your early warning', b: 'If a critical path milestone is amber, the PI is at risk regardless of how green everything else looks.' },
+        { t: '💡 Regulatory deadlines are immovable', b: 'Flag regulatory and compliance milestones differently from internal gates — they have no negotiating room.' },
+        { t: '💡 Record actual vs planned', b: 'Tracking whether milestones were hit or missed is the best predictor of PI delivery reliability over time.' }
+      ],
+      related: [
+        { slug: 'raid-log', label: 'RAID Log', desc: 'Risks to milestones' },
+        { slug: 'capacity-planner', label: 'Capacity Planner', desc: 'PI planning context' },
+        { slug: 'reporting', label: 'Reporting', desc: 'Milestone reports' }
+      ]
+    },
+
+    'configuration': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Configuration',
+      breadcrumb: 'Configuration',
+      sub: 'Customise ForecastInSite to match your organisation\'s terminology, thresholds, and governance preferences.',
+      chips: ['Custom thresholds', 'Terminology', 'PI structure', 'Export/import settings'],
+      overview: 'The Configuration module lets you adapt ForecastInSite to your organisation\'s specific governance model. Set your own PI structure (sprint count, sprint length), define custom RAG thresholds, rename terminology to match your organisation\'s language, and configure export formats. All configuration is stored locally and travels with your JSON export.',
+      caps: [
+        'PI structure configuration: number of sprints, sprint length in weeks',
+        'Custom RAG thresholds for budget variance, capacity utilisation, and risk scores',
+        'Terminology customisation: rename "PI" to "Quarter", "Sprint" to "Iteration", etc.',
+        'Export format configuration: PDF layout, report headers, organisation name and logo',
+        'FTE cost model: choose between daily rate, monthly rate, or annual salary input',
+        'Reset to defaults with a single click — non-destructive configuration management'
+      ],
+      problem: 'Every organisation has its own language and thresholds. A tool that forces you to speak its language loses adoption. Configuration lets ForecastInSite adapt to how your organisation already works.',
+      vid: 'configuration.mp4',
+      vidLabel: '⏱ ~45 seconds · Setting PI structure, adjusting thresholds, customising terminology',
+      gateH4: 'Unlock the full Configuration guide',
+      steps: [
+        { t: 'Set your PI structure', b: 'Enter the number of sprints in your PI and the length of each sprint. This drives all capacity calculations.' },
+        { t: 'Configure RAG thresholds', b: 'Set the variance percentages that trigger Amber and Red status for your organisation\'s risk tolerance.' },
+        { t: 'Customise terminology', b: 'If your organisation uses "Quarter" instead of "PI" or "Iteration" instead of "Sprint", update the labels here.' },
+        { t: 'Set cost model preference', b: 'Choose whether team members are entered as daily rates, monthly rates, or annual salaries.' },
+        { t: 'Export your configuration', b: 'Configuration is embedded in your JSON export — sharing the export with a colleague shares your exact setup.' }
+      ],
+      tips: [
+        { t: '💡 Configure before entering data', b: 'Set your PI structure and terminology before you start entering team and budget data — changing it later can disrupt existing calculations.' },
+        { t: '💡 Tighten RAG thresholds over time', b: 'Start with generous thresholds (Amber at 15%, Red at 25%). As your governance matures, tighten them to increase discipline.' },
+        { t: '💡 Terminology matters for adoption', b: 'Teams that see their own language in the tool adopt it faster than those who have to translate between the tool\'s language and their own.' },
+        { t: '💡 Share configuration via JSON export', b: 'The fastest way to onboard a new user is to share a JSON export with your configuration already embedded.' }
+      ],
+      related: [
+        { slug: 'getting-started', label: 'Getting Started', desc: 'Tool orientation' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Team model setup' },
+        { slug: 'reporting', label: 'Reporting', desc: 'Reporting configuration' }
+      ]
+    }
+  };
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  function render() {
+    const slug = window.location.pathname.replace(/^\/forecastinsite\//, '').replace(/\/$/, '');
+    const m = MODULES[slug];
+
+    if (!m) {
+      document.querySelector('.mod-hero').innerHTML = '<div class="container"><h1 style="color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;">Module not found</h1><p style="color:rgba(255,255,255,0.7);">Return to <a href="/tools/forecastinsite" style="color:#06b6d4;">ForecastInSite</a></p></div>';
+      return;
+    }
+
+    // Meta
+    document.getElementById('page-title').textContent = m.title + ' — ForecastInSite | PortfolioInSite';
+    document.getElementById('page-desc').content = m.sub;
+    document.getElementById('page-canonical').href = 'https://portfolioinsite.com.au/forecastinsite/' + slug;
+
+    // Hero
+    document.getElementById('hero-breadcrumb').textContent = m.title;
+    document.getElementById('hero-title').textContent = m.title;
+    document.getElementById('hero-sub').textContent = m.sub;
+
+    const tierBadge = document.getElementById('tier-badge');
+    if (m.tier === 'included') {
+      tierBadge.textContent = 'Included';
+      tierBadge.className = 'badge badge-free';
+    } else {
+      tierBadge.textContent = 'Paid Module';
+      tierBadge.className = 'badge badge-paid';
+    }
+
+    document.getElementById('hero-chips').innerHTML = m.chips.map(c => `<span class="mod-chip">${c}</span>`).join('');
+
+    // Overview
+    document.getElementById('overview-text').textContent = m.overview;
+
+    // Capabilities
+    document.getElementById('caps-list').innerHTML = m.caps.map(c => `<li>${c}</li>`).join('');
+
+    // Problem
+    document.getElementById('problem-text').textContent = m.problem;
+
+    // Video
+    const vw = document.getElementById('video-wrap');
+    const vp = document.getElementById('video-placeholder');
+    const vidSrc = `../img/forecastinsite/videos/${m.vid}`;
+    document.getElementById('vid-label').textContent = m.vidLabel || 'Video walkthrough coming soon';
+    const testVid = document.createElement('video');
+    testVid.oncanplay = () => {
+      vp.style.display = 'none';
+      const vid = document.createElement('video');
+      vid.src = vidSrc; vid.controls = true; vid.autoplay = false;
+      vid.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+      vw.appendChild(vid);
+    };
+    testVid.onerror = () => { /* placeholder stays */ };
+    testVid.src = vidSrc;
+
+    // Gate — steps preview (first 2 steps blurred)
+    document.getElementById('gate-heading').textContent = m.gateH4 || 'Unlock the full step-by-step guide';
+    const stepsEl = document.getElementById('steps-preview');
+    stepsEl.innerHTML = m.steps.map((s, i) => `
+      <li>
+        <span class="step-num">${i + 1}</span>
+        <div class="step-body">
+          <strong>${s.t}</strong>
+          <p>${s.b}</p>
+        </div>
+      </li>`).join('');
+
+    // Gate — tips preview (all blurred)
+    document.getElementById('tips-preview').innerHTML = m.tips.map(t => `
+      <div class="tip-card">
+        <strong>${t.t}</strong>
+        <p>${t.b}</p>
+      </div>`).join('');
+
+    // Related
+    document.getElementById('related-grid').innerHTML = m.related.map(r => `
+      <a href="/forecastinsite/${r.slug}" class="related-link">
+        ${r.label}
+        <span>${r.desc}</span>
+      </a>`).join('');
+  }
+
+  render();
+  </script>
+</body>
+</html>

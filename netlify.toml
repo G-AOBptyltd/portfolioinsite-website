@@ -53,10 +53,16 @@
   to = "/pages/forecastinsite-playbook.html"
   status = 200
 
-# ===== Module Teasers =====
+# ===== Module Teasers (PortfolioInSite Jira App) =====
 [[redirects]]
   from = "/modules/*"
   to = "/pages/module.html"
+  status = 200
+
+# ===== ForecastInSite Module Teasers =====
+[[redirects]]
+  from = "/forecastinsite/*"
+  to = "/pages/forecastinsite-module.html"
   status = 200
 
 # ===== 404 Fallback =====
