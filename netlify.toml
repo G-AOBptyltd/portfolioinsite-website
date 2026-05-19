@@ -47,6 +47,12 @@
   to = "/tools/portfolioinsite.html"
   status = 200
 
+# ===== Pricing =====
+[[redirects]]
+  from = "/pricing"
+  to = "/pages/pricing.html"
+  status = 200
+
 # ===== Playbook =====
 [[redirects]]
   from = "/playbook"
