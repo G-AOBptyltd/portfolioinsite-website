@@ -65,10 +65,11 @@ These are served via Netlify redirects (already configured in netlify.toml):
 - /tools/planinsite → /tools/planinsite.html
 
 **Licensing & Checkout (Live — deployed 29 April 2026):**
-- All InSite tools have a **90-day free trial** built in (starts on first launch, stored in localStorage)
+- All InSite tools have a **14-day free trial** — Stripe card required upfront (no bypass)
 - Trial badge shows `TRIAL · XXd` (amber) → `LICENSED` (green) → `EXPIRED` (red)
-- **"Try Free"** nav button links to `/tools/forecastinsite` — this launches the 90-day trial, NO Stripe upfront
-- When trial expires, users click the licence badge → modal prompts for a key → they purchase via `/pricing`
+- **"Start Free Trial"** nav button links to `/pricing` → redirects to `https://agilityops.com.au/pages/pricing` to start trial via Stripe
+- Users must go through central pricing page first — **never link directly to `/tools/forecastinsite` as a trial CTA**
+- After trial/purchase, users access the tool at `/tools/forecastinsite` (already licensed)
 - **Stripe checkout flow:** `/pricing` page → calls `/api/checkout` (central API) with Stripe Price ID → Stripe hosted checkout → `checkout.session.completed` webhook → `stripe-webhook.js` auto-generates licence key → Resend emails key to customer from `support@agilityops.com.au`
 - **Licence key format:** `FCT-{CUSTOMERID}-{YYYYMMDD}-{HASH}` (djb2 checksum)
 - ForecastInSite product code: `FCT` | PortfolioInSite (Jira app): `POI`

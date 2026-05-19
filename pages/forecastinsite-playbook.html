@@ -392,6 +392,17 @@
       transition: background .15s;
     }
     .btn-unlock:hover { background: var(--ac-dark); }
+    .btn-module-overview {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ac);
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity .15s;
+    }
+    .btn-module-overview:hover { opacity: 1; text-decoration: underline; }
 
     /* ── GATED CONTENT SAMPLE ── */
     .gated-steps { padding: 0 0 16px; }
@@ -504,7 +515,7 @@
   </a>
   <span class="hdr-title">Playbook &amp; Practitioner Guide</span>
   <div class="hdr-right">
-    <a href="/tools/forecastinsite" class="btn-outline">Open Tool →</a>
+    <a href="/pricing" class="btn-outline">Start Free Trial →</a>
     <a href="/pricing" class="btn-primary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       Unlock Full Playbook
@@ -1551,6 +1562,20 @@
 
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // Inject "Module Overview" links into each gate-card
+  const slugOverrides = { 'roles': 'roles-guide' };
+  document.querySelectorAll('.module-section[id] .gate-card').forEach(card => {
+    const section = card.closest('.module-section');
+    const id = section ? section.id : null;
+    if (!id || id === 'get-access') return;
+    const slug = slugOverrides[id] || id;
+    const link = document.createElement('a');
+    link.href = '/forecastinsite/' + slug;
+    link.className = 'btn-module-overview';
+    link.textContent = 'Module overview →';
+    card.appendChild(link);
+  });
 </script>
 
 </body>
