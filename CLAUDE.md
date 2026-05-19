@@ -2,7 +2,7 @@
 
 ## Project Identity
 
-Marketing website for PortfolioInSite, an AI-native portfolio governance platform for Jira Cloud. This site handles the product landing page, features showcase, documentation, and waitlist conversion. Legal pages (Privacy Policy, Terms of Service) are hosted on the parent company site at agilityops.com.au.
+Marketing website for PortfolioInSite, an AI-native portfolio governance platform for Jira Cloud. This site handles the product landing page, features showcase, documentation, and purchase conversion. **Product is live — no waitlist.** Stripe licensing active since 29 April 2026. Legal pages (Privacy Policy, Terms of Service) are hosted on the parent company site at agilityops.com.au.
 
 **Owner:** Agility Ops Business Pty Ltd (AOB)
 **Domain:** https://portfolioinsite.com.au
@@ -51,6 +51,30 @@ PortfolioInSite is a 19-module portfolio governance platform built on Atlassian 
 - **Styling:** Custom CSS with CSS variables, responsive grid
 - **Hosting:** Netlify (auto-deploy from GitHub main branch)
 - **SEO:** OG tags, Twitter cards, canonical URLs, structured data
+
+## Tools (Standalone Web Apps)
+
+tools/ contains standalone HTML tool pages served at /tools/{slug}:
+- `tools/portfolioinsite.html` → PortfolioInSite (web) — executive portfolio dashboard
+- `tools/forecastinsite.html` → ForecastInSite — dependency mapping and critical path
+- `tools/planinsite.html` → PlanInSite — PI planning and capacity management
+
+These are served via Netlify redirects (already configured in netlify.toml):
+- /tools/portfolioinsite → /tools/portfolioinsite.html
+- /tools/forecastinsite → /tools/forecastinsite.html
+- /tools/planinsite → /tools/planinsite.html
+
+**Licensing & Checkout (Live — deployed 29 April 2026):**
+- All InSite tools have a **90-day free trial** built in (starts on first launch, stored in localStorage)
+- Trial badge shows `TRIAL · XXd` (amber) → `LICENSED` (green) → `EXPIRED` (red)
+- **"Try Free"** nav button links to `/tools/forecastinsite` — this launches the 90-day trial, NO Stripe upfront
+- When trial expires, users click the licence badge → modal prompts for a key → they purchase via `/pricing`
+- **Stripe checkout flow:** `/pricing` page → calls `/api/checkout` (central API) with Stripe Price ID → Stripe hosted checkout → `checkout.session.completed` webhook → `stripe-webhook.js` auto-generates licence key → Resend emails key to customer from `support@agilityops.com.au`
+- **Licence key format:** `FCT-{CUSTOMERID}-{YYYYMMDD}-{HASH}` (djb2 checksum)
+- ForecastInSite product code: `FCT` | PortfolioInSite (Jira app): `POI`
+- Stripe webhook destination ID: `we_1TRXId1yWUXkg4kiwkmSy3EE` (on agilityops-hub Netlify site)
+- Full technical reference: `ClaudeStripeResend.md` in AgilityOpsBizAI workspace
+- **`/pricing` page** — must exist on portfolioinsite.com.au; all "View Pricing" and purchase CTAs link here
 
 ## Central API Integration (April 2026)
 
