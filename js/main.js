@@ -28,8 +28,36 @@ if (navToggle) {
 // Close mobile menu on link click
 document.querySelectorAll('.nav-links a').forEach(link => {
   link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    navToggle.setAttribute('aria-expanded', 'false');
+    if (navLinks) navLinks.classList.remove('open');
+    if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// Products dropdown toggle
+document.querySelectorAll('.nav-dropdown-btn').forEach(btn => {
+  const panel = btn.nextElementSibling;
+  if (!panel) return;
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = panel.classList.contains('open');
+    // Close all open panels first
+    document.querySelectorAll('.nav-dropdown-panel.open').forEach(p => {
+      p.classList.remove('open');
+      if (p.previousElementSibling) p.previousElementSibling.setAttribute('aria-expanded', 'false');
+    });
+    // Toggle this panel
+    if (!isOpen) {
+      panel.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-dropdown-panel.open').forEach(p => {
+    p.classList.remove('open');
+    if (p.previousElementSibling) p.previousElementSibling.setAttribute('aria-expanded', 'false');
   });
 });
 

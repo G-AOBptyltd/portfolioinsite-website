@@ -41,15 +41,49 @@
   <!-- Navigation -->
   <nav class="nav" role="navigation" aria-label="Main navigation">
     <div class="container nav-inner">
-      <a href="index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <div class="nav-logo-icon">PI</div>
         PortfolioInSite
       </a>
       <div class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="pages/features.html">Features</a>
-        <a href="pages/how-it-works.html">How It Works</a>
-        <a href="pages/docs.html">Docs</a>
+        <!-- Products dropdown -->
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">
+            Products <svg class="nav-chevron" viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="nav-dropdown-panel" role="menu">
+            <div class="ndp-grid">
+              <div class="ndp-col">
+                <div class="ndp-tool" style="color:#06b6d4;">PortfolioInSite</div>
+                <span class="ndp-badge">Jira App</span>
+                <a href="/modules/moscow-scoring" class="ndp-link">Modules</a>
+                <a href="/pages/features.html" class="ndp-link">Features</a>
+                <a href="/pages/how-it-works.html" class="ndp-link">How It Works</a>
+              </div>
+              <div class="ndp-col">
+                <div class="ndp-tool" style="color:#7c3aed;">PortfolioInSite Web</div>
+                <span class="ndp-badge">Standalone</span>
+                <a href="/portfolioinsite-web/backlog-triage" class="ndp-link">Modules</a>
+                <a href="/tools/portfolioinsite" class="ndp-link ndp-tool-link">Open Tool →</a>
+              </div>
+              <div class="ndp-col">
+                <div class="ndp-tool" style="color:#0284c7;">ForecastInSite</div>
+                <span class="ndp-badge">Standalone</span>
+                <a href="/forecastinsite/getting-started" class="ndp-link">Modules</a>
+                <a href="/playbook" class="ndp-link">Playbook</a>
+                <a href="/tools/forecastinsite" class="ndp-link ndp-tool-link">Open Tool →</a>
+              </div>
+              <div class="ndp-col">
+                <div class="ndp-tool" style="color:#d97706;">PlanInSite</div>
+                <span class="ndp-badge">Standalone</span>
+                <a href="/planinsite/import-data" class="ndp-link">Modules</a>
+                <a href="/tools/planinsite" class="ndp-link ndp-tool-link">Open Tool →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="/pages/docs.html">Docs</a>
+        <a href="/pricing">Pricing</a>
         <a href="/pricing" class="nav-cta">Start Free Trial</a>
       </div>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">

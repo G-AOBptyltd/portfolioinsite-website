@@ -169,6 +169,47 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--primary-bright) !important;
   transform: translateY(-1px);
 }
+/* ── Products dropdown navigation ── */
+.nav-dropdown { position: relative; }
+.nav-dropdown-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: inherit; font-size: 0.95rem; font-weight: 500;
+  color: var(--gray-600); display: inline-flex; align-items: center;
+  gap: 5px; padding: 0; transition: color 0.2s;
+}
+.nav-dropdown-btn:hover,
+.nav-dropdown-btn[aria-expanded="true"] { color: var(--primary); }
+.nav-chevron { transition: transform 0.2s; flex-shrink: 0; }
+.nav-dropdown-btn[aria-expanded="true"] .nav-chevron { transform: rotate(180deg); }
+.nav-dropdown-panel {
+  display: none; position: absolute; top: calc(100% + 18px);
+  left: 50%; transform: translateX(-50%);
+  background: #fff; border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.14);
+  padding: 24px 28px; z-index: 200; min-width: 620px;
+}
+.nav-dropdown-panel.open { display: block; }
+.ndp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.ndp-col { display: flex; flex-direction: column; gap: 4px; }
+.ndp-divider {
+  width: 1px; background: var(--border, #e2e8f0); margin: 0 4px;
+}
+.ndp-tool { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.ndp-badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: #94a3b8; margin-bottom: 8px;
+}
+.ndp-link {
+  font-size: 13px !important; color: var(--gray-600) !important;
+  font-weight: 500 !important; padding: 3px 0 !important;
+  transition: color 0.15s !important; text-decoration: none !important;
+  display: block;
+}
+.ndp-link:hover { color: var(--primary) !important; }
+.ndp-tool-link { color: #94a3b8 !important; font-style: italic; }
+.ndp-tool-link:hover { color: var(--primary) !important; }
+
 .nav-toggle {
   display: none;
   flex-direction: column;
@@ -667,4 +708,17 @@ h1, h2, h3, h4, h5, h6 {
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
   .waitlist-form { flex-direction: column; }
+
+  /* Mobile: Products dropdown adapts to full-screen overlay */
+  .nav-dropdown { width: 100%; text-align: center; }
+  .nav-dropdown-btn { font-size: 1.25rem; justify-content: center; width: 100%; }
+  .nav-dropdown-panel {
+    position: static; transform: none; min-width: auto;
+    border-radius: 12px; padding: 16px;
+    box-shadow: none; border: 1px solid var(--border, #e2e8f0);
+    margin-top: 8px; width: 90vw; max-width: 400px;
+  }
+  .ndp-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ndp-tool { font-size: 12px; }
+  .ndp-link { font-size: 12px !important; }
 }
