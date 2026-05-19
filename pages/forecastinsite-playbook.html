@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForecastInSite v5 Playbook — Lean Agile Financial Modelling & Governance</title>
+  <meta name="description" content="The complete practitioner guide to ForecastInSite v5. Learn how to model team costs, forecast PI spend, track feature economics, and govern your lean agile portfolio.">
+  <meta property="og:title" content="ForecastInSite v5 Playbook">
+  <meta property="og:description" content="Step-by-step guidance for every module in ForecastInSite v5 — the lean agile financial modelling platform.">
+  <link rel="canonical" href="https://portfolioinsite.com.au/playbook">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ac: #06b6d4;
+      --ac-dark: #0891b2;
+      --ac-light: #e0f7fa;
+      --bg: #ffffff;
+      --bg1: #f8fafc;
+      --bg2: #f1f5f9;
+      --t1: #0f172a;
+      --t2: #475569;
+      --t3: #94a3b8;
+      --bdr: #e2e8f0;
+      --sidebar-w: 256px;
+      --header-h: 64px;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── TOP HEADER ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 200;
+      gap: 16px;
+    }
+    .hdr-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .hdr-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hdr-logo svg { width: 18px; height: 18px; color: #fff; }
+    .hdr-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--t1); }
+    .hdr-badge { background: var(--ac); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.5px; }
+    .hdr-title { font-size: 13px; color: var(--t2); font-weight: 500; border-left: 1px solid var(--bdr); padding-left: 16px; }
+    .hdr-right { display: flex; align-items: center; gap: 10px; }
+    .btn-primary {
+      background: var(--ac);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--ac-dark); }
+    .btn-outline {
+      background: transparent;
+      color: var(--t1);
+      border: 1px solid var(--bdr);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ac); color: var(--ac); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: fixed;
+      top: var(--header-h);
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      background: var(--bg1);
+      border-right: 1px solid var(--bdr);
+      padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 2px; }
+    .sb-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      padding: 0 16px 8px;
+      margin-top: 12px;
+    }
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t2);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all .12s;
+      cursor: pointer;
+    }
+    .sb-link:hover { color: var(--t1); background: var(--bg2); }
+    .sb-link.active { color: var(--ac); border-left-color: var(--ac); background: var(--ac-light); font-weight: 600; }
+    .sb-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+    .sb-lock { margin-left: auto; font-size: 11px; color: var(--t3); }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── HERO ── */
+    .playbook-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0891b2 100%);
+      padding: 64px 48px;
+      color: #fff;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(6,182,212,.2);
+      border: 1px solid rgba(6,182,212,.4);
+      color: var(--ac);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .hero-title span { color: var(--ac); }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,.7); max-width: 560px; margin-bottom: 28px; line-height: 1.7; }
+    .hero-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .hero-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,.6); }
+    .hero-stat strong { color: #fff; font-weight: 600; }
+
+    /* ── SECTION ── */
+    .module-section {
+      padding: 56px 48px;
+      border-bottom: 1px solid var(--bdr);
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+    .module-section:nth-child(even) { background: var(--bg1); }
+
+    .mod-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .mod-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .mod-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .mod-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .mod-icon.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .mod-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .mod-icon.slate { background: linear-gradient(135deg, #64748b, #475569); }
+    .mod-icon.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .mod-icon.rose { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+
+    .mod-meta { flex: 1; }
+    .mod-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--t1);
+      margin-bottom: 8px;
+    }
+    .mod-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+    }
+    .badge-fc { background: #e0f2fe; color: #0369a1; }
+    .badge-pm { background: #f0fdf4; color: #15803d; }
+    .badge-dm { background: #fdf4ff; color: #7e22ce; }
+    .badge-all { background: var(--ac-light); color: var(--ac-dark); }
+    .badge-new { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-v5 { background: linear-gradient(135deg,#06b6d4,#8b5cf6); color:#fff; }
+
+    /* ── PUBLIC CONTENT ── */
+    .pub-overview {
+      font-size: 15px;
+      color: var(--t2);
+      line-height: 1.75;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+    .pub-caps {
+      background: var(--bg2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .pub-caps h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 12px;
+    }
+    .pub-caps ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .pub-caps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--t2);
+    }
+    .pub-caps li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--ac);
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-wrap {
+      background: var(--t1);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      position: relative;
+      aspect-ratio: 16/9;
+      max-width: 720px;
+    }
+    .video-wrap video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+      color: rgba(255,255,255,.5);
+    }
+    .video-placeholder .play-ring {
+      width: 56px; height: 56px;
+      border: 2px solid rgba(6,182,212,.5);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ac);
+      font-size: 20px;
+    }
+    .video-placeholder p { font-size: 12px; text-align: center; max-width: 180px; }
+    .video-label {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: -20px;
+      margin-bottom: 28px;
+    }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .img-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      border: 1px solid var(--bdr);
+      max-width: 720px;
+    }
+    .img-wrap img { width: 100%; display: block; }
+    .img-placeholder {
+      background: var(--bg2);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--t3);
+      font-size: 13px;
+    }
+    .img-placeholder span { font-size: 28px; }
+
+    /* ── GATE ── */
+    .gate-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .gate-inner {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .gate-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 25%, rgba(255,255,255,0.97) 55%);
+      z-index: 1;
+    }
+    .module-section:nth-child(even) .gate-fade {
+      background: linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.6) 25%, rgba(248,250,252,0.97) 55%);
+    }
+    .gate-card {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px 36px;
+      text-align: center;
+    }
+    .gate-lock { font-size: 28px; margin-bottom: 10px; }
+    .gate-card h3 { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--t2); max-width: 360px; margin-bottom: 18px; line-height: 1.6; }
+    .btn-unlock {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--ac);
+      color: #fff;
+      text-decoration: none;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-unlock:hover { background: var(--ac-dark); }
+
+    /* ── GATED CONTENT SAMPLE ── */
+    .gated-steps { padding: 0 0 16px; }
+    .gated-steps h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 14px; }
+    .step { display: flex; gap: 14px; margin-bottom: 16px; }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--ac); color: #fff;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body h5 { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+    .step-body p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .tip-card {
+      background: var(--bg2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--ac);
+    }
+    .tip-card h5 { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .tip-card p { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    /* ── METRICS STRIP ── */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: var(--bg);
+      border: 1px solid var(--bdr);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-card .metric-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--ac); }
+    .metric-card .metric-lbl { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--bdr);
+    }
+
+    /* ── ROLE GUIDE CARDS ── */
+    .role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-bottom: 28px; }
+    .role-card { border-radius: var(--radius); padding: 20px; border: 1px solid var(--bdr); }
+    .role-card.fc { border-top: 3px solid #0ea5e9; }
+    .role-card.pm { border-top: 3px solid #10b981; }
+    .role-card.dm { border-top: 3px solid #8b5cf6; }
+    .role-card h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .role-card p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+    .role-emoji { font-size: 20px; margin-bottom: 8px; }
+
+    /* ── FOOTER ── */
+    .playbook-footer {
+      background: var(--t1);
+      color: rgba(255,255,255,.6);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-left: 0;
+    }
+    .playbook-footer a { color: var(--ac); text-decoration: none; font-size: 13px; }
+    .playbook-footer p { font-size: 13px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .module-section { padding: 36px 24px; }
+      .playbook-hero { padding: 40px 24px; }
+      .hero-title { font-size: 28px; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .hdr-title { display: none; }
+      .playbook-footer { padding: 32px 24px; }
+    }
+
+    /* ── ACTIVE NAV HIGHLIGHT ── */
+    .module-section { transition: none; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     TOP HEADER
+════════════════════════════════════════ -->
+<header class="site-header">
+  <a href="https://portfolioinsite.com.au" class="hdr-brand">
+    <div class="hdr-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <span class="hdr-name">ForecastInSite</span>
+    <span class="hdr-badge">v5</span>
+  </a>
+  <span class="hdr-title">Playbook &amp; Practitioner Guide</span>
+  <div class="hdr-right">
+    <a href="/tools/forecastinsite" class="btn-outline">Open Tool →</a>
+    <a href="#purchase" class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Unlock Full Playbook
+    </a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     LAYOUT
+════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-label">Getting Started</div>
+    <a class="sb-link active" href="#getting-started" onclick="setActive(this)"><span class="sb-icon">🚀</span> Getting Started</a>
+    <a class="sb-link" href="#roles" onclick="setActive(this)"><span class="sb-icon">🎭</span> Roles Guide</a>
+
+    <div class="sb-label">Core Modules</div>
+    <a class="sb-link" href="#command-centre" onclick="setActive(this)"><span class="sb-icon">🎛️</span> Command Centre</a>
+    <a class="sb-link" href="#teams-capacity" onclick="setActive(this)"><span class="sb-icon">👥</span> Teams &amp; Capacity</a>
+    <a class="sb-link" href="#budget-actuals" onclick="setActive(this)"><span class="sb-icon">💰</span> Budget &amp; Actuals</a>
+    <a class="sb-link" href="#feature-economics" onclick="setActive(this)"><span class="sb-icon">⚡</span> Feature Economics</a>
+    <a class="sb-link" href="#value-stream" onclick="setActive(this)"><span class="sb-icon">🌊</span> Value Stream</a>
+    <a class="sb-link" href="#productivity" onclick="setActive(this)"><span class="sb-icon">📈</span> Productivity</a>
+
+    <div class="sb-label">Advanced</div>
+    <a class="sb-link" href="#ai-workforce" onclick="setActive(this)"><span class="sb-icon">🤖</span> AI Workforce <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#licences-overhead" onclick="setActive(this)"><span class="sb-icon">📋</span> Licences &amp; Overhead <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#relative-sizing" onclick="setActive(this)"><span class="sb-icon">📐</span> Relative Sizing <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#reporting" onclick="setActive(this)"><span class="sb-icon">📊</span> Reporting <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#capacity-planner" onclick="setActive(this)"><span class="sb-icon">🗓️</span> Capacity Planner <span class="sb-lock">🔒</span></a>
+
+    <div class="sb-label">Governance (v5)</div>
+    <a class="sb-link" href="#raid-log" onclick="setActive(this)"><span class="sb-icon">🔍</span> RAID Log <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#milestones" onclick="setActive(this)"><span class="sb-icon">🎯</span> Milestones <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#configuration" onclick="setActive(this)"><span class="sb-icon">⚙️</span> Configuration <span class="sb-lock">🔒</span></a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="playbook-hero">
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        ForecastInSite v5 — Practitioner Playbook
+      </div>
+      <h1 class="hero-title">The True Cost of Value.<br><span>Governed. Forecasted. Delivered.</span></h1>
+      <p class="hero-sub">Everything you need to model team costs, forecast PI spend, track feature ROI, and govern your lean agile portfolio — from Command Centre to RAID log.</p>
+      <div class="hero-meta">
+        <span class="hero-stat"><strong>15</strong> modules covered</span>
+        <span class="hero-stat"><strong>3</strong> role-specific views</span>
+        <span class="hero-stat"><strong>v5</strong> — latest release</span>
+        <span class="hero-stat">100% browser-based, no install</span>
+      </div>
+    </div>
+
+    <!-- ════════ GETTING STARTED ════════ -->
+    <section class="module-section" id="getting-started">
+      <div class="mod-header">
+        <div class="mod-icon">🚀</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Getting Started</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+            <span class="badge badge-v5">v5</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">ForecastInSite v5 is a fully browser-based lean agile financial modelling platform. There is nothing to install — open the tool, choose your starting point, select your role, and you're modelling within minutes. Your data lives in your browser's local storage and can be exported as JSON at any time.</p>
+
+      <div class="pub-caps">
+        <h4>What you get out of the box</h4>
+        <ul>
+          <li>Three role-optimised views: Financial Controller, Portfolio Manager, and Project/Delivery Manager — each with a tailored tab set</li>
+          <li>Pre-loaded demo data spanning 6 teams, 4 PIs, and realistic budget scenarios — activate with a single click</li>
+          <li>Full JSON import/export so your data travels with you and can be shared with colleagues</li>
+          <li>Persistent local storage — your last session is always waiting when you return</li>
+          <li>Dark and light theme that adapts to your system preference</li>
+        </ul>
+      </div>
+
+      <!-- VIDEO SLOT -->
+      <div class="video-wrap" id="vid-getting-started">
+        <!-- DROP MP4 HERE: img/forecastinsite/videos/getting-started.mp4 -->
+        <!-- <video src="../img/forecastinsite/videos/getting-started.mp4" autoplay muted loop playsinline controls></video> -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Getting Started walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~90 seconds · Startup screen, role selection, demo data</p>
+
+      <div class="section-divider">Step-by-step guide</div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>How to set up ForecastInSite for your portfolio</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Open the tool and choose your start</h5><p>On first load you'll see the startup screen. Choose Load Demo to explore with realistic data, Start Fresh to enter your own, or Import to load a previously exported JSON file.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Select your role</h5><p>Choose Financial Controller (full cost and budget access), Portfolio Manager (feature and value focus), or Project/Delivery Manager (team and delivery focus). You can switch roles at any time from the header.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Configure your Financial Year</h5><p>Navigate to Configuration → set your FY start month. This drives all quarter and PI calculations across the tool. Australia defaults to July.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Set up your PI schedule</h5><p>Define how many sprints per PI and your sprint length. ForecastInSite will generate your complete PI and quarter calendar automatically.</p></div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Add your teams and members</h5><p>In Teams &amp; Capacity, create each delivery team, add members with their cost rates, and define FTE percentages. The tool calculates monthly and PI-level costs immediately.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Start with demo data</h5><p>Even if you have real data, run through the demo first to understand how each tab interconnects before entering your own numbers.</p></div>
+            <div class="tip-card"><h5>💡 Export early, export often</h5><p>Use the Export button after every major configuration change. JSON exports are your backup — local storage can be cleared by the browser.</p></div>
+            <div class="tip-card"><h5>💡 Role switching is instant</h5><p>The Financial Controller and Portfolio Manager see different tabs. Toggle between roles to understand what each stakeholder experiences.</p></div>
+            <div class="tip-card"><h5>💡 One PI at a time</h5><p>Use the PI navigator (◀ ▶) to move between programme increments. Build one PI accurately before copying patterns to future PIs.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Setup Guide Included</h3>
+          <p>Unlock the complete step-by-step playbook including data preparation checklist, PI configuration guide, and team onboarding workflow.</p>
+          <a href="#purchase" class="btn-unlock">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ ROLES GUIDE ════════ -->
+    <section class="module-section" id="roles">
+      <div class="mod-header">
+        <div class="mod-icon green">🎭</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Roles Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-dm">Project Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">ForecastInSite v5 is role-aware. Each role sees a curated tab set built around what actually matters for their job. Switching roles is instant — no data is lost, just the lens changes.</p>
+
+      <div class="role-cards">
+        <div class="role-card fc">
+          <div class="role-emoji">💰</div>
+          <h4>Financial Controller</h4>
+          <p>Full cost visibility across all teams and PIs. Command Centre, Budget &amp; Actuals, Licences &amp; Overhead, and Reporting. Owns the financial narrative.</p>
+        </div>
+        <div class="role-card pm">
+          <div class="role-emoji">🗺️</div>
+          <h4>Portfolio Manager</h4>
+          <p>Feature economics, value stream, and scenario planning. Sees Feature Economics, Value Stream, Relative Sizing, and Capacity Planner. Owns the delivery-value balance.</p>
+        </div>
+        <div class="role-card dm">
+          <div class="role-emoji">🚀</div>
+          <h4>Project / Delivery Manager</h4>
+          <p>Team health, capacity, productivity, and RAID governance. Sees Teams &amp; Capacity, Productivity, RAID Log, and Milestones. Owns delivery execution.</p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Choosing the right role for your context</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Financial Controller — when budget accountability is primary</h5><p>Use this role for PI budget reviews, finance team presentations, cost variance analysis, and licence audit reporting. The Command Centre dashboard is designed to answer "are we over budget and why?" in under 30 seconds.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Portfolio Manager — when value delivery is primary</h5><p>Use this role for PI planning workshops, feature prioritisation sessions, and stakeholder value reviews. Feature Economics shows you cost-per-point and revenue per feature — the conversation shifts from "how much" to "is it worth it".</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Project / Delivery Manager — when execution is primary</h5><p>Use this role for daily standups, sprint reviews, and team capacity checks. The RAID log and milestones are front and centre so blockers never get buried in a spreadsheet.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Role Configuration Guide</h3>
+          <p>Learn how to configure each role for your organisation's governance model and which tabs to present in which stakeholder meetings.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ COMMAND CENTRE ════════ -->
+    <section class="module-section" id="command-centre">
+      <div class="mod-header">
+        <div class="mod-icon">🎛️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Command Centre</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Command Centre is the executive dashboard of ForecastInSite — the first thing you see when you open the tool. In a single view it answers the four questions every leadership team asks at the start of a PI review: How much have we budgeted? How much have we spent? What's the variance? And how accurate is our forecast?</p>
+
+      <div class="metrics-strip">
+        <div class="metric-card"><div class="metric-val">$1.57M</div><div class="metric-lbl">Total Budget</div></div>
+        <div class="metric-card"><div class="metric-val">$1.62M</div><div class="metric-lbl">Total Spend</div></div>
+        <div class="metric-card"><div class="metric-val">-3.2%</div><div class="metric-lbl">Variance</div></div>
+        <div class="metric-card"><div class="metric-val">96.8%</div><div class="metric-lbl">Forecast Accuracy</div></div>
+      </div>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Four live KPI cards: Total Budget, Total Spend, Variance ($ and %), and Forecast Accuracy — updated as you change any figure in the tool</li>
+          <li>Budget Burn by Team — grouped bar chart showing Budgeted, Actual, and Forecast for every team in the current PI</li>
+          <li>Top 5 Over-Budget Teams table with RAG (Red/Amber/Green) status indicators and variance amounts</li>
+          <li>Cost Per Point Trend — which teams are getting more or less expensive to deliver a story point over time</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/command-centre.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Command Centre walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~60 seconds · KPI cards, budget burn chart, over-budget analysis</p>
+
+      <div class="section-divider">Full module guide</div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>How to use Command Centre effectively</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Check the variance indicator first</h5><p>Red variance means you're over budget for the current PI. Click through to Budget &amp; Actuals to see which cost category is driving the blowout before escalating.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Read the Budget Burn chart by column group</h5><p>Each team shows three bars: Budgeted (blue), Actual (red), Forecast (amber). If Forecast exceeds Budgeted and you're mid-PI, you have a problem you can still address. If Actual exceeds Budgeted and the PI is complete, that's a retrospective finding.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Use the Top 5 table for prioritisation</h5><p>Not all over-budget teams need the same response. A team 1% over on a $50k budget is noise. A team 15% over on a $300k budget is a governance event. Use the variance $ figure, not just the RAG dot.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Cost Per Point Trend reveals hidden waste</h5><p>Rising cost per point means the team is spending more to deliver the same story points. Could be overtime, contractor uplift, or velocity decay. This is the leading indicator to watch.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Present this tab first</h5><p>In any PI review, start on Command Centre. It anchors the conversation on facts before anyone opens a spreadsheet.</p></div>
+            <div class="tip-card"><h5>💡 Forecast ≠ Actual</h5><p>Forecast is your modelled end-state. Actual is what's been spent. Keep both current for the accuracy metric to mean anything.</p></div>
+            <div class="tip-card"><h5>💡 RAG thresholds</h5><p>Red = over 10% variance. Amber = 5–10%. Green = within 5%. These can be tuned in Configuration to match your governance policy.</p></div>
+            <div class="tip-card"><h5>💡 PI navigator</h5><p>Use the ◀ ▶ controls in the header to compare this PI to previous ones. Cost per point trend is most meaningful across 3+ PIs.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Command Centre Playbook</h3>
+          <p>Includes PI review presentation template, RAG threshold configuration guide, and how to use Command Centre data in executive reporting.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ TEAMS & CAPACITY ════════ -->
+    <section class="module-section" id="teams-capacity">
+      <div class="mod-header">
+        <div class="mod-icon purple">👥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Teams &amp; Capacity</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-dm">Project Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Teams &amp; Capacity is where you build the financial DNA of your delivery organisation. Every team member, contractor, AI agent, and their associated cost rate is defined here. The module calculates monthly cost, PI-level cost, and FTE allocation automatically — feeding every other financial view in the tool.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Create unlimited delivery teams, each with a name, Agile Release Train, and primary role</li>
+          <li>Add FTE members and contractors with daily or monthly cost rates — the tool converts to consistent monthly figures automatically</li>
+          <li>Model AI agents as first-class team members with licence cost, compute cost, and productivity multiplier</li>
+          <li>See real-time monthly team cost totals and PI-level projections as you configure each team</li>
+          <li>Employment type badges (FTE / Contractor / AI Agent) give instant visibility of team composition</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/teams-capacity.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Teams &amp; Capacity walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~90 seconds · Adding teams, members, cost rates, AI agents</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Building your team cost model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Create your teams</h5><p>Click Add Team. Give it a name that matches your Jira project or ART structure. Consistent naming matters — it flows through to all charts and reports.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Add members with cost rates</h5><p>For each member, enter their name, role, employment type (FTE or Contractor), and cost rate. Choose Daily or Monthly rate — the tool normalises to monthly using a 20-working-day multiplier.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set FTE percentage</h5><p>If a member is only 50% allocated to this team, set FTE% to 0.5. Monthly cost and PI projections respect the FTE weighting.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Add AI agents</h5><p>Click Add AI Agent. Enter the tool name, monthly licence cost, estimated compute cost, and productivity multiplier (e.g. 1.3 = 30% productivity boost). The tool models ROI automatically.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Use blended rates for contractors</h5><p>If you don't know individual contractor rates, use a blended market rate for the role. This is more defensible in governance reviews than guessing.</p></div>
+            <div class="tip-card"><h5>💡 AI agent ROI model</h5><p>The productivity multiplier converts AI cost to human-equivalent value. A 1.5x multiplier on a $500/month tool means you're getting $750 worth of human capacity — model this before every AI tool renewal.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Teams &amp; Capacity Playbook</h3>
+          <p>Includes cost rate benchmarks by role, FTE allocation frameworks, contractor cost modelling guide, and the AI workforce ROI calculator methodology.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ BUDGET & ACTUALS ════════ -->
+    <section class="module-section" id="budget-actuals">
+      <div class="mod-header">
+        <div class="mod-icon amber">💰</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Budget &amp; Actuals</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Budget &amp; Actuals is the financial ledger of your PI. Set your approved budget per team, enter actuals as the PI progresses, and ForecastInSite handles variance calculation, RAG status, and trend analysis automatically. This is where the financial conversation gets granular.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Set team-level budgets per PI and track actuals in real-time</li>
+          <li>Automatic variance calculation with RAG (Red/Amber/Green) status per team</li>
+          <li>Period-over-period comparison across multiple PIs</li>
+          <li>Forecast-to-completion modelling based on current burn rate</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/budget-actuals.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Budget &amp; Actuals walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Running your PI budget cycle</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Set approved budgets at PI start</h5><p>Enter the approved budget for each team at the beginning of each PI. Lock these figures once the PI starts — variance is only meaningful against a fixed baseline.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Update actuals fortnightly</h5><p>Align actuals updates with your payroll cycle or sprint cadence. Fortnightly is the minimum frequency for actuals to be useful as a governance signal.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Review RAG status before steering committee</h5><p>Red teams need a narrative before the meeting — not during it. Use the variance $ and % to prepare a one-sentence explanation for each red team.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Budget ≠ team cost</h5><p>Your team cost (from Teams &amp; Capacity) is the modelled run rate. Your budget is the approved envelope. These should align at PI planning — if they don't, you already have a problem.</p></div>
+            <div class="tip-card"><h5>💡 Variance tolerance</h5><p>Set your RAG thresholds to match your finance policy. Most organisations use ±5% for amber and ±10% for red, but scaling organisations often use ±3% for red.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Budget &amp; Actuals Playbook</h3>
+          <p>Includes PI budget template, actuals entry workflow, variance narrative guide, and finance governance calendar.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ FEATURE ECONOMICS ════════ -->
+    <section class="module-section" id="feature-economics">
+      <div class="mod-header">
+        <div class="mod-icon">⚡</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Feature Economics</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-fc">Financial Controller</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Feature Economics answers the question every executive eventually asks: "We're spending $1.6M this PI — what value are we actually getting for it?" It maps every feature to a cost, a business value score, and (optionally) a revenue figure. The result is a cost-per-point and ROI view that makes prioritisation a financial conversation, not just a planning one.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Track features with business value score, story point estimate, and delivery cost</li>
+          <li>Mark features as revenue-generating and track actual revenue realised</li>
+          <li>Automatic cost-per-point calculation per feature and per team</li>
+          <li>Incomplete feature tracking — cost sunk on features not yet delivered</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/feature-economics.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Feature Economics walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Building your feature cost model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Add your PI features</h5><p>Import from Jira or enter manually. Each feature needs a name, story point estimate, assigned team, and business value score (1–10 or MoSCoW).</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Tag revenue features</h5><p>Mark any feature that directly generates revenue. Add the expected revenue figure. ForecastInSite will calculate ROI automatically.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Track delivery status</h5><p>As features complete, update their status. Incomplete features at PI end are your sunk cost signal — the next PI planning conversation starts here.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Cost-per-point as a KPI</h5><p>Cost per story point is your unit economics. Track it across 3+ PIs to spot whether your delivery efficiency is improving or degrading.</p></div>
+            <div class="tip-card"><h5>💡 Sunk cost visibility</h5><p>Features started but not completed represent locked capital. Feature Economics surfaces this automatically — use it to challenge the "we've already started it" prioritisation bias.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Feature Economics Playbook</h3>
+          <p>Includes feature scoring framework, ROI calculation methodology, cost-per-point benchmarks by team type, and the incomplete feature governance model.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ VALUE STREAM ════════ -->
+    <section class="module-section" id="value-stream">
+      <div class="mod-header">
+        <div class="mod-icon green">🌊</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Value Stream</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Value Stream maps your delivery capacity to the value it produces — connecting the financial cost model to the flow of work through your organisation. It surfaces efficiency ratios, throughput trends, and where value is getting stuck before it reaches customers.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Value stream efficiency ratio — value delivered vs capacity consumed</li>
+          <li>Flow metrics: throughput, cycle time, and WIP by team</li>
+          <li>Cross-team value contribution analysis</li>
+          <li>PI-over-PI value trend to identify improvement or degradation</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/value-stream.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Value Stream walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Analysing your value flow</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Review the efficiency ratio</h5><p>Value stream efficiency = value delivered ÷ total capacity invested. An efficiency below 40% means more than half your spend is not producing customer value.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Identify throughput outliers</h5><p>Teams with low throughput relative to their cost are your highest-risk investments. Use this data to ask whether team structure or backlog quality is the constraint.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Value ≠ story points</h5><p>High throughput teams delivering low-value features are expensive noise. Value Stream connects the two — don't manage velocity in isolation.</p></div>
+            <div class="tip-card"><h5>💡 WIP is a cost driver</h5><p>Every feature in progress but not complete is capital locked. Value Stream makes WIP visible as a financial metric, not just a process metric.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Value Stream Playbook</h3>
+          <p>Flow efficiency benchmarks, WIP limit guidance, and how to use value stream data in PI retrospectives and investment decisions.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ PRODUCTIVITY ════════ -->
+    <section class="module-section" id="productivity">
+      <div class="mod-header">
+        <div class="mod-icon indigo">📈</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Productivity</h2>
+          <div class="mod-badges">
+            <span class="badge badge-dm">Project Manager</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Productivity tracks team performance over time — velocity trends, capacity utilisation, and the contribution of AI agents to team output. It separates "busy" from "productive" by connecting effort to delivered value.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Velocity tracking per team across PIs and sprints</li>
+          <li>Capacity utilisation rate — planned vs actual capacity consumed</li>
+          <li>AI agent productivity contribution isolated and modelled separately</li>
+          <li>Productivity trend indicators (improving ↑, declining ↓, stable →)</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/productivity.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Productivity walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Using productivity data in PI retrospectives</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Review velocity trend first</h5><p>Is the team delivering more or fewer story points per sprint compared to the last PI? A declining trend needs a root cause conversation before the next PI planning event.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Check utilisation rate</h5><p>Teams consistently above 90% utilisation are at risk of quality problems and burnout. Teams consistently below 70% may have a backlog or dependency issue hiding a capacity problem.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Velocity is a diagnostic, not a target</h5><p>Never use velocity as a performance target — teams game it. Use it to spot systemic change (impediments, team restructure, tech debt load).</p></div>
+            <div class="tip-card"><h5>💡 AI contribution visibility</h5><p>ForecastInSite is one of very few tools that lets you see the productivity delta from AI tooling. Track this across PIs to justify AI investment at finance review.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Productivity Playbook</h3>
+          <p>Velocity benchmarks by team size, capacity utilisation guidance, and the AI productivity ROI model explained step by step.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ AI WORKFORCE ════════ -->
+    <section class="module-section" id="ai-workforce">
+      <div class="mod-header">
+        <div class="mod-icon">🤖</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">AI Workforce</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-dm">Project Manager</span>
+            <span class="badge badge-new">v5 Feature</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">AI Workforce is ForecastInSite's dedicated module for modelling the financial and productivity impact of AI agents within your delivery teams. As AI tooling becomes a line item on every technology budget, AI Workforce gives you the governance framework to justify, track, and optimise that spend.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Model AI agents as team members with licence cost, compute cost, and productivity multiplier</li>
+          <li>Calculate the human-equivalent cost of each AI tool — making ROI tangible</li>
+          <li>See the blended human + AI cost per team against output delivered</li>
+          <li>Track AI tool proliferation across teams and surface duplication of tools</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/ai-workforce.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>AI Workforce walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Governing your AI tooling spend</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Audit all AI tools in use</h5><p>Before modelling, list every AI tool each team uses — GitHub Copilot, Claude, Notion AI, Jira AI, etc. Many organisations discover 3–5x more AI spend than finance is tracking.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Set the productivity multiplier honestly</h5><p>Don't use vendor claims. Use your team's actual experience. A conservative 1.2x (20% productivity boost) is more defensible than 2x and just as valuable in an ROI argument.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Compare human-equivalent cost</h5><p>If a $500/month AI tool with a 1.3x multiplier replaces the equivalent of 1.3 humans at $8,000/month, the ROI is self-evident. ForecastInSite surfaces this comparison automatically.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Compute cost matters</h5><p>For internally deployed models, compute cost can dwarf licence cost. Always include both in your AI cost model — licence + compute = true AI spend.</p></div>
+            <div class="tip-card"><h5>💡 Tool consolidation opportunity</h5><p>When multiple teams use different AI tools for the same purpose, AI Workforce surfaces the duplication. A single enterprise licence is almost always cheaper.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full AI Workforce Playbook</h3>
+          <p>AI tool audit template, productivity multiplier benchmarks by tool category, and the complete ROI governance framework for AI investment decisions.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ LICENCES & OVERHEAD ════════ -->
+    <section class="module-section" id="licences-overhead">
+      <div class="mod-header">
+        <div class="mod-icon slate">📋</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Licences &amp; Overhead</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Licences &amp; Overhead captures the non-headcount cost of delivery — software licences, platform costs, tooling subscriptions, and overhead allocations. In most agile organisations, this category is 15–25% of total delivery cost and is almost never modelled accurately.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Track all software and platform licences with seat counts, unit costs, and renewal dates</li>
+          <li>Allocate overhead costs (office, hardware, tooling) across teams by headcount or percentage</li>
+          <li>See total true cost of delivery (headcount + licences + overhead) per team and PI</li>
+          <li>Licence renewal calendar to prevent unbudgeted surprises</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/licences-overhead.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Licences &amp; Overhead walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Building your true cost model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Gather all non-headcount costs</h5><p>Pull your last invoice from every software vendor. Include Jira, Confluence, GitHub, CI/CD tools, monitoring, security tooling, and cloud infrastructure. You'll likely find 20–30% more spend than your budget spreadsheet shows.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Allocate to teams</h5><p>Most licences are enterprise or per-seat. Per-seat licences allocate to the team that uses them. Enterprise licences can be split by headcount proportion or usage percentage.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 True cost = headcount + licences + overhead</h5><p>Most "agile cost" conversations only count salaries. Add licences and overhead and the number typically increases by 30–40%. Know your real number.</p></div>
+            <div class="tip-card"><h5>💡 Renewal calendar</h5><p>Enter every licence renewal date. ForecastInSite flags upcoming renewals so you can budget for them in the next PI — not scramble for emergency approval.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Licences &amp; Overhead Playbook</h3>
+          <p>Software licence audit checklist, overhead allocation methodologies, and the true cost model explained with worked examples.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ RELATIVE SIZING ════════ -->
+    <section class="module-section" id="relative-sizing">
+      <div class="mod-header">
+        <div class="mod-icon green">📐</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Relative Sizing</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-dm">Project Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Relative Sizing calibrates story point estimates across teams so that financial comparisons are meaningful. If Team A's "5 points" costs $2,000 and Team B's "5 points" costs $8,000, cost-per-point is meaningless without a normalisation layer. This module provides that layer.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Calibrate story points against a reference feature to create a common sizing scale</li>
+          <li>T-shirt to points mapping for organisations that estimate at initiative level</li>
+          <li>Cross-team normalisation factor — comparable cost-per-point across teams of different maturity</li>
+          <li>Historical velocity-based calibration to validate estimate accuracy</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/relative-sizing.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Relative Sizing walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Calibrating your sizing model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Choose a reference feature</h5><p>Pick one well-understood, mid-sized feature that every team can relate to. Size it as your "5-point reference". All other estimates calibrate relative to this anchor.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Apply normalisation factors</h5><p>If Team A consistently delivers 2x the complexity per point compared to Team B, apply a 0.5 normalisation factor to Team B. Now cost-per-normalised-point is comparable.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Don't compare raw velocity</h5><p>A team doing 80 points a sprint and a team doing 40 points cannot be compared without normalisation. Relative Sizing makes this honest.</p></div>
+            <div class="tip-card"><h5>💡 Recalibrate every 3 PIs</h5><p>As teams mature, their sizing baselines shift. Recalibrate every 3 PIs or after any significant team change to keep comparisons valid.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Relative Sizing Playbook</h3>
+          <p>Calibration workshop guide, T-shirt to points conversion tables, normalisation methodology, and cross-team sizing governance framework.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ REPORTING ════════ -->
+    <section class="module-section" id="reporting">
+      <div class="mod-header">
+        <div class="mod-icon purple">📊</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Reporting</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Reporting aggregates every data point in ForecastInSite into stakeholder-ready outputs. Export PI financial summaries, team cost reports, and feature economics snapshots as structured JSON — ready for your BI tools, finance system, or governance portal.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Full data export as JSON — complete state snapshot including all teams, features, budget, and actuals</li>
+          <li>PI financial summary — budget, actuals, variance, and forecast in a single structured output</li>
+          <li>Feature economics report — cost, value, and ROI per feature, exportable for finance review</li>
+          <li>Import previously exported data to restore any historical PI state</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/reporting.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Reporting &amp; Export walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Setting up your reporting workflow</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Export at every PI milestone</h5><p>Export at PI planning, mid-PI review, and PI close. These three snapshots form your PI financial audit trail. Store the JSON files in your governance repository.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Share snapshots with Finance</h5><p>The JSON export can be parsed by any BI tool (Power BI, Tableau, Looker) or loaded into a spreadsheet. Share the PI close export with Finance as your actuals reconciliation source.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 JSON is your backup</h5><p>Local storage can be cleared. Every significant data entry should be followed by an Export. Treat JSON exports as your source of truth.</p></div>
+            <div class="tip-card"><h5>💡 Version your exports</h5><p>Name exports with PI and date: <code>FIS-PI4-2026-06-30.json</code>. You'll thank yourself during the year-end audit.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Reporting Playbook</h3>
+          <p>PI reporting templates, BI tool integration guide, governance audit checklist, and the finance reconciliation workflow.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ CAPACITY PLANNER ════════ -->
+    <section class="module-section" id="capacity-planner">
+      <div class="mod-header">
+        <div class="mod-icon amber">🗓️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Capacity Planner</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-dm">Project Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Capacity Planner connects team capacity to PI objectives — turning headcount and velocity into a concrete statement of what can be delivered this PI and at what cost. It's the bridge between the financial model and the delivery plan.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>PI capacity calculation per team based on FTE, velocity, and sprint count</li>
+          <li>Load analysis — available capacity vs planned feature point total</li>
+          <li>Over-capacity detection with recommended rebalancing options</li>
+          <li>Sprint-level capacity allocation for detailed PI planning</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/capacity-planner.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Capacity Planner walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Running a PI capacity plan</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Set team velocity baseline</h5><p>Use the last 3–5 sprints average as your velocity baseline. Don't use the best sprint — use a realistic sustainable pace for capacity planning.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Apply availability adjustments</h5><p>Subtract planned leave, innovation time, and PI ceremonies (typically 10–15% of capacity). ForecastInSite applies this as a configurable buffer.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Compare capacity to feature backlog</h5><p>Load your PI feature list point totals. If total feature points exceed capacity, you're already over-committed before PI planning starts. Use this data to drive the prioritisation conversation.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 85% rule</h5><p>Never plan to 100% capacity. 85% utilisation leaves room for unplanned work, defects, and dependencies. 100% utilisation = 0% responsiveness.</p></div>
+            <div class="tip-card"><h5>💡 Capacity is a financial constraint</h5><p>A team with 200 capacity points and a $300k budget has a cost-per-point constraint. Capacity Planner makes this explicit before features are committed.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Capacity Planner Playbook</h3>
+          <p>PI planning facilitation guide, capacity buffer framework, over-commitment detection and rebalancing methodology.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ RAID LOG ════════ -->
+    <section class="module-section" id="raid-log">
+      <div class="mod-header">
+        <div class="mod-icon red">🔍</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">RAID Log</h2>
+          <div class="mod-badges">
+            <span class="badge badge-dm">Project Manager</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-new">New in v5</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The RAID Log brings governance into the financial tool — tracking Risks, Assumptions, Issues, and Dependencies in the same context as your budget and delivery data. Every RAID item has a financial impact, an owner, and a status. No more "risks live in a separate spreadsheet no one reads."</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Create RAID items across four types: Risk, Assumption, Issue, Dependency</li>
+          <li>Assign financial impact, probability, and severity ratings to each item</li>
+          <li>Track status (Open, In Progress, Closed, Escalated) with owner and due date</li>
+          <li>Filter and sort by type, status, severity, and financial impact</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/raid-log.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>RAID Log walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Running your RAID governance cycle</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Populate at PI planning</h5><p>Every PI planning event should produce a RAID log. Walk through the PI objectives and ask: what could stop this? What are we assuming? What do we depend on others for? Enter each answer as a RAID item.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Review weekly</h5><p>The RAID log should be a standing agenda item in your weekly PI sync. New items get added. Closed items get archived. Escalated items get immediate owner assignment.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Connect to financials</h5><p>Every Risk should have a financial impact estimate. A risk with $50k impact and 70% probability is a $35k expected cost that should be in your risk reserve calculation.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Dependencies are the biggest risk</h5><p>In most scaled agile organisations, 60–80% of delivery delays trace back to cross-team dependencies. Capture every dependency before PI planning ends.</p></div>
+            <div class="tip-card"><h5>💡 Assumptions become risks</h5><p>Every assumption that turns out to be false becomes an issue or risk. Review assumptions mid-PI — if the assumption is no longer valid, log a new risk immediately.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full RAID Log Playbook</h3>
+          <p>RAID workshop facilitation guide, financial impact estimation framework, escalation path templates, and the PI governance cadence.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ MILESTONES ════════ -->
+    <section class="module-section" id="milestones">
+      <div class="mod-header">
+        <div class="mod-icon rose">🎯</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Milestones</h2>
+          <div class="mod-badges">
+            <span class="badge badge-dm">Project Manager</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-new">New in v5</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Milestones tracks the key delivery gates, review points, and commitments that matter to your stakeholders — with each milestone connected to the team, PI, and (optionally) a financial trigger. Never miss a steering committee date or release commitment again.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Create milestones with type (Release, Review, Commitment, Dependency), owner, and due date</li>
+          <li>Track milestone status (Planned, At Risk, Complete, Missed) across PIs</li>
+          <li>Link milestones to teams and features for traceability</li>
+          <li>At-Risk detection — milestones within 7 days of due date without Completed status are flagged automatically</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/milestones.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Milestones walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Setting up your milestone calendar</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Add all fixed dates first</h5><p>Start with the non-negotiables: steering committee dates, release windows, regulatory deadlines, and contractual commitments. These anchor everything else.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Add PI internal milestones</h5><p>System Integration Testing start, UAT start, go/no-go decision point, and PI demo. These form the internal gate structure that keeps the PI on track.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Assign owners, not teams</h5><p>Every milestone must have a named owner — not a team. Teams don't miss milestones; individuals do. Named ownership drives accountability.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Milestone density is a risk signal</h5><p>More than 3 milestones in a single sprint is a governance smell. Compress milestone density and you reduce the risk of everything slipping together.</p></div>
+            <div class="tip-card"><h5>💡 At-Risk is a lagging indicator</h5><p>Don't wait for the At-Risk flag. Review milestone confidence in your weekly sync — the 7-day flag is your last chance, not your early warning system.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Milestones Playbook</h3>
+          <p>Milestone taxonomy, PI gate structure templates, at-risk escalation protocol, and the delivery governance calendar framework.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ CONFIGURATION ════════ -->
+    <section class="module-section" id="configuration">
+      <div class="mod-header">
+        <div class="mod-icon slate">⚙️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Configuration</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Configuration is where you align ForecastInSite to your organisation's financial calendar, PI structure, and governance thresholds. Get this right once and every calculation in the tool — from quarter mapping to PI cost — flows correctly from it.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Financial Year start month — drives all quarter, PI, and annual calculations</li>
+          <li>PI schedule generator — define sprint length and count, and the tool builds your complete PI calendar automatically</li>
+          <li>Quarter-to-PI mapping — visual confirmation that your PI boundaries align to your financial quarters</li>
+          <li>RAG threshold configuration — set your own variance tolerances for Red and Amber status</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/configuration.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Configuration walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>First-time configuration checklist</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Set Financial Year start month</h5><p>Australia: July (7). UK: April (4). USA: October (10) for federal, January (1) for most commercial. This single setting drives all downstream calculations.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Define your PI structure</h5><p>Enter your sprint length (typically 2 weeks) and sprints per PI (typically 4–6). ForecastInSite generates the full PI schedule including IP sprint and PI dates.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Verify quarter alignment</h5><p>Use the Quarter Mapping preview to confirm your PI boundaries land within financial quarter boundaries. Misaligned PIs make financial reporting significantly harder.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Set RAG thresholds</h5><p>Configure your variance tolerance: Red at ±10%, Amber at ±5% is a common starting point. Align to your organisation's finance policy.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Configure before adding teams</h5><p>Configuration drives all downstream calculations. Add teams and features after configuration is complete — not before — to avoid recalculation surprises.</p></div>
+            <div class="tip-card"><h5>💡 PI alignment to quarters</h5><p>If your PIs don't align to financial quarters, your finance team will always be reconciling estimates. Align PI planning to quarter boundaries where possible.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Configuration Playbook</h3>
+          <p>FY configuration by country, PI structure templates for SAFe and non-SAFe teams, quarter alignment guide, and the governance threshold framework.</p>
+          <a href="#purchase" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ PURCHASE ANCHOR ════════ -->
+    <section class="module-section" id="purchase" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);border:none;">
+      <div style="max-width:560px;margin:0 auto;text-align:center;padding:24px 0;">
+        <div style="font-size:42px;margin-bottom:16px;">🔓</div>
+        <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:#fff;margin-bottom:14px;">Unlock the Full Playbook</h2>
+        <p style="font-size:15px;color:rgba(255,255,255,.7);line-height:1.75;margin-bottom:28px;">Get complete step-by-step guidance for all 15 modules, practitioner templates, governance frameworks, and priority access to new playbook sections as ForecastInSite evolves.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;margin-bottom:28px;">
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:14px;">
+            <span style="color:#06b6d4;">✓</span> All 15 module deep-dive guides
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:14px;">
+            <span style="color:#06b6d4;">✓</span> PI planning templates and governance calendars
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:14px;">
+            <span style="color:#06b6d4;">✓</span> Cost modelling and ROI calculation frameworks
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:14px;">
+            <span style="color:#06b6d4;">✓</span> Video walkthroughs for every module
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:14px;">
+            <span style="color:#06b6d4;">✓</span> Access to ForecastInSite with full licence
+          </div>
+        </div>
+        <a href="https://portfolioinsite.com.au/#waitlist" class="btn-primary" style="font-size:15px;padding:14px 32px;">
+          Get Started — Join the Waitlist
+        </a>
+        <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.4);">Already have a licence? <a href="/tools/forecastinsite" style="color:var(--ac);">Open ForecastInSite →</a></p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="playbook-footer">
+      <div>
+        <p>© 2026 Agility Ops Business Pty Ltd · <a href="https://portfolioinsite.com.au">portfolioinsite.com.au</a></p>
+        <p style="margin-top:4px;">ForecastInSite v5 Playbook — Lean Agile Financial Modelling &amp; Governance</p>
+      </div>
+      <div style="display:flex;gap:16px;">
+        <a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a>
+        <a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a>
+        <a href="/pages/sla.html">SLA</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Scroll-based active nav highlight
+  const sections = document.querySelectorAll('.module-section[id]');
+  const navLinks = document.querySelectorAll('.sb-link');
+  const headerH = 64;
+
+  function onScroll() {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY + headerH + 40 >= s.offsetTop) current = s.id;
+    });
+    navLinks.forEach(l => {
+      l.classList.remove('active');
+      if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>

@@ -47,6 +47,12 @@
   to = "/tools/portfolioinsite.html"
   status = 200
 
+# ===== Playbook =====
+[[redirects]]
+  from = "/playbook"
+  to = "/pages/forecastinsite-playbook.html"
+  status = 200
+
 # ===== 404 Fallback =====
 [[redirects]]
   from = "/*"
