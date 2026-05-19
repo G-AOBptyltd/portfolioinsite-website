@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ForecastInSite — Dependency Mapping Tool</title>
+  <title>ForecastInSite — Lean Agile Financial Modelling & Governance</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Chart.js bundled locally — avoids CDN/CSP issues -->
   <script src="chart.umd.min.js"></script>
@@ -84,6 +84,38 @@
       line-height: 1.6;
       font-size: 14px;
       overflow-x: hidden;
+    }
+
+    /* GLOBAL FORM ELEMENT THEMING
+       Prevents Chrome from forcing its own light/dark defaults on inputs.
+       Applies the app's CSS vars to ALL text-like inputs, selects and textareas. */
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=submit]):not([type=button]):not([type=reset]),
+    select,
+    textarea {
+      background-color: var(--bg2);
+      color: var(--t1);
+      border: 1px solid var(--bdr);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 6px 8px;
+      box-sizing: border-box;
+      transition: border-color .15s;
+    }
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=submit]):not([type=button]):not([type=reset]):focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--ac);
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--t3, var(--t2));
+      opacity: 1;
+    }
+    /* Date picker icon colour */
+    input[type=date]::-webkit-calendar-picker-indicator {
+      filter: var(--date-icon-filter, invert(0.7));
     }
 
     /* SCROLLBAR */
@@ -675,6 +707,30 @@
       justify-content: flex-end;
     }
 
+    /* v5 modal form inputs — ensure theme vars apply inside modal content */
+    .mf input, .mf select, .mf textarea {
+      background: var(--bg2);
+      border: 1px solid var(--bdr);
+      border-radius: 6px;
+      color: var(--t1);
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color .15s;
+    }
+    .mf input:focus, .mf select:focus, .mf textarea:focus {
+      border-color: var(--ac);
+      outline: none;
+    }
+    .mf label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--t2);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
     /* TOAST */
     .tc2 {
       position: fixed;
@@ -973,7 +1029,7 @@
 </style>
   <link rel="canonical" href="https://portfolioinsite.app/tools/forecastinsite">
   <meta property="og:url" content="https://portfolioinsite.app/tools/forecastinsite">
-  <meta property="og:title" content="ForecastInSite — Dependency Mapping Tool">
+  <meta property="og:title" content="ForecastInSite — Lean Agile Financial Modelling & Governance">
 </head>
 
 <script>/* DEMO MODE */sessionStorage.setItem("aob_gate_v1","1");</script><body>
@@ -1093,6 +1149,44 @@ function aobGateCheck(){
 }
 </script>
 <!-- END AOB Beta Access Gate -->
+
+<!-- v5 STARTUP LANDING SCREEN — shown on first load (empty localStorage) -->
+<div id="startupOverlay" style="display:none;position:fixed;inset:0;z-index:8000;background:var(--bg0);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--bg1);border:1px solid var(--bdr);border-radius:16px;padding:40px;max-width:560px;width:100%;text-align:center;box-shadow:var(--sh)">
+    <div style="width:56px;height:56px;background:linear-gradient(135deg,#0EA5E9,#14B8A6);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px">🔗</div>
+    <h2 style="font-size:22px;font-weight:700;margin:0 0 6px;color:var(--t1)">Welcome to ForecastInSite <span style="font-size:14px;color:var(--ac);font-weight:600">v5</span></h2>
+    <p style="color:var(--t2);font-size:14px;margin:0 0 8px">Lean Agile Financial Modelling & Governance</p>
+    <p style="color:var(--t3);font-size:13px;margin:0 0 32px">How would you like to begin?</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px">
+      <button onclick="startupChoice('demo')" style="background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px 12px;cursor:pointer;color:var(--t1);text-align:center;transition:var(--tr)" onmouseover="this.style.background='var(--bg2h)'" onmouseout="this.style.background='var(--bg2)'">
+        <div style="font-size:28px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Load Demo</div>
+        <div style="font-size:11px;color:var(--t3)">Explore with realistic sample data</div>
+      </button>
+      <button onclick="startupChoice('fresh')" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.3);border-radius:10px;padding:20px 12px;cursor:pointer;color:var(--t1);text-align:center;transition:var(--tr)" onmouseover="this.style.background='rgba(14,165,233,.12)'" onmouseout="this.style.background='rgba(14,165,233,.06)'">
+        <div style="font-size:28px;margin-bottom:8px">✨</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--ac)">Start Fresh</div>
+        <div style="font-size:11px;color:var(--t3)">Build your plan from scratch manually</div>
+      </button>
+      <button onclick="startupChoice('import')" style="background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px 12px;cursor:pointer;color:var(--t1);text-align:center;transition:var(--tr)" onmouseover="this.style.background='var(--bg2h)'" onmouseout="this.style.background='var(--bg2)'">
+        <div style="font-size:28px;margin-bottom:8px">📥</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Import</div>
+        <div style="font-size:11px;color:var(--t3)">Load from CSV, JSON, or Jira export</div>
+      </button>
+    </div>
+
+    <div style="border-top:1px solid var(--bdr);padding-top:20px">
+      <p style="color:var(--t3);font-size:12px;margin:0 0 10px">Which role best describes you? (you can change this anytime)</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button id="su-role-fc" onclick="suPickRole('fc')" style="padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,.4);background:rgba(14,165,233,.15);color:var(--ac)">💰 Financial Controller</button>
+        <button id="su-role-pm" onclick="suPickRole('pm')" style="padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);color:var(--t2)">📊 Portfolio Manager</button>
+        <button id="su-role-dm" onclick="suPickRole('dm')" style="padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--bdr);background:var(--bg2);color:var(--t2)">🚀 Project Manager</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <header class="hdr">
     <div class="hdr-left">
       <a href="#" class="logo">
@@ -1112,7 +1206,7 @@ function aobGateCheck(){
         </svg>
         <div class="logo-t">
           <h1>ForecastInSite</h1>
-          <span class="ver">v4</span>
+          <span class="ver">v5</span>
         </div>
       </a>
       <div class="tagline">The True Cost of Value</div>
@@ -1124,6 +1218,7 @@ function aobGateCheck(){
       <div class="role-toggle">
         <button class="role-btn role-active" data-role="fc" onclick="setRole('fc')">Financial Controller</button>
         <button class="role-btn" data-role="pm" onclick="setRole('pm')">Portfolio Manager</button>
+        <button class="role-btn" data-role="dm" onclick="setRole('dm')">Project Manager</button>
       </div>
 
       <div class="theme-toggle">
@@ -1150,20 +1245,8 @@ function aobGateCheck(){
     </div>
   </header>
 
-  <nav class="tabs">
-    <button class="tab on" data-tab="p-command">Command Centre</button>
-    <button class="tab" data-tab="p-teams">Teams & Capacity</button>
-    <button class="tab" data-tab="p-budget">Budget & Actuals</button>
-    <button class="tab" data-tab="p-features">Feature Economics</button>
-    <button class="tab" data-tab="p-value">Value Stream</button>
-    <button class="tab" data-tab="p-productivity">Productivity</button>
-    <button class="tab" data-tab="p-ai">AI Workforce</button>
-    <button class="tab" data-tab="p-licences">Licences & Overhead</button>
-    <button class="tab" data-tab="p-sizing">Relative Sizing</button>
-    <button class="tab" data-tab="p-reporting">Reporting</button>
-    <button class="tab" data-tab="p-capacity">Capacity Planner</button>
-    <button class="tab" data-tab="p-config">Configuration</button>
-  </nav>
+  <!-- v5: tab nav built dynamically by buildTabNav() based on active role -->
+  <nav class="tabs" id="mainTabNav"></nav>
 
   <main class="mc">
     <section class="tp on" id="p-command">
@@ -1208,6 +1291,19 @@ function aobGateCheck(){
 
     <section class="tp" id="p-capacity">
       <div id="capacityC"></div>
+    </section>
+
+    <!-- v5: new tabs -->
+    <section class="tp" id="p-roadmap">
+      <div id="roadmapC"></div>
+    </section>
+
+    <section class="tp" id="p-raid">
+      <div id="raidC"></div>
+    </section>
+
+    <section class="tp" id="p-scenarios">
+      <div id="scenariosC"></div>
     </section>
 
     <section class="tp" id="p-config">
@@ -1680,7 +1776,11 @@ function calcCostPerPoint(teamId) {
   const team = STATE.teams.find(t => t.id === teamId);
   if (!team || !team.sprintCapacity) return 0;
   const runRate = calcTeamRunRate(teamId);
-  const pointsPerMonth = (team.sprintCapacity * 4.33) / team.sprintCapacity;
+  // v5 fix: was incorrectly (capacity × 4.33) ÷ capacity = 4.33 (ignored capacity entirely)
+  // Correct: sprints per month based on sprint length, then × capacity gives monthly points
+  const sprintLengthWeeks = Math.max(1, STATE.config.sprintLength || 2);
+  const sprintsPerMonth = 4.33 / sprintLengthWeeks;
+  const pointsPerMonth = Math.max(1, team.sprintCapacity * sprintsPerMonth);
   return runRate / pointsPerMonth;
 }
 
@@ -1960,21 +2060,86 @@ function getTheme() {
 // ============================================================================
 // ROLE SWITCHING
 // ============================================================================
-function setRole(role) {
-  if (!['fc', 'pm'].includes(role)) return;
+// ============================================================================
+// v5: ROLE-AWARE TAB CONFIGURATION
+// Each role gets a tailored primary tab set. All panel sections exist in DOM.
+// Switching role rebuilds the nav and re-activates the appropriate panel.
+// ============================================================================
+const ROLE_TABS = {
+  fc: [
+    { id: 'p-command',   label: 'Command Centre' },
+    { id: 'p-budget',    label: 'Budget & Actuals' },
+    { id: 'p-scenarios', label: 'Capex / Opex & Scenarios' },
+    { id: 'p-licences',  label: 'Licences & Overhead' },
+    { id: 'p-features',  label: 'Feature Economics' },
+    { id: 'p-ai',        label: 'AI Workforce' },
+    { id: 'p-teams',     label: 'Teams & Capacity' },
+    { id: 'p-reporting', label: 'Reporting' },
+    { id: 'p-config',    label: 'Configuration' }
+  ],
+  pm: [
+    { id: 'p-command',   label: 'Command Centre' },
+    { id: 'p-roadmap',   label: 'Roadmap & Dependencies' },
+    { id: 'p-features',  label: 'Feature Economics' },
+    { id: 'p-value',     label: 'Value Stream' },
+    { id: 'p-scenarios', label: 'Scenarios' },
+    { id: 'p-sizing',    label: 'Relative Sizing' },
+    { id: 'p-teams',     label: 'Teams & Capacity' },
+    { id: 'p-reporting', label: 'Reporting' },
+    { id: 'p-config',    label: 'Configuration' }
+  ],
+  dm: [
+    { id: 'p-command',   label: 'Command Centre' },
+    { id: 'p-raid',      label: 'RAID & Delivery' },
+    { id: 'p-roadmap',   label: 'Roadmap & Dependencies' },
+    { id: 'p-teams',     label: 'Teams & Capacity' },
+    { id: 'p-capacity',  label: 'Capacity Planner' },
+    { id: 'p-features',  label: 'Feature Progress' },
+    { id: 'p-reporting', label: 'Reporting' },
+    { id: 'p-config',    label: 'Configuration' }
+  ]
+};
 
-  STATE.ui.role = role;
+function buildTabNav(role) {
+  const nav = document.getElementById('mainTabNav');
+  if (!nav) return;
+  const tabs = ROLE_TABS[role] || ROLE_TABS.fc;
+  // If active tab not in this role's set, reset to command
+  if (!tabs.some(t => t.id === 'p-' + STATE.ui.activeTab)) {
+    STATE.ui.activeTab = 'command';
+  }
+  nav.innerHTML = tabs.map(t => {
+    const isOn = t.id === 'p-' + STATE.ui.activeTab;
+    return `<button class="tab${isOn ? ' on' : ''}" data-tab="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`;
+  }).join('');
+}
 
-  const roleBtns = document.querySelectorAll('.role-btn');
-  roleBtns.forEach(btn => {
-    btn.classList.remove('role-active');
-    if (btn.getAttribute('data-role') === role) {
-      btn.classList.add('role-active');
-    }
+function switchTab(panelId) {
+  const tabName = panelId.replace('p-', '');
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('on'));
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('on');
+  document.querySelectorAll('#mainTabNav .tab').forEach(t => {
+    t.classList.toggle('on', t.getAttribute('data-tab') === panelId);
   });
-
+  STATE.ui.activeTab = tabName;
   saveCfg();
-  rCommand();
+  renderAll();
+}
+
+function setRole(role) {
+  if (!['fc', 'pm', 'dm'].includes(role)) return;
+  STATE.ui.role = role;
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.classList.toggle('role-active', btn.getAttribute('data-role') === role);
+  });
+  // Rebuild nav for new role, then show active panel
+  buildTabNav(role);
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('on'));
+  const panel = document.getElementById('p-' + STATE.ui.activeTab);
+  if (panel) panel.classList.add('on');
+  saveCfg();
+  renderAll();
 }
 
 function getRole() {
@@ -1982,32 +2147,14 @@ function getRole() {
 }
 
 // ============================================================================
-// TAB SYSTEM
+// TAB SYSTEM — init (v5: dynamic nav, role-aware)
 // ============================================================================
 function initTabs() {
-  const tabElements = document.querySelectorAll('.tab');
-  const tabPanels = document.querySelectorAll('.tp');
-
-  tabElements.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const panelId = tab.getAttribute('data-tab'); // e.g. "p-command"
-      const tabName = panelId.replace('p-', '');     // e.g. "command"
-
-      // Deactivate all tabs and panels
-      tabElements.forEach(t => t.classList.remove('on'));
-      tabPanels.forEach(p => p.classList.remove('on'));
-
-      // Activate selected tab and panel
-      tab.classList.add('on');
-      const panel = document.getElementById(panelId);
-      if (panel) {
-        panel.classList.add('on');
-        STATE.ui.activeTab = tabName;
-        saveCfg();
-        renderAll();
-      }
-    });
-  });
+  buildTabNav(STATE.ui.role || 'fc');
+  // Ensure correct panel shown on load
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('on'));
+  const panel = document.getElementById('p-' + (STATE.ui.activeTab || 'command'));
+  if (panel) panel.classList.add('on');
 }
 
 // ============================================================================
@@ -2640,7 +2787,7 @@ function initSampleData() {
 // (Stub functions removed — real renderers defined in Parts 3-5)
 // ============================================================================
 // PART 3: RENDERER FUNCTIONS — Command Centre, Teams & Capacity, Budget & Actuals
-// ForecastInSite v4 — Lean Agile Financial Modelling Tool
+// ForecastInSite v5 — Lean Agile Financial Modelling & Governance
 // ============================================================================
 
 let cmdBurnChartInstance = null;
@@ -2666,10 +2813,15 @@ function rCommand() {
   } else if (STATE.ui.role === 'pm') {
     // PORTFOLIO MANAGER VIEW
     html += renderCommandPM();
+  } else if (STATE.ui.role === 'dm') {
+    // PROJECT / DELIVERY MANAGER VIEW
+    html += renderCommandDM();
   }
 
-  // Shared: Quarter Alignment Bar
-  html += renderQuarterAlignment();
+  // Shared: Quarter Alignment Bar (not shown for DM — DM has its own milestone summary)
+  if (STATE.ui.role !== 'dm') {
+    html += renderQuarterAlignment();
+  }
 
   container.innerHTML = html;
 
@@ -2827,7 +2979,7 @@ function renderTopOverBudgetTeams() {
     .slice(0, 5);
 
   if (teamBudgets.length === 0) {
-    html += '<p style="color:#7f8c8d">All teams within budget</p>';
+    html += '<p style="color:var(--t2)">All teams within budget</p>';
   } else {
     html += '<div class="tw"><table class="dt">';
     html += '<thead><tr><th>Team</th><th style="text-align:right">Budget</th><th style="text-align:right">Actual</th><th style="text-align:right">Variance</th><th>RAG</th></tr></thead>';
@@ -2868,7 +3020,7 @@ function renderCostPerPointTrend() {
     .slice(0, 5);
 
   if (teamCosts.length === 0) {
-    html += '<p style="color:#7f8c8d">No teams</p>';
+    html += '<p style="color:var(--t2)">No teams</p>';
   } else {
     html += '<div class="tw"><table class="dt">';
     html += '<thead><tr><th>Team</th><th style="text-align:right">Cost/Point</th><th>Trend</th><th style="text-align:right">Δ</th></tr></thead>';
@@ -2901,7 +3053,7 @@ function renderTopFeaturesByValue() {
     .slice(0, 5);
 
   if (topFeatures.length === 0) {
-    html += '<p style="color:#7f8c8d">No revenue features yet</p>';
+    html += '<p style="color:var(--t2)">No revenue features yet</p>';
   } else {
     html += '<div class="tw"><table class="dt">';
     html += '<thead><tr><th>Feature</th><th>Team</th><th style="text-align:right">BV</th><th style="text-align:right">Revenue</th><th>Status</th></tr></thead>';
@@ -2914,7 +3066,7 @@ function renderTopFeaturesByValue() {
           <td>${team ? esc(team.name) : 'N/A'}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmt(f.businessValue || 0)}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmtCurrency(f.actualRevenue || 0)}</td>
-          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:#ecf0f1;border-radius:3px">${esc(f.status)}</span></td>
+          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:var(--bg2);border:1px solid var(--bdr);border-radius:3px;color:var(--t1)">${esc(f.status)}</span></td>
         </tr>
       `;
     });
@@ -2939,7 +3091,7 @@ function renderWSJFPriorityQueue() {
     .slice(0, 5);
 
   if (notDoneFeatures.length === 0) {
-    html += '<p style="color:#7f8c8d">All features completed</p>';
+    html += '<p style="color:var(--t2)">All features completed</p>';
   } else {
     html += '<div class="tw"><table class="dt">';
     html += '<thead><tr><th>Feature</th><th style="text-align:right">WSJF</th><th style="text-align:right">Points</th><th>Team</th><th>Status</th></tr></thead>';
@@ -2952,7 +3104,7 @@ function renderWSJFPriorityQueue() {
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmt(f.wsjf)}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmt(f.points || 0)}</td>
           <td>${team ? esc(team.name) : 'N/A'}</td>
-          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:#ecf0f1;border-radius:3px">${esc(f.status)}</span></td>
+          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:var(--bg2);border:1px solid var(--bdr);border-radius:3px;color:var(--t1)">${esc(f.status)}</span></td>
         </tr>
       `;
     });
@@ -2979,7 +3131,7 @@ function renderPIProgress() {
   const totalWeeks = Math.ceil(totalDays / 7);
 
   html += `<p style="margin:0 0 1rem 0">${currentPI} — Week ${week} of ${totalWeeks} — ${progressPct.toFixed(0)}%</p>`;
-  html += '<div class="prog-bar" style="height:24px;background:#ecf0f1;border-radius:4px;overflow:hidden">';
+  html += '<div class="prog-bar" style="height:24px;background:var(--bg0);border-radius:4px;overflow:hidden">';
   html += `<div class="prog-fill" style="height:100%;width:${progressPct}%;background:#3498db;transition:width 0.3s ease"></div>`;
   html += '</div>';
 
@@ -3086,7 +3238,7 @@ function initValueDeliveryChart(ctx) {
       datasets: [{
         data: teamValueData,
         backgroundColor: colors.slice(0, STATE.teams.length),
-        borderColor: '#ecf0f1',
+        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--bdr').trim() || '#d1d9e6',
         borderWidth: 2
       }]
     },
@@ -3244,7 +3396,7 @@ function rTeams() {
   const filteredTeams = STATE.teams.filter(t => t.name.toLowerCase().includes(searchTerm));
 
   if (filteredTeams.length === 0) {
-    html += '<p style="color:#7f8c8d;text-align:center;padding:2rem">No teams found</p>';
+    html += '<p style="color:var(--t2);text-align:center;padding:2rem">No teams found</p>';
   } else {
     filteredTeams.forEach(team => {
       html += renderTeamCard(team);
@@ -3271,11 +3423,11 @@ function renderTeamCard(team) {
   // Header
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">';
   html += `<div><h3 style="margin:0">${esc(team.name)}</h3>`;
-  html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:#ecf0f1;border-radius:3px;margin-right:0.5rem">${esc(team.type)}</span>`;
+  html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;color:var(--t2);margin-right:0.5rem">${esc(team.type)}</span>`;
   if (team.runRateOverride) {
-    html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:#fff3cd;border-radius:3px;color:#856404">Fixed: ${fmtCurrency(team.runRateOverride)}/month</span>`;
+    html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:4px;color:var(--mid)">Fixed: ${fmtCurrency(team.runRateOverride)}/month</span>`;
   }
-  html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:#ecf0f1;border-radius:3px;margin-left:0.5rem">${fmtCurrency(monthlyCost)}/mo</span>`;
+  html += `<span style="font-size:0.85em;padding:0.25rem 0.75rem;background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;color:var(--t2);margin-left:0.5rem">${fmtCurrency(monthlyCost)}/mo</span>`;
   html += '</div>';
   html += `<div>`;
   html += `<button class="btn btn-sm" onclick="openTeamEditModal('${team.id}')" style="margin-right:0.5rem">Edit</button>`;
@@ -3287,7 +3439,7 @@ function renderTeamCard(team) {
   html += '<div style="margin-bottom:1rem">';
   html += '<h4 style="margin:0.5rem 0">Members</h4>';
   if (members.length === 0 && aiAgents.length === 0) {
-    html += '<p style="color:#7f8c8d;font-size:0.9em">No members yet</p>';
+    html += '<p style="color:var(--t2);font-size:0.9em">No members yet</p>';
   } else {
     html += '<div class="tw"><table class="dt">';
     html += '<thead><tr><th>Name</th><th>Role</th><th>Type</th><th style="text-align:right">Daily Rate</th><th style="text-align:right">Monthly Cost</th><th style="text-align:right">FTE%</th><th>Actions</th></tr></thead>';
@@ -3300,7 +3452,7 @@ function renderTeamCard(team) {
         <tr>
           <td>${esc(member.name)}</td>
           <td>${esc(member.role)}</td>
-          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:#ecf0f1;border-radius:3px">${esc(member.type)}</span></td>
+          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:var(--bg2);border:1px solid var(--bdr);border-radius:3px;color:var(--t1)">${esc(member.employmentType || member.type || 'FTE')}</span></td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmtCurrency(member.costRate || 0)}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmtCurrency(monthlyValue * fte)}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmtPct(fte)}</td>
@@ -3315,10 +3467,10 @@ function renderTeamCard(team) {
     aiAgents.forEach(agent => {
       const monthlyCost = (agent.licenceCost || 0) + (agent.computeCost || 0);
       html += `
-        <tr style="background:#f0f8ff">
+        <tr style="background:rgba(14,165,233,.07)">
           <td>${esc(agent.name)}</td>
           <td>AI Agent</td>
-          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:#d4edff;border-radius:3px;color:#0066cc">AI Agent</span></td>
+          <td><span style="font-size:0.85em;padding:0.25rem 0.5rem;background:var(--ac);border-radius:3px;color:#fff;font-weight:600">AI Agent</span></td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">—</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmtCurrency(monthlyCost)}</td>
           <td style="text-align:right;font-family:'JetBrains Mono',monospace">${fmt(agent.productivityMultiplier || 1)}x</td>
@@ -3335,7 +3487,7 @@ function renderTeamCard(team) {
   html += '</div>';
 
   // Footer: Team totals
-  html += '<div style="border-top:1px solid #ecf0f1;padding-top:1rem">';
+  html += '<div style="border-top:1px solid var(--bdr);padding-top:1rem">';
   html += '<div class="metric-row" style="display:flex;justify-content:space-between;font-size:0.9em;margin-bottom:0.5rem">';
   html += `<span><strong>Team Total:</strong></span><span style="font-family:'JetBrains Mono',monospace;font-weight:bold">${fmtCurrency(monthlyCost)}/month</span>`;
   html += '</div>';
@@ -3361,22 +3513,22 @@ function openTeamModal() {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Team Name</label>
-      <input type="text" id="newTeamName" placeholder="e.g. Backend Platform" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <input type="text" id="newTeamName" placeholder="e.g. Backend Platform" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Team Type</label>
-      <select id="newTeamType" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="newTeamType" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="Scrum">Scrum</option>
         <option value="Kanban">Kanban</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Sprint Capacity (points)</label>
-      <input type="number" id="newTeamSprintCap" placeholder="e.g. 40" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="40">
+      <input type="number" id="newTeamSprintCap" placeholder="e.g. 40" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="40">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">PI Capacity (points)</label>
-      <input type="number" id="newTeamPICap" placeholder="e.g. 160" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="160">
+      <input type="number" id="newTeamPICap" placeholder="e.g. 160" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="160">
     </div>
   `;
 
@@ -3411,11 +3563,11 @@ function openMemberModal(teamId) {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Name</label>
-      <input type="text" id="newMemberName" placeholder="e.g. John Smith" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <input type="text" id="newMemberName" placeholder="e.g. John Smith" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Role</label>
-      <select id="newMemberRole" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="newMemberRole" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="Engineer">Engineer</option>
         <option value="Lead">Lead</option>
         <option value="Designer">Designer</option>
@@ -3425,7 +3577,7 @@ function openMemberModal(teamId) {
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Employment Type</label>
-      <select id="newMemberType" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" onchange="updateMemberTypeFields()">
+      <select id="newMemberType" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" onchange="updateMemberTypeFields()">
         <option value="FTE">FTE</option>
         <option value="Contractor">Contractor</option>
         <option value="Consultant">Consultant</option>
@@ -3434,26 +3586,26 @@ function openMemberModal(teamId) {
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Cost Rate</label>
-      <input type="number" id="newMemberCostRate" placeholder="e.g. 150" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="0">
+      <input type="number" id="newMemberCostRate" placeholder="e.g. 150" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="0">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Cost Frequency</label>
-      <select id="newMemberCostFreq" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="newMemberCostFreq" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="daily">Daily</option>
         <option value="monthly">Monthly</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">FTE %</label>
-      <input type="number" id="newMemberFTE" placeholder="e.g. 1.0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="1" min="0" max="1" step="0.1">
+      <input type="number" id="newMemberFTE" placeholder="e.g. 1.0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="1" min="0" max="1" step="0.1">
     </div>
     <div id="aiFieldsContainer" style="display:none;margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Licence Cost</label>
-      <input type="number" id="newAILicenceCost" placeholder="e.g. 100" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="0">
+      <input type="number" id="newAILicenceCost" placeholder="e.g. 100" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="0">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Compute Cost</label>
-      <input type="number" id="newAIComputeCost" placeholder="e.g. 50" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="0">
+      <input type="number" id="newAIComputeCost" placeholder="e.g. 50" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="0">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Productivity Multiplier</label>
-      <input type="number" id="newAIProductivity" placeholder="e.g. 1.5" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="1" min="0.1" step="0.1">
+      <input type="number" id="newAIProductivity" placeholder="e.g. 1.5" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="1" min="0.1" step="0.1">
     </div>
   `;
 
@@ -3521,22 +3673,22 @@ function openTeamEditModal(teamId) {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Team Name</label>
-      <input type="text" id="editTeamName" placeholder="Team Name" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${esc(team.name)}">
+      <input type="text" id="editTeamName" placeholder="Team Name" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${esc(team.name)}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Team Type</label>
-      <select id="editTeamType" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="editTeamType" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="Scrum" ${team.type === 'Scrum' ? 'selected' : ''}>Scrum</option>
         <option value="Kanban" ${team.type === 'Kanban' ? 'selected' : ''}>Kanban</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Sprint Capacity (points)</label>
-      <input type="number" id="editTeamSprintCap" placeholder="Sprint Capacity" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${team.sprintCapacity || 40}">
+      <input type="number" id="editTeamSprintCap" placeholder="Sprint Capacity" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${team.sprintCapacity || 40}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">PI Capacity (points)</label>
-      <input type="number" id="editTeamPICap" placeholder="PI Capacity" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${team.piCapacity || 160}">
+      <input type="number" id="editTeamPICap" placeholder="PI Capacity" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${team.piCapacity || 160}">
     </div>
   `;
 
@@ -3560,11 +3712,11 @@ function openMemberEditModal(memberId, teamId) {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Name</label>
-      <input type="text" id="editMemberName" placeholder="Name" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${esc(member.name)}">
+      <input type="text" id="editMemberName" placeholder="Name" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${esc(member.name)}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Role</label>
-      <select id="editMemberRole" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="editMemberRole" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="Engineer" ${member.role === 'Engineer' ? 'selected' : ''}>Engineer</option>
         <option value="Lead" ${member.role === 'Lead' ? 'selected' : ''}>Lead</option>
         <option value="Designer" ${member.role === 'Designer' ? 'selected' : ''}>Designer</option>
@@ -3574,7 +3726,7 @@ function openMemberEditModal(memberId, teamId) {
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Employment Type</label>
-      <select id="editMemberType" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="editMemberType" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="FTE" ${member.type === 'FTE' ? 'selected' : ''}>FTE</option>
         <option value="Contractor" ${member.type === 'Contractor' ? 'selected' : ''}>Contractor</option>
         <option value="Consultant" ${member.type === 'Consultant' ? 'selected' : ''}>Consultant</option>
@@ -3582,18 +3734,18 @@ function openMemberEditModal(memberId, teamId) {
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Cost Rate</label>
-      <input type="number" id="editMemberCostRate" placeholder="Cost Rate" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${member.costRate || 0}">
+      <input type="number" id="editMemberCostRate" placeholder="Cost Rate" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${member.costRate || 0}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Cost Frequency</label>
-      <select id="editMemberCostFreq" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="editMemberCostFreq" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="daily" ${member.costFrequency === 'daily' ? 'selected' : ''}>Daily</option>
         <option value="monthly" ${member.costFrequency === 'monthly' ? 'selected' : ''}>Monthly</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">FTE %</label>
-      <input type="number" id="editMemberFTE" placeholder="FTE" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${member.fte || 1}" min="0" max="1" step="0.1">
+      <input type="number" id="editMemberFTE" placeholder="FTE" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${member.fte || 1}" min="0" max="1" step="0.1">
     </div>
   `;
 
@@ -3619,19 +3771,19 @@ function openAIAgentEditModal(agentId, teamId) {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Name</label>
-      <input type="text" id="editAIName" placeholder="AI Agent Name" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${esc(agent.name)}">
+      <input type="text" id="editAIName" placeholder="AI Agent Name" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${esc(agent.name)}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Licence Cost</label>
-      <input type="number" id="editAILicenceCost" placeholder="Licence Cost" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${agent.licenceCost || 0}">
+      <input type="number" id="editAILicenceCost" placeholder="Licence Cost" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${agent.licenceCost || 0}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Compute Cost</label>
-      <input type="number" id="editAIComputeCost" placeholder="Compute Cost" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${agent.computeCost || 0}">
+      <input type="number" id="editAIComputeCost" placeholder="Compute Cost" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${agent.computeCost || 0}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Productivity Multiplier</label>
-      <input type="number" id="editAIProductivity" placeholder="Productivity Multiplier" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${agent.productivityMultiplier || 1}" min="0.1" step="0.1">
+      <input type="number" id="editAIProductivity" placeholder="Productivity Multiplier" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${agent.productivityMultiplier || 1}" min="0.1" step="0.1">
     </div>
   `;
 
@@ -3947,35 +4099,35 @@ function openBudgetModal() {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Period Type</label>
-      <select id="newBudgetPeriodType" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" onchange="updateBudgetPeriodSelect()">
+      <select id="newBudgetPeriodType" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" onchange="updateBudgetPeriodSelect()">
         <option value="PI">PI</option>
         <option value="Quarter">Quarter</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Period</label>
-      <select id="newBudgetPeriod" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="newBudgetPeriod" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="">${STATE.config.currentPI || 'PI 25.1'}</option>
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Team</label>
-      <select id="newBudgetTeam" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem">
+      <select id="newBudgetTeam" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem">
         <option value="">Select Team</option>
         ${STATE.teams.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('')}
       </select>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Budgeted Amount</label>
-      <input type="number" id="newBudgetAmount" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="0">
+      <input type="number" id="newBudgetAmount" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="0">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Forecast</label>
-      <input type="number" id="newBudgetForecast" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="0">
+      <input type="number" id="newBudgetForecast" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="0">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Notes</label>
-      <textarea id="newBudgetNotes" placeholder="Optional notes" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem;min-height:80px"></textarea>
+      <textarea id="newBudgetNotes" placeholder="Optional notes" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem;min-height:80px"></textarea>
     </div>
   `;
 
@@ -4026,23 +4178,23 @@ function openBudgetEditModal(budgetId) {
   const html = `
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Period</label>
-      <input type="text" id="editBudgetPeriod" placeholder="Period" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${esc(budget.period)}" readonly>
+      <input type="text" id="editBudgetPeriod" placeholder="Period" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${esc(budget.period)}" readonly>
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Budgeted Amount</label>
-      <input type="number" id="editBudgetAmount" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${budget.budgeted}">
+      <input type="number" id="editBudgetAmount" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${budget.budgeted}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Actual Spend</label>
-      <input type="number" id="editBudgetActual" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${budget.actual}">
+      <input type="number" id="editBudgetActual" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${budget.actual}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Forecast</label>
-      <input type="number" id="editBudgetForecast" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem" value="${budget.forecast || 0}">
+      <input type="number" id="editBudgetForecast" placeholder="0" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem" value="${budget.forecast || 0}">
     </div>
     <div style="margin-bottom:1.5rem">
       <label style="display:block;margin-bottom:0.5rem;font-weight:bold">Notes</label>
-      <textarea id="editBudgetNotes" placeholder="Optional notes" style="width:100%;padding:0.5rem;border:1px solid #bdc3c7;border-radius:4px;margin-bottom:1rem;min-height:80px">${esc(budget.notes || '')}</textarea>
+      <textarea id="editBudgetNotes" placeholder="Optional notes" style="width:100%;padding:0.5rem;border:1px solid var(--bdr);border-radius:4px;margin-bottom:1rem;min-height:80px">${esc(budget.notes || '')}</textarea>
     </div>
   `;
 
@@ -5988,7 +6140,7 @@ function rAI() {
     const humanPct = 100 - aiPct;
 
     html += `
-      <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f9f9f9; border-left: 4px solid #0078d4;">
+      <div style="margin-bottom: 1.5rem; padding: 1rem; background:var(--bg2);border-left:3px solid var(--ac);">
         <h4>${esc(team.name)} Squad (${teamAIAgents.length} AI agent${teamAIAgents.length !== 1 ? 's' : ''}, ${teamMembers.length} human${teamMembers.length !== 1 ? 's' : ''})</h4>
         <p style="font-size: 0.9rem; color: #555;">Combined AI Run Rate: ${fmtCurrency(aiCost)} | Human Cost: ${fmtCurrency(humanCost)} | Total: ${fmtCurrency(totalCost)}</p>
         <div style="display: flex; height: 2rem; background: #eee; border-radius: 4px; overflow: hidden;">
@@ -6804,7 +6956,7 @@ function rLicences() {
   });
 
   // Total row
-  html += `<tr style="background: #f0f0f0; font-weight: bold;"><td>Total</td>`;
+  html += `<tr style="background:var(--bg2);font-weight:bold;color:var(--t1);"><td>Total</td>`;
   STATE.licences.forEach(lic => {
     let licTotal = 0;
     if (lic.costModel === 'per-seat') {
@@ -7004,7 +7156,7 @@ function openAddLicence() {
     </div>
     <div class="mf">
       <label>Assigned Teams</label>
-      <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 0.5rem; border-radius: 4px;">
+      <div style="max-height: 150px; overflow-y: auto; border:1px solid var(--bdr);padding:0.5rem;border-radius:4px;background:var(--bg2);">
         ${teams}
       </div>
     </div>
@@ -7087,7 +7239,7 @@ function openEditLicence(licId) {
     </div>
     <div class="mf">
       <label>Assigned Teams</label>
-      <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 0.5rem; border-radius: 4px;">
+      <div style="max-height: 150px; overflow-y: auto; border:1px solid var(--bdr);padding:0.5rem;border-radius:4px;background:var(--bg2);">
         ${teams}
       </div>
     </div>
@@ -8682,9 +8834,9 @@ function rConfig() {
           <label>Number of PIs to Plan</label>
           <input type="number" id="cfgNumPIs" value="${STATE.config.numPIs || 4}" min="1" max="12" step="1" onchange="saveConfig()">
         </div>
-        <div style="margin-top: 1rem; padding: 0.5rem; background: #f0f8ff; border-left: 4px solid #0078d4; border-radius: 4px;">
-          <strong>Generated PI Schedule:</strong>
-          <div id="piPreview" style="margin-top: 0.5rem; font-size: 0.9rem;"></div>
+        <div style="margin-top:1rem;padding:12px 14px;background:var(--bg2);border-left:3px solid var(--ac);border-radius:6px;color:var(--t2);font-size:13px">
+          <div style="font-weight:700;color:var(--t1);margin-bottom:6px">Generated PI Schedule</div>
+          <div id="piPreview" style="font-size:12px;line-height:1.8"></div>
         </div>
       </div>
     </div>
@@ -8712,7 +8864,7 @@ function rConfig() {
             <option value="11" ${STATE.config.fyStartMonth === 11 ? 'selected' : ''}>December</option>
           </select>
         </div>
-        <div style="margin-top: 1rem; padding: 0.5rem; background: #f0f8ff; border-left: 4px solid #0078d4; border-radius: 4px;">
+        <div style="margin-top:1rem;padding:12px 14px;background:var(--bg2);border-left:3px solid var(--ac);border-radius:6px;color:var(--t2);font-size:13px">
           <strong>Quarter Mapping:</strong>
           <table class="dt" style="margin-top: 0.5rem; font-size: 0.9rem;">
             <thead>
@@ -10268,6 +10420,9 @@ function renderAll() {
   else if (tab === 'sizing') rSizing();
   else if (tab === 'reporting') rReporting();
   else if (tab === 'capacity') rCapacity();
+  else if (tab === 'roadmap') rRoadmap();
+  else if (tab === 'raid') rRaid();
+  else if (tab === 'scenarios') rScenarios();
   else if (tab === 'config') rConfig();
 }
 
@@ -10425,19 +10580,891 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render initial view
   renderAll();
   initLicence();
+
+  // v5: show startup screen for first-time users (no saved data)
+  checkShowStartup();
 });
 
 </script>
 
 <script>
 /* v2: Demo Data — clears forecastinsite localStorage and reloads default data */
-function loadSampleData() {
-  if (!confirm('This will clear all current data and reload the default 6-team sample dataset. Continue?')) return;
+function loadSampleData(skipConfirm) {
+  if (!skipConfirm && !confirm('This will clear all current data and reload the default 6-team sample dataset. Continue?')) return;
   Object.keys(localStorage)
     .filter(k => k.startsWith('forecastinsite'))
     .forEach(k => localStorage.removeItem(k));
-  closeImportModal();
+  try { closeImportModal(); } catch(e) {}
+  // Signal checkShowStartup() to skip the overlay on next load (reset path, not first-run)
+  try { sessionStorage.setItem('fis_skip_startup', '1'); } catch(e) {}
   window.location.reload();
+}
+</script>
+
+<script>
+// ============================================================================
+// ForecastInSite v5 — New tab renderers, startup screen, RAID/milestone/
+// dependency/scenario CRUD. All data saved to existing localStorage key.
+// Licence system (LIC_PRODUCT='FCT', TC='FCT') is NOT modified.
+// ============================================================================
+
+// --- Startup screen ---
+let _suRole = 'fc';
+
+function suPickRole(role) {
+  _suRole = role;
+  const styles = {
+    fc: { bg: 'rgba(14,165,233,.15)', border: 'rgba(14,165,233,.4)', color: 'var(--ac)' },
+    pm: { bg: 'rgba(20,184,166,.15)', border: 'rgba(20,184,166,.4)', color: 'var(--ac2)' },
+    dm: { bg: 'rgba(139,92,246,.15)', border: 'rgba(139,92,246,.4)', color: 'var(--epur)' }
+  };
+  ['fc','pm','dm'].forEach(r => {
+    const btn = document.getElementById('su-role-' + r);
+    if (!btn) return;
+    const s = r === role ? styles[r] : { bg: 'var(--bg2)', border: 'var(--bdr)', color: 'var(--t2)' };
+    btn.style.background = s.bg;
+    btn.style.borderColor = s.border;
+    btn.style.color = s.color;
+  });
+}
+
+function startupChoice(choice) {
+  const overlay = document.getElementById('startupOverlay');
+  STATE.ui.role = _suRole;
+  if (choice === 'demo') {
+    overlay.style.display = 'none';
+    initSampleData();   // populate STATE in-memory (avoids reload loop)
+    ensureV5State();    // ensure v5 arrays exist
+    save();             // persist to localStorage so startup won't re-show on next load
+    setRole(_suRole);   // apply the role chosen in the startup screen
+    renderAll();        // render immediately
+    toast('Demo data loaded — explore all 6 teams and 4 PIs.', 'ok');
+    return;
+  }
+  if (choice === 'fresh') {
+    STATE.teams = []; STATE.members = []; STATE.features = []; STATE.budgets = [];
+    STATE.licences = []; STATE.aiAgents = []; STATE.velocityHistory = [];
+    STATE.raid = []; STATE.milestones = []; STATE.dependencies = []; STATE.scenarios = [];
+    STATE.config.projectName = '';
+    STATE.ui.activeTab = 'config';
+    save();
+    overlay.style.display = 'none';
+    setRole(_suRole);
+    switchTab('p-config');
+    toast('Blank project ready — start by setting your project name and adding teams.', 'ok');
+    return;
+  }
+  if (choice === 'import') {
+    overlay.style.display = 'none';
+    setRole(_suRole);
+    openImportModal();
+    return;
+  }
+}
+
+function checkShowStartup() {
+  try {
+    // Skip startup if this is a reset/reload (loadSampleData sets this flag)
+    if (sessionStorage.getItem('fis_skip_startup')) {
+      sessionStorage.removeItem('fis_skip_startup');
+      return;
+    }
+    const saved = localStorage.getItem('forecastinsite_v2');
+    if (!saved) {
+      const overlay = document.getElementById('startupOverlay');
+      if (overlay) overlay.style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+// --- Shared helpers for new tabs ---
+function ragDot(rag) {
+  const c = String(rag || '').toLowerCase();
+  const color = c === 'red' ? 'var(--lo)' : c === 'amber' ? 'var(--mid)' : 'var(--hi)';
+  return `<span style="color:${color};font-weight:700">● ${esc(rag || 'Green')}</span>`;
+}
+
+function rolePillV5(label) {
+  return `<div style="display:inline-flex;align-items:center;gap:8px;padding:4px 14px;border-radius:99px;font-size:12px;font-weight:700;margin-bottom:16px;background:rgba(14,165,233,.1);color:var(--ac);border:1px solid rgba(14,165,233,.25)">${esc(label)}</div>`;
+}
+
+function ensureV5State() {
+  if (!STATE.raid)         STATE.raid = [];
+  if (!STATE.milestones)   STATE.milestones = [];
+  if (!STATE.dependencies) STATE.dependencies = [];
+  if (!STATE.scenarios)    STATE.scenarios = [];
+}
+
+// ============================================================================
+// COMMAND CENTRE — Project Manager / Delivery Manager view (v5)
+// ============================================================================
+function renderCommandDM() {
+  ensureV5State();
+  const blocked  = STATE.features.filter(f => f.status === 'Blocked').length;
+  const inFlight = STATE.features.filter(f => f.status === 'In Progress').length;
+  const redRaid  = STATE.raid.filter(r => r.rag === 'Red').length;
+  const atRiskDeps = STATE.dependencies.filter(d => d.rag !== 'Green').length;
+
+  let html = rolePillV5('Project Manager / Delivery Manager View');
+  html += `<div class="dg">
+    <div class="sc"><div class="sl">Delivery RAG</div>
+      <div class="sv" style="color:${redRaid||blocked?'var(--mid)':'var(--hi)'}">
+        ${redRaid||blocked ? 'Amber' : 'Green'}
+      </div>
+      <div class="ss">${redRaid} red RAID · ${blocked} blocked features</div>
+    </div>
+    <div class="sc"><div class="sl">Features in Flight</div><div class="sv">${fmt(inFlight)}</div><div class="ss">Currently being delivered</div></div>
+    <div class="sc"><div class="sl">Open RAID Items</div><div class="sv">${fmt(STATE.raid.length)}</div>
+      <div class="ss"><a href="#" onclick="switchTab('p-raid');return false" style="color:var(--ac)">View RAID log →</a></div>
+    </div>
+    <div class="sc"><div class="sl">Dependency Risk</div><div class="sv">${fmt(atRiskDeps)}</div>
+      <div class="ss"><a href="#" onclick="switchTab('p-roadmap');return false" style="color:var(--ac)">View dependencies →</a></div>
+    </div>
+  </div>`;
+
+  // Needs attention
+  const items = [];
+  STATE.features.filter(f => f.status === 'Blocked').slice(0,4).forEach(f =>
+    items.push({ label: f.name, reason: 'Blocked feature', rag: 'Red' }));
+  STATE.dependencies.filter(d => d.rag !== 'Green').slice(0,4).forEach(d =>
+    items.push({ label: d.from, reason: `${d.type} dependency — ${d.status}`, rag: d.rag }));
+  STATE.raid.filter(r => r.rag !== 'Green').slice(0,4).forEach(r =>
+    items.push({ label: r.title, reason: `${r.type} · ${r.owner}`, rag: r.rag }));
+
+  html += `<div class="cr">`;
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h3 style="margin:0">Needs Attention</h3>
+    <button class="btn btn-p btn-sm" onclick="switchTab('p-raid')">Open RAID Log →</button>
+  </div>`;
+  if (items.length === 0) {
+    html += `<div style="text-align:center;padding:24px;color:var(--hi)">✓ No escalations — portfolio operating within thresholds.</div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr><th>Item</th><th>Reason</th><th>RAG</th></tr></thead><tbody>`;
+    items.slice(0,8).forEach(i => {
+      html += `<tr><td>${esc(i.label)}</td><td>${esc(i.reason)}</td><td>${ragDot(i.rag)}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+
+  // Milestone summary
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h3 style="margin:0">Milestone Tracker</h3>
+    <button class="btn btn-p btn-sm" onclick="switchTab('p-raid')">Manage Milestones →</button>
+  </div>`;
+  if (STATE.milestones.length === 0) {
+    html += `<div style="text-align:center;padding:24px;color:var(--t3)">No milestones logged yet. <a href="#" onclick="switchTab('p-raid');return false" style="color:var(--ac)">Add milestones →</a></div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr><th>Milestone</th><th>Planned</th><th>Forecast</th><th>Status</th></tr></thead><tbody>`;
+    STATE.milestones.slice(0,5).forEach(m => {
+      html += `<tr><td><strong>${esc(m.name)}</strong><div style="font-size:11px;color:var(--t3)">${esc(m.owner)} · ${esc(m.dependency||'')}</div></td>
+        <td>${esc(m.planned)}</td><td>${esc(m.forecast)}</td><td>${ragDot(m.status)}</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div></div>`;
+
+  return html;
+}
+
+// ============================================================================
+// ROADMAP & DEPENDENCIES (v5 — editable)
+// ============================================================================
+function rRoadmap() {
+  ensureV5State();
+  const c = document.getElementById('roadmapC'); if (!c) return;
+  const role = STATE.ui.role;
+  const pillLabel = role === 'pm' ? 'Portfolio Manager — Roadmap & Dependencies' : 'Roadmap & Dependency Mapping';
+
+  const groups = {};
+  STATE.features.forEach(f => {
+    const pi = f.piAssignment || 'Unassigned';
+    (groups[pi] ||= []).push(f);
+  });
+
+  let html = rolePillV5(pillLabel);
+
+  // Roadmap by PI
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">Roadmap by PI / Quarter</h2>
+  </div>`;
+  if (Object.keys(groups).length === 0) {
+    html += `<div style="text-align:center;padding:32px;border:1px dashed var(--bdr);border-radius:8px">
+      <div style="font-size:32px;margin-bottom:8px">🗺️</div>
+      <div style="color:var(--t2);margin-bottom:4px">No features assigned to PIs yet.</div>
+      <div style="font-size:12px;color:var(--t3)">Assign PI values in the Feature Economics tab and they'll appear here grouped by PI.</div>
+    </div>`;
+  } else {
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">`;
+    Object.keys(groups).sort().forEach(pi => {
+      html += `<div class="panel"><h3 style="margin-top:0">${esc(pi)}</h3>`;
+      groups[pi].slice(0,8).forEach(f => {
+        const status = f.status || 'Planned';
+        const statusColor = status === 'Done' ? 'var(--hi)' : status === 'Blocked' ? 'var(--lo)' : status === 'In Progress' ? 'var(--ac)' : 'var(--t3)';
+        html += `<div style="padding:6px 0;border-bottom:1px solid var(--bdr)">
+          <div style="font-size:12px;font-weight:600">${esc(f.name)}</div>
+          <div style="font-size:11px;color:${statusColor};margin-top:2px">${esc(status)}</div>
+        </div>`;
+      });
+      if (groups[pi].length > 8) html += `<div style="font-size:11px;color:var(--t3);padding-top:6px">+${groups[pi].length - 8} more</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+
+  // Dependency Register
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">Dependency Register</h2>
+    <button class="btn btn-p" onclick="openAddDependency()">+ Add Dependency</button>
+  </div>`;
+  if (STATE.dependencies.length === 0) {
+    html += `<div style="text-align:center;padding:32px;border:1px dashed var(--bdr);border-radius:8px">
+      <div style="font-size:32px;margin-bottom:8px">🔗</div>
+      <div style="color:var(--t2);margin-bottom:4px">No dependencies logged yet.</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px">Track team-to-team, feature, vendor, governance, and platform dependencies.</div>
+      <button class="btn btn-p" onclick="openAddDependency()">+ Add your first dependency</button>
+    </div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr><th>From</th><th>Depends On</th><th>Owner</th><th>Due</th><th>Type</th><th>RAG</th><th>Status</th><th></th></tr></thead><tbody>`;
+    STATE.dependencies.forEach(d => {
+      html += `<tr>
+        <td style="max-width:150px;font-weight:600">${esc(d.from)}</td>
+        <td style="max-width:150px">${esc(d.to)}</td>
+        <td>${esc(d.owner)}</td>
+        <td>${esc(d.dueDate)}</td>
+        <td><span style="font-size:11px;background:var(--bg2);padding:2px 6px;border-radius:4px">${esc(d.type)}</span></td>
+        <td>${ragDot(d.rag)}</td>
+        <td>${esc(d.status)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" onclick="openEditDependency('${d.id}')" style="padding:2px 8px;font-size:11px">Edit</button>
+          <button class="btn btn-sm" onclick="deleteDependency('${d.id}')" style="padding:2px 8px;font-size:11px;color:var(--lo);margin-left:4px">✕</button>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+  c.innerHTML = html;
+}
+
+function _mfStyles() {
+  // Shared modal form style helpers — returns {inp, lbl, grp, g2, g3}
+  const inp = 'width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;color:var(--t1);font-size:13px;box-sizing:border-box;outline:none';
+  const lbl = 'display:block;font-size:11px;font-weight:700;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px';
+  const grp = 'margin-bottom:14px';
+  const g2  = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px';
+  const g3  = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px';
+  return {inp, lbl, grp, g2, g3};
+}
+
+function openAddDependency() {
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  const depTypes = ['Team-to-team','Feature-to-feature','External vendor','Governance approval','Architecture decision','Data dependency','Platform dependency','Security / risk approval','Environment readiness','Release dependency'];
+  openModal('Add Dependency', `
+    <div style="${grp}">
+      <label style="${lbl}">From — team, feature or epic *</label>
+      <input id="dep-from" style="${inp}" placeholder="e.g. Platform Team"/>
+    </div>
+    <div style="${grp}">
+      <label style="${lbl}">Depends On *</label>
+      <input id="dep-to" style="${inp}" placeholder="e.g. Security Architecture Approval"/>
+    </div>
+    <div style="${g2}">
+      <div>
+        <label style="${lbl}">Dependency Type</label>
+        <select id="dep-type" style="${inp}">${depTypes.map(t=>`<option>${t}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="dep-owner" style="${inp}" placeholder="Owner name"/>
+      </div>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Due Date</label>
+        <input id="dep-due" type="date" style="${inp}"/>
+      </div>
+      <div>
+        <label style="${lbl}">RAG Status</label>
+        <select id="dep-rag" style="${inp}"><option>Green</option><option>Amber</option><option>Red</option></select>
+      </div>
+      <div>
+        <label style="${lbl}">Delivery Status</label>
+        <select id="dep-status" style="${inp}"><option>On Track</option><option>At Risk</option><option>Blocked</option><option>Done</option></select>
+      </div>
+    </div>
+  `, () => {
+    const dep = {
+      id: gid('dep'),
+      from: document.getElementById('dep-from').value.trim(),
+      to: document.getElementById('dep-to').value.trim(),
+      type: document.getElementById('dep-type').value,
+      owner: document.getElementById('dep-owner').value.trim(),
+      dueDate: document.getElementById('dep-due').value,
+      rag: document.getElementById('dep-rag').value,
+      status: document.getElementById('dep-status').value
+    };
+    if (!dep.from || !dep.to) { toast('Please fill in From and Depends On.', 'err'); return; }
+    STATE.dependencies.push(dep);
+    save(); rRoadmap(); toast('Dependency added', 'ok');
+  });
+}
+
+function openEditDependency(id) {
+  const d = STATE.dependencies.find(x => x.id === id); if (!d) return;
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  const depTypes = ['Team-to-team','Feature-to-feature','External vendor','Governance approval','Architecture decision','Data dependency','Platform dependency','Security / risk approval','Environment readiness','Release dependency'];
+  openModal('Edit Dependency', `
+    <div style="${grp}">
+      <label style="${lbl}">From — team, feature or epic</label>
+      <input id="dep-from" style="${inp}" value="${esc(d.from)}"/>
+    </div>
+    <div style="${grp}">
+      <label style="${lbl}">Depends On</label>
+      <input id="dep-to" style="${inp}" value="${esc(d.to)}"/>
+    </div>
+    <div style="${g2}">
+      <div>
+        <label style="${lbl}">Dependency Type</label>
+        <select id="dep-type" style="${inp}">${depTypes.map(t=>`<option${t===d.type?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="dep-owner" style="${inp}" value="${esc(d.owner)}"/>
+      </div>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Due Date</label>
+        <input id="dep-due" type="date" style="${inp}" value="${d.dueDate||''}"/>
+      </div>
+      <div>
+        <label style="${lbl}">RAG Status</label>
+        <select id="dep-rag" style="${inp}">${['Green','Amber','Red'].map(r=>`<option${r===d.rag?' selected':''}>${r}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Delivery Status</label>
+        <select id="dep-status" style="${inp}">${['On Track','At Risk','Blocked','Done'].map(s=>`<option${s===d.status?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+    </div>
+  `, () => {
+    d.from   = document.getElementById('dep-from').value.trim();
+    d.to     = document.getElementById('dep-to').value.trim();
+    d.type   = document.getElementById('dep-type').value;
+    d.owner  = document.getElementById('dep-owner').value.trim();
+    d.dueDate= document.getElementById('dep-due').value;
+    d.rag    = document.getElementById('dep-rag').value;
+    d.status = document.getElementById('dep-status').value;
+    save(); rRoadmap(); toast('Dependency updated', 'ok');
+  });
+}
+
+function deleteDependency(id) {
+  if (!confirm('Delete this dependency?')) return;
+  STATE.dependencies = STATE.dependencies.filter(d => d.id !== id);
+  save(); rRoadmap(); toast('Dependency removed', 'ok');
+}
+
+// ============================================================================
+// RAID & DELIVERY (v5 — editable)
+// ============================================================================
+function rRaid() {
+  ensureV5State();
+  const c = document.getElementById('raidC'); if (!c) return;
+  const risks     = STATE.raid.filter(x => x.type === 'Risk').length;
+  const issues    = STATE.raid.filter(x => x.type === 'Issue').length;
+  const decisions = STATE.raid.filter(x => x.type === 'Decision').length;
+  const actions   = STATE.raid.filter(x => x.type === 'Action').length;
+
+  let html = rolePillV5('RAID Log, Milestones & Delivery Control');
+  html += `<div class="dg">
+    <div class="sc"><div class="sl">Risks</div><div class="sv" style="color:${risks>0?'var(--mid)':'var(--hi)'}">${fmt(risks)}</div><div class="ss">Open risks</div></div>
+    <div class="sc"><div class="sl">Issues</div><div class="sv" style="color:${issues>0?'var(--lo)':'var(--hi)'}">${fmt(issues)}</div><div class="ss">Active issues</div></div>
+    <div class="sc"><div class="sl">Decisions</div><div class="sv" style="color:${decisions>0?'var(--mid)':'var(--hi)'}">${fmt(decisions)}</div><div class="ss">Decisions needed</div></div>
+    <div class="sc"><div class="sl">Actions</div><div class="sv">${fmt(actions)}</div><div class="ss">Follow-up actions</div></div>
+  </div>`;
+
+  // RAID Log
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">RAID Log</h2>
+    <button class="btn btn-p" onclick="openAddRaid()">+ Add Risk / Issue / Decision / Action</button>
+  </div>`;
+  if (STATE.raid.length === 0) {
+    html += `<div style="text-align:center;padding:32px;border:1px dashed var(--bdr);border-radius:8px">
+      <div style="font-size:32px;margin-bottom:8px">📋</div>
+      <div style="color:var(--t2);margin-bottom:4px">No RAID items logged yet.</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px">Track Risks, Assumptions, Issues, Dependencies, Decisions, and Actions.</div>
+      <button class="btn btn-p" onclick="openAddRaid()">+ Add your first RAID item</button>
+    </div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr><th>Type</th><th>Title</th><th>Owner</th><th>Due</th><th>Impact</th><th>RAG</th><th>Status</th><th></th></tr></thead><tbody>`;
+    STATE.raid.forEach(r => {
+      html += `<tr>
+        <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:var(--bg2);font-weight:600">${esc(r.type)}</span></td>
+        <td><div style="font-weight:600">${esc(r.title)}</div>${r.linkedFeature?`<div style="font-size:11px;color:var(--t3)">${esc(r.linkedFeature)}</div>`:''}</td>
+        <td>${esc(r.owner)}</td>
+        <td>${esc(r.dueDate)}</td>
+        <td>${esc(r.impact)}</td>
+        <td>${ragDot(r.rag)}</td>
+        <td><span style="font-size:11px;color:${r.status==='Closed'?'var(--t3)':'var(--t1)'}">${esc(r.status)}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" onclick="openEditRaid('${r.id}')" style="padding:2px 8px;font-size:11px">Edit</button>
+          <button class="btn btn-sm" onclick="deleteRaid('${r.id}')" style="padding:2px 8px;font-size:11px;color:var(--lo);margin-left:4px">✕</button>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+
+  // Milestone Tracker
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">Milestone Tracker</h2>
+    <button class="btn btn-p" onclick="openAddMilestone()">+ Add Milestone</button>
+  </div>`;
+  if (STATE.milestones.length === 0) {
+    html += `<div style="text-align:center;padding:32px;border:1px dashed var(--bdr);border-radius:8px">
+      <div style="font-size:32px;margin-bottom:8px">🏁</div>
+      <div style="color:var(--t2);margin-bottom:4px">No milestones tracked yet.</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px">Track planned vs forecast dates, owners, and health.</div>
+      <button class="btn btn-p" onclick="openAddMilestone()">+ Add your first milestone</button>
+    </div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr><th>Milestone</th><th>Owner</th><th>Planned</th><th>Forecast</th><th>Variance</th><th>Status</th><th></th></tr></thead><tbody>`;
+    STATE.milestones.forEach(m => {
+      const p = m.planned ? new Date(m.planned) : null;
+      const f = m.forecast ? new Date(m.forecast) : null;
+      const diff = (p && f) ? Math.round((f - p) / 86400000) : null;
+      const varStr = diff === null ? '—' : diff === 0 ? 'On time' : diff > 0 ? `+${diff}d late` : `${Math.abs(diff)}d early`;
+      const varColor = !diff ? 'var(--hi)' : diff > 0 ? 'var(--lo)' : 'var(--hi)';
+      html += `<tr>
+        <td style="font-weight:600">${esc(m.name)}${m.dependency?`<div style="font-size:11px;color:var(--t3)">${esc(m.dependency)}</div>`:''}</td>
+        <td>${esc(m.owner)}</td>
+        <td>${esc(m.planned)}</td>
+        <td>${esc(m.forecast)}</td>
+        <td style="color:${varColor};font-weight:600">${varStr}</td>
+        <td>${ragDot(m.status)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" onclick="openEditMilestone('${m.id}')" style="padding:2px 8px;font-size:11px">Edit</button>
+          <button class="btn btn-sm" onclick="deleteMilestone('${m.id}')" style="padding:2px 8px;font-size:11px;color:var(--lo);margin-left:4px">✕</button>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+  c.innerHTML = html;
+}
+
+// RAID CRUD
+function openAddRaid() {
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  const types = ['Risk','Assumption','Issue','Dependency','Decision','Action'];
+  const levels = ['High','Medium','Low'];
+  const statuses = ['Open','In Progress','Needed','Closed'];
+  openModal('Add RAID Item', `
+    <div style="${grp}">
+      <label style="${lbl}">Title *</label>
+      <input id="ri-title" style="${inp}" placeholder="Brief description of the risk, issue, or action"/>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Type</label>
+        <select id="ri-type" style="${inp}">${types.map(t=>`<option>${t}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="ri-owner" style="${inp}" placeholder="Person responsible"/>
+      </div>
+      <div>
+        <label style="${lbl}">Due Date</label>
+        <input id="ri-due" type="date" style="${inp}"/>
+      </div>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Impact</label>
+        <select id="ri-impact" style="${inp}">${levels.map(l=>`<option>${l}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Likelihood</label>
+        <select id="ri-like" style="${inp}">${levels.map(l=>`<option>${l}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">RAG</label>
+        <select id="ri-rag" style="${inp}"><option>Red</option><option>Amber</option><option>Green</option></select>
+      </div>
+    </div>
+    <div style="${g2}">
+      <div>
+        <label style="${lbl}">Status</label>
+        <select id="ri-status" style="${inp}">${statuses.map(s=>`<option>${s}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Linked Feature / Epic</label>
+        <input id="ri-feat" style="${inp}" placeholder="Feature or epic name (optional)"/>
+      </div>
+    </div>
+    <div style="${grp}">
+      <label style="${lbl}">Mitigation / Next Step</label>
+      <textarea id="ri-mit" style="${inp};height:72px;resize:vertical" placeholder="What are we doing about this?"></textarea>
+    </div>
+  `, () => {
+    const item = {
+      id: gid('raid'),
+      type: document.getElementById('ri-type').value,
+      title: document.getElementById('ri-title').value.trim(),
+      owner: document.getElementById('ri-owner').value.trim(),
+      dueDate: document.getElementById('ri-due').value,
+      impact: document.getElementById('ri-impact').value,
+      likelihood: document.getElementById('ri-like').value,
+      rag: document.getElementById('ri-rag').value,
+      status: document.getElementById('ri-status').value,
+      mitigation: document.getElementById('ri-mit').value.trim(),
+      linkedFeature: document.getElementById('ri-feat').value.trim()
+    };
+    if (!item.title) { toast('Please enter a title.', 'err'); return; }
+    STATE.raid.push(item);
+    save(); rRaid(); toast(`${item.type} added to RAID log`, 'ok');
+  });
+}
+
+function openEditRaid(id) {
+  const r = STATE.raid.find(x => x.id === id); if (!r) return;
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  const types = ['Risk','Assumption','Issue','Dependency','Decision','Action'];
+  const levels = ['High','Medium','Low'];
+  const statuses = ['Open','In Progress','Needed','Closed'];
+  openModal('Edit RAID Item', `
+    <div style="${grp}">
+      <label style="${lbl}">Title</label>
+      <input id="ri-title" style="${inp}" value="${esc(r.title)}"/>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Type</label>
+        <select id="ri-type" style="${inp}">${types.map(t=>`<option${t===r.type?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="ri-owner" style="${inp}" value="${esc(r.owner)}"/>
+      </div>
+      <div>
+        <label style="${lbl}">Due Date</label>
+        <input id="ri-due" type="date" style="${inp}" value="${r.dueDate||''}"/>
+      </div>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Impact</label>
+        <select id="ri-impact" style="${inp}">${levels.map(l=>`<option${l===r.impact?' selected':''}>${l}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Likelihood</label>
+        <select id="ri-like" style="${inp}">${levels.map(l=>`<option${l===r.likelihood?' selected':''}>${l}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">RAG</label>
+        <select id="ri-rag" style="${inp}">${['Red','Amber','Green'].map(x=>`<option${x===r.rag?' selected':''}>${x}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div style="${g2}">
+      <div>
+        <label style="${lbl}">Status</label>
+        <select id="ri-status" style="${inp}">${statuses.map(s=>`<option${s===r.status?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Linked Feature / Epic</label>
+        <input id="ri-feat" style="${inp}" value="${esc(r.linkedFeature||'')}"/>
+      </div>
+    </div>
+    <div style="${grp}">
+      <label style="${lbl}">Mitigation / Next Step</label>
+      <textarea id="ri-mit" style="${inp};height:72px;resize:vertical">${esc(r.mitigation||'')}</textarea>
+    </div>
+  `, () => {
+    r.type = document.getElementById('ri-type').value;
+    r.title = document.getElementById('ri-title').value.trim();
+    r.owner = document.getElementById('ri-owner').value.trim();
+    r.dueDate = document.getElementById('ri-due').value;
+    r.impact = document.getElementById('ri-impact').value;
+    r.likelihood = document.getElementById('ri-like').value;
+    r.rag = document.getElementById('ri-rag').value;
+    r.status = document.getElementById('ri-status').value;
+    r.mitigation = document.getElementById('ri-mit').value.trim();
+    r.linkedFeature = document.getElementById('ri-feat').value.trim();
+    save(); rRaid(); toast('RAID item updated', 'ok');
+  });
+}
+
+function deleteRaid(id) {
+  if (!confirm('Delete this RAID item?')) return;
+  STATE.raid = STATE.raid.filter(r => r.id !== id);
+  save(); rRaid(); toast('RAID item removed', 'ok');
+}
+
+// Milestone CRUD
+function openAddMilestone() {
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  openModal('Add Milestone', `
+    <div style="${grp}">
+      <label style="${lbl}">Milestone Name *</label>
+      <input id="ms-name" style="${inp}" placeholder="e.g. PI 25.2 Scope Freeze"/>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="ms-owner" style="${inp}" placeholder="Person responsible"/>
+      </div>
+      <div>
+        <label style="${lbl}">Planned Date</label>
+        <input id="ms-planned" type="date" style="${inp}"/>
+      </div>
+      <div>
+        <label style="${lbl}">Forecast Date</label>
+        <input id="ms-forecast" type="date" style="${inp}"/>
+      </div>
+    </div>
+    <div style="${g2}">
+      <div>
+        <label style="${lbl}">RAG Status</label>
+        <select id="ms-status" style="${inp}"><option>Green</option><option>Amber</option><option>Red</option></select>
+      </div>
+      <div>
+        <label style="${lbl}">Dependency (optional)</label>
+        <input id="ms-dep" style="${inp}" placeholder="What does this depend on?"/>
+      </div>
+    </div>
+  `, () => {
+    const ms = {
+      id: gid('ms'),
+      name: document.getElementById('ms-name').value.trim(),
+      owner: document.getElementById('ms-owner').value.trim(),
+      planned: document.getElementById('ms-planned').value,
+      forecast: document.getElementById('ms-forecast').value,
+      actual: '',
+      status: document.getElementById('ms-status').value,
+      dependency: document.getElementById('ms-dep').value.trim()
+    };
+    if (!ms.name) { toast('Please enter a milestone name.', 'err'); return; }
+    STATE.milestones.push(ms);
+    save(); rRaid(); toast('Milestone added', 'ok');
+  });
+}
+
+function openEditMilestone(id) {
+  const m = STATE.milestones.find(x => x.id === id); if (!m) return;
+  const {inp, lbl, grp, g2, g3} = _mfStyles();
+  openModal('Edit Milestone', `
+    <div style="${grp}">
+      <label style="${lbl}">Milestone Name</label>
+      <input id="ms-name" style="${inp}" value="${esc(m.name)}"/>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Owner</label>
+        <input id="ms-owner" style="${inp}" value="${esc(m.owner)}"/>
+      </div>
+      <div>
+        <label style="${lbl}">Planned Date</label>
+        <input id="ms-planned" type="date" style="${inp}" value="${m.planned||''}"/>
+      </div>
+      <div>
+        <label style="${lbl}">Forecast Date</label>
+        <input id="ms-forecast" type="date" style="${inp}" value="${m.forecast||''}"/>
+      </div>
+    </div>
+    <div style="${g3}">
+      <div>
+        <label style="${lbl}">Actual Date</label>
+        <input id="ms-actual" type="date" style="${inp}" value="${m.actual||''}"/>
+      </div>
+      <div>
+        <label style="${lbl}">RAG Status</label>
+        <select id="ms-status" style="${inp}">${['Green','Amber','Red'].map(s=>`<option${s===m.status?' selected':''}>${s}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label style="${lbl}">Dependency</label>
+        <input id="ms-dep" style="${inp}" value="${esc(m.dependency||'')}"/>
+      </div>
+    </div>
+  `, () => {
+    m.name = document.getElementById('ms-name').value.trim();
+    m.owner = document.getElementById('ms-owner').value.trim();
+    m.planned = document.getElementById('ms-planned').value;
+    m.forecast = document.getElementById('ms-forecast').value;
+    m.actual = document.getElementById('ms-actual').value;
+    m.status = document.getElementById('ms-status').value;
+    m.dependency = document.getElementById('ms-dep').value.trim();
+    save(); rRaid(); toast('Milestone updated', 'ok');
+  });
+}
+
+function deleteMilestone(id) {
+  if (!confirm('Delete this milestone?')) return;
+  STATE.milestones = STATE.milestones.filter(m => m.id !== id);
+  save(); rRaid(); toast('Milestone removed', 'ok');
+}
+
+// ============================================================================
+// SCENARIOS & CONTROLS (v5)
+// ============================================================================
+function rScenarios() {
+  ensureV5State();
+  const c = document.getElementById('scenariosC'); if (!c) return;
+  const totalForecast = STATE.budgets.reduce((s,b) => s+(b.forecast||b.budgeted||0), 0);
+
+  let html = rolePillV5('Capex / Opex Classification & Scenario Modelling');
+  html += `<div class="dg">
+    <div class="sc"><div class="sl">Forecast Baseline</div><div class="sv">${fmtCurrency(totalForecast)}</div><div class="ss">From budget records</div></div>
+    <div class="sc"><div class="sl">Scenarios</div><div class="sv">${fmt(STATE.scenarios.length)}</div><div class="ss">Modelled cases</div></div>
+    <div class="sc"><div class="sl">Teams</div><div class="sv">${fmt(STATE.teams.length)}</div><div class="ss">In scope</div></div>
+    <div class="sc"><div class="sl">Features</div><div class="sv">${fmt(STATE.features.length)}</div><div class="ss">In portfolio</div></div>
+  </div>`;
+
+  // Scenario table
+  html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">Scenario Comparison</h2>
+    <button class="btn btn-p" onclick="openAddScenario()">+ Add Scenario</button>
+  </div>`;
+  if (STATE.scenarios.length === 0) {
+    html += `<div style="text-align:center;padding:32px;border:1px dashed var(--bdr);border-radius:8px">
+      <div style="font-size:32px;margin-bottom:8px">📊</div>
+      <div style="color:var(--t2);margin-bottom:4px">No scenarios defined yet.</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:16px">Model base case, best case, worst case, and executive target scenarios.</div>
+      <button class="btn btn-p" onclick="openAddScenario()">+ Add your first scenario</button>
+    </div>`;
+  } else {
+    html += `<div class="tw"><table class="dt"><thead><tr>
+      <th>Scenario</th><th>Rate Δ%</th><th>Capacity Δ%</th><th>Delay (mo)</th><th>Scope Δ%</th><th>AI Uplift %</th><th>Confidence</th><th style="text-align:right">Forecast Impact</th><th></th>
+    </tr></thead><tbody>`;
+    STATE.scenarios.forEach(scn => {
+      const impact = calcScenarioImpact(scn);
+      const diff = impact - totalForecast;
+      const diffStr = diff === 0 ? 'Baseline' : (diff > 0 ? '+' : '') + fmtCurrency(diff);
+      const diffColor = diff > 0 ? 'var(--lo)' : diff < 0 ? 'var(--hi)' : 'var(--t2)';
+      html += `<tr>
+        <td style="font-weight:600">${esc(scn.name)}</td>
+        <td>${fmt(scn.rateChangePct)}%</td>
+        <td>${fmt(scn.capacityChangePct)}%</td>
+        <td>${fmt(scn.delayMonths)} mo</td>
+        <td>${fmt(scn.scopeChangePct)}%</td>
+        <td>${fmt(scn.aiProductivityPct)}%</td>
+        <td>${esc(scn.confidence)}</td>
+        <td style="text-align:right;font-family:'JetBrains Mono',monospace">
+          ${fmtCurrency(impact)}<br><span style="font-size:11px;color:${diffColor}">${diffStr}</span>
+        </td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" onclick="openEditScenario('${scn.id}')" style="padding:2px 8px;font-size:11px">Edit</button>
+          <button class="btn btn-sm" onclick="deleteScenario('${scn.id}')" style="padding:2px 8px;font-size:11px;color:var(--lo);margin-left:4px">✕</button>
+        </td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+
+  // Finance control mapping (Capex/Opex per feature)
+  if (STATE.features.length > 0) {
+    html += `<div class="gs"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h2 style="margin:0">Finance Control Mapping</h2>
+      <button class="btn" onclick="exportFinanceCSV()">↓ Export CSV</button>
+    </div>
+    <div class="tw"><table class="dt"><thead><tr><th>Feature</th><th>Spend Type</th><th>Capex %</th><th>Strategic Theme</th><th>Benefit Type</th></tr></thead><tbody>`;
+    STATE.features.slice(0, 20).forEach(f => {
+      html += `<tr>
+        <td style="font-weight:600">${esc(f.name)}</td>
+        <td>${esc(f.spendType||'—')}</td>
+        <td>${f.capexPct != null ? fmt(f.capexPct)+'%' : '—'}</td>
+        <td>${esc(f.strategicTheme||'—')}</td>
+        <td>${esc(f.benefitType||'—')}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div></div>`;
+  }
+
+  c.innerHTML = html;
+}
+
+function calcScenarioImpact(scn) {
+  const base = STATE.budgets.reduce((s,b) => s+(b.forecast||b.budgeted||0), 0);
+  const teamMonthly = STATE.teams.reduce((s,t) => s + calcTeamMonthlyCost(t.id), 0);
+  return base
+    + base * ((scn.rateChangePct||0) / 100)
+    + base * ((scn.scopeChangePct||0) / 100)
+    + (scn.delayMonths||0) * teamMonthly
+    - base * ((scn.aiProductivityPct||0) / 100) * 0.5;
+}
+
+function openAddScenario() {
+  openModal('Add Scenario', `
+    <label>Scenario Name</label><input id="scn-name" class="finput" placeholder="e.g. Base Case, Worst Case"/>
+    <label>Rate Change % (+ = increase, - = reduction)</label><input id="scn-rate" type="number" class="finput" value="0"/>
+    <label>Capacity Change % (+ = more capacity, - = less)</label><input id="scn-cap" type="number" class="finput" value="0"/>
+    <label>Delivery Delay (months)</label><input id="scn-delay" type="number" class="finput" value="0" min="0"/>
+    <label>Scope Change % (+ = scope increase, - = reduction)</label><input id="scn-scope" type="number" class="finput" value="0"/>
+    <label>AI Productivity Uplift %</label><input id="scn-ai" type="number" class="finput" value="0" min="0"/>
+    <label>Confidence</label><select id="scn-conf" class="finput"><option>High</option><option selected>Medium</option><option>Low</option></select>
+  `, () => {
+    const scn = {
+      id: gid('scn'),
+      name: document.getElementById('scn-name').value.trim(),
+      rateChangePct: parseFloat(document.getElementById('scn-rate').value)||0,
+      capacityChangePct: parseFloat(document.getElementById('scn-cap').value)||0,
+      delayMonths: parseFloat(document.getElementById('scn-delay').value)||0,
+      scopeChangePct: parseFloat(document.getElementById('scn-scope').value)||0,
+      aiProductivityPct: parseFloat(document.getElementById('scn-ai').value)||0,
+      confidence: document.getElementById('scn-conf').value
+    };
+    if (!scn.name) { toast('Please enter a scenario name.', 'err'); return; }
+    STATE.scenarios.push(scn);
+    save(); rScenarios(); toast('Scenario added', 'ok');
+  });
+}
+
+function openEditScenario(id) {
+  const scn = STATE.scenarios.find(x => x.id === id); if (!scn) return;
+  openModal('Edit Scenario', `
+    <label>Scenario Name</label><input id="scn-name" class="finput" value="${esc(scn.name)}"/>
+    <label>Rate Change %</label><input id="scn-rate" type="number" class="finput" value="${scn.rateChangePct||0}"/>
+    <label>Capacity Change %</label><input id="scn-cap" type="number" class="finput" value="${scn.capacityChangePct||0}"/>
+    <label>Delivery Delay (months)</label><input id="scn-delay" type="number" class="finput" value="${scn.delayMonths||0}"/>
+    <label>Scope Change %</label><input id="scn-scope" type="number" class="finput" value="${scn.scopeChangePct||0}"/>
+    <label>AI Productivity Uplift %</label><input id="scn-ai" type="number" class="finput" value="${scn.aiProductivityPct||0}"/>
+    <label>Confidence</label><select id="scn-conf" class="finput">${['High','Medium','Low'].map(c=>`<option${c===scn.confidence?' selected':''}>${c}</option>`).join('')}</select>
+  `, () => {
+    scn.name = document.getElementById('scn-name').value.trim();
+    scn.rateChangePct = parseFloat(document.getElementById('scn-rate').value)||0;
+    scn.capacityChangePct = parseFloat(document.getElementById('scn-cap').value)||0;
+    scn.delayMonths = parseFloat(document.getElementById('scn-delay').value)||0;
+    scn.scopeChangePct = parseFloat(document.getElementById('scn-scope').value)||0;
+    scn.aiProductivityPct = parseFloat(document.getElementById('scn-ai').value)||0;
+    scn.confidence = document.getElementById('scn-conf').value;
+    save(); rScenarios(); toast('Scenario updated', 'ok');
+  });
+}
+
+function deleteScenario(id) {
+  if (!confirm('Delete this scenario?')) return;
+  STATE.scenarios = STATE.scenarios.filter(s => s.id !== id);
+  save(); rScenarios(); toast('Scenario removed', 'ok');
+}
+
+function exportFinanceCSV() {
+  const rows = [['Feature','Spend Type','Capex %','Strategic Theme','Benefit Type','Estimated Cost']];
+  STATE.features.forEach(f => rows.push([
+    f.name, f.spendType||'', f.capexPct||'', f.strategicTheme||'', f.benefitType||'',
+    Math.round(calcFeatureCost(f.id))
+  ]));
+  const csv = rows.map(r => r.map(v => '"' + String(v??'').replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'forecastinsite-finance-controls.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Finance controls CSV exported', 'ok');
 }
 </script>
 </body>
