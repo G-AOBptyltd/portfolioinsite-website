@@ -901,6 +901,27 @@ function render() {
 }
 
 render();
+
+// Products dropdown
+document.querySelectorAll('.nav-dropdown-btn').forEach(btn => {
+  const panel = btn.nextElementSibling;
+  if (!panel) return;
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = panel.classList.contains('open');
+    document.querySelectorAll('.nav-dropdown-panel.open').forEach(p => {
+      p.classList.remove('open');
+      if (p.previousElementSibling) p.previousElementSibling.setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen) { panel.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.nav-dropdown-panel.open').forEach(p => {
+    p.classList.remove('open');
+    if (p.previousElementSibling) p.previousElementSibling.setAttribute('aria-expanded', 'false');
+  });
+});
 </script>
 
 </body>
