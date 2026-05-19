@@ -53,6 +53,12 @@
   to = "/pages/forecastinsite-playbook.html"
   status = 200
 
+# ===== Module Teasers =====
+[[redirects]]
+  from = "/modules/*"
+  to = "/pages/module.html"
+  status = 200
+
 # ===== 404 Fallback =====
 [[redirects]]
   from = "/*"

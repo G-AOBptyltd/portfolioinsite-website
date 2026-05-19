@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Module — PortfolioInSite</title>
+  <meta id="page-desc" name="description" content="PortfolioInSite module detail">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    :root {
+      --ac: #06b6d4; --ac-d: #0891b2; --ac-l: #e0f7fa;
+      --t1: #0f172a; --t2: #475569; --t3: #94a3b8;
+      --bg: #fff; --bg1: #f8fafc; --bg2: #f1f5f9;
+      --bdr: #e2e8f0; --green: #10b981; --amber: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+
+    /* ── BREADCRUMB ── */
+    .mod-bread {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 0;
+      font-size: 13px; color: var(--t3);
+    }
+    .mod-bread a { color: var(--ac); text-decoration: none; }
+    .mod-bread a:hover { text-decoration: underline; }
+
+    /* ── HERO ── */
+    .mod-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 65%, #0891b2 100%);
+      padding: 56px 0 48px;
+      color: #fff;
+    }
+    .mod-hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .mod-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(6,182,212,.18); border: 1px solid rgba(6,182,212,.35);
+      color: var(--ac); padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; margin-bottom: 16px;
+    }
+    .mod-tier {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700; letter-spacing: .3px;
+      margin-left: 8px;
+    }
+    .tier-free { background: #dcfce7; color: #15803d; }
+    .tier-paid { background: rgba(6,182,212,.2); color: var(--ac); }
+    .tier-uat  { background: #fef3c7; color: #92400e; }
+    .mod-hero h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 36px; font-weight: 800; line-height: 1.15;
+      margin-bottom: 14px; max-width: 640px;
+    }
+    .mod-hero-sub {
+      font-size: 15px; color: rgba(255,255,255,.72);
+      max-width: 580px; line-height: 1.75; margin-bottom: 24px;
+    }
+    .hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .hero-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+      padding: 6px 12px; border-radius: 20px;
+      font-size: 13px; color: rgba(255,255,255,.8);
+    }
+    .hero-chip span { color: var(--ac); font-weight: 600; }
+
+    /* ── SECTION WRAPPER ── */
+    .mod-body { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── PUBLIC CONTENT ── */
+    .pub-block { padding: 48px 0 0; }
+    .pub-block h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 22px; font-weight: 700; color: var(--t1); margin-bottom: 14px;
+    }
+    .pub-block p { font-size: 15px; color: var(--t2); line-height: 1.75; margin-bottom: 20px; }
+
+    .caps-box {
+      background: var(--bg2); border-radius: 10px;
+      padding: 20px 24px; margin-bottom: 28px;
+    }
+    .caps-box h4 {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--t3); margin-bottom: 12px;
+    }
+    .caps-box ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .caps-box li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--t2);
+    }
+    .caps-box li::before {
+      content: ''; width: 6px; height: 6px; background: var(--ac);
+      border-radius: 50%; margin-top: 7px; flex-shrink: 0;
+    }
+
+    /* ── PROBLEM STATEMENT ── */
+    .problem-strip {
+      background: #fff7ed; border-left: 4px solid #f97316;
+      border-radius: 8px; padding: 20px 24px; margin-bottom: 28px;
+    }
+    .problem-strip h4 { font-size: 13px; font-weight: 700; color: #9a3412; margin-bottom: 8px; }
+    .problem-strip p { font-size: 14px; color: #7c2d12; line-height: 1.6; margin: 0; }
+
+    /* ── VIDEO ── */
+    .vid-wrap {
+      background: var(--t1); border-radius: 10px;
+      overflow: hidden; margin-bottom: 8px;
+      position: relative; aspect-ratio: 16/9; max-width: 720px;
+    }
+    .vid-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .vid-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      color: rgba(255,255,255,.5);
+    }
+    .vid-play { width: 52px; height: 52px; border: 2px solid rgba(6,182,212,.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--ac); font-size: 18px; }
+    .vid-label { font-size: 11px; color: var(--t3); margin-bottom: 28px; }
+
+    /* ── SCREENSHOT ── */
+    .img-box { border-radius: 10px; overflow: hidden; border: 1px solid var(--bdr); margin-bottom: 28px; max-width: 720px; }
+    .img-box img { width: 100%; display: block; object-fit: contain; }
+    .img-ph { background: var(--bg2); height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--t3); font-size: 13px; }
+
+    /* ── GATE ── */
+    .gate-wrap { position: relative; border-radius: 10px; overflow: hidden; margin-top: 12px; }
+    .gate-inner { filter: blur(5px); user-select: none; pointer-events: none; opacity: .7; padding-bottom: 80px; }
+    .gate-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,.6) 25%, rgba(255,255,255,.97) 50%); z-index: 1; }
+    .gate-card { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; padding: 24px 24px 32px; text-align: center; }
+    .gate-lock { font-size: 26px; margin-bottom: 8px; }
+    .gate-card h3 { font-size: 17px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--t2); max-width: 340px; margin-bottom: 16px; line-height: 1.6; }
+    .btn-unlock {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--ac); color: #fff; text-decoration: none;
+      padding: 10px 22px; border-radius: 8px;
+      font-size: 14px; font-weight: 600; transition: background .15s;
+    }
+    .btn-unlock:hover { background: var(--ac-d); }
+
+    /* ── GATED CONTENT ── */
+    .gstep { display: flex; gap: 14px; margin-bottom: 16px; }
+    .gsnum { width: 26px; height: 26px; border-radius: 50%; background: var(--ac); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .gsbody h5 { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+    .gsbody p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+    .tips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .tip { background: var(--bg2); border-radius: 8px; padding: 14px 16px; border-left: 3px solid var(--ac); }
+    .tip h5 { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .tip p { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    /* ── RELATED ── */
+    .related { padding: 40px 0 48px; }
+    .related h3 { font-size: 16px; font-weight: 700; color: var(--t1); margin-bottom: 16px; }
+    .related-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+    .related-card {
+      background: var(--bg1); border: 1px solid var(--bdr);
+      border-radius: 8px; padding: 14px 18px;
+      text-decoration: none; color: var(--t1);
+      font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      transition: border-color .15s, color .15s;
+    }
+    .related-card:hover { border-color: var(--ac); color: var(--ac); }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      padding: 56px 32px; text-align: center; color: #fff;
+    }
+    .cta-band h2 { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+    .cta-band p { font-size: 15px; color: rgba(255,255,255,.7); max-width: 480px; margin: 0 auto 24px; line-height: 1.7; }
+    .btn-cta-lg {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--ac); color: #fff; text-decoration: none;
+      padding: 13px 28px; border-radius: 8px;
+      font-size: 15px; font-weight: 700; transition: background .15s;
+    }
+    .btn-cta-lg:hover { background: var(--ac-d); }
+    .cta-sub { margin-top: 12px; font-size: 12px; color: rgba(255,255,255,.4); }
+    .cta-sub a { color: var(--ac); text-decoration: none; }
+
+    @media (max-width: 700px) {
+      .mod-hero h1 { font-size: 26px; }
+      .tips { grid-template-columns: 1fr; }
+      .mod-body { padding: 0 16px; }
+      .mod-hero-inner { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav scrolled" role="navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <div class="nav-logo-icon">PI</div>PortfolioInSite
+      </a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="features.html" class="active">Features</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="docs.html">Docs</a>
+        <a href="/tools/forecastinsite" class="nav-cta">Try Free</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO (populated by JS) -->
+  <div class="mod-hero">
+    <div class="mod-hero-inner">
+      <div class="mod-bread">
+        <a href="features.html">← Features</a>
+        <span>/</span>
+        <span id="bread-label">Module</span>
+      </div>
+      <div class="mod-eyebrow" id="hero-eyebrow">PortfolioInSite</div>
+      <h1 id="hero-title">Loading…</h1>
+      <p class="mod-hero-sub" id="hero-sub"></p>
+      <div class="hero-chips" id="hero-chips"></div>
+    </div>
+  </div>
+
+  <!-- BODY (populated by JS) -->
+  <div class="mod-body">
+
+    <div class="pub-block">
+      <h2 id="pub-h2">What this module does</h2>
+      <p id="pub-overview"></p>
+      <div class="caps-box" id="caps-box">
+        <h4>Key capabilities</h4>
+        <ul id="caps-list"></ul>
+      </div>
+      <div class="problem-strip" id="problem-strip">
+        <h4>Without this module…</h4>
+        <p id="problem-text"></p>
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="vid-wrap" id="vid-wrap">
+      <div class="vid-placeholder" id="vid-placeholder">
+        <div class="vid-play">▶</div>
+        <p id="vid-label-inner" style="font-size:12px;text-align:center;max-width:160px"></p>
+      </div>
+    </div>
+    <p class="vid-label" id="vid-label"></p>
+
+    <!-- SCREENSHOT -->
+    <div class="img-box" id="img-box">
+      <div class="img-ph"><span>🖼️</span><span id="img-ph-text">Screenshot coming soon</span></div>
+    </div>
+
+    <!-- GATE -->
+    <div class="gate-wrap" id="gate-wrap">
+      <div class="gate-inner" id="gate-inner">
+        <div style="padding:4px 0">
+          <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:16px" id="gate-h4">How to configure and use this module</h4>
+          <div id="gate-steps"></div>
+          <div class="tips" id="gate-tips"></div>
+        </div>
+      </div>
+      <div class="gate-fade"></div>
+      <div class="gate-card">
+        <div class="gate-lock">🔒</div>
+        <h3 id="gate-title">Full Module Playbook</h3>
+        <p id="gate-desc">Get the complete setup guide, configuration reference, and practitioner tips for this module.</p>
+        <a href="/pricing" class="btn-unlock">View Pricing &amp; Get Access</a>
+      </div>
+    </div>
+
+    <!-- RELATED -->
+    <div class="related">
+      <h3>Related modules</h3>
+      <div class="related-grid" id="related-grid"></div>
+    </div>
+
+  </div>
+
+  <!-- CTA BAND -->
+  <div class="cta-band">
+    <h2 id="cta-title">Ready to govern your portfolio?</h2>
+    <p id="cta-sub-text">PortfolioInSite is live inside Jira Cloud. Start with the free MoSCoW Scoring module and expand as your governance maturity grows.</p>
+    <a href="/pricing" class="btn-cta-lg">View Pricing &amp; Get Access →</a>
+    <p class="cta-sub">Already using the tool? <a href="/tools/forecastinsite">Open ForecastInSite →</a></p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="../index.html" class="footer-logo"><div class="nav-logo-icon">PI</div>PortfolioInSite</a>
+        <p class="footer-desc">AI-native portfolio governance for Jira Cloud. Built by Agility Ops Business Pty Ltd.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="/playbook">Playbook</a>
+        <a href="docs.html">Documentation</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a>
+        <a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a>
+        <a href="sla.html">SLA</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Agility Ops Business Pty Ltd · <a href="https://agilityops.com.au" target="_blank">agilityops.com.au</a></p>
+    </div>
+  </footer>
+
+<script>
+// ═══════════════════════════════════════════════
+//  MODULE DATA
+// ═══════════════════════════════════════════════
+const MODULES = {
+  'moscow-scoring': {
+    num: 'M01',
+    tier: 'free',
+    tierLabel: 'Free Forever',
+    title: 'MoSCoW Scoring Engine',
+    sub: 'The foundation every prioritisation decision builds on. Weighted, Fibonacci-normalised scoring across five criteria — inside Jira Cloud.',
+    chips: ['5-criteria scoring', 'Fibonacci normalisation', 'Jira-native', 'Free forever'],
+    overview: 'The MoSCoW Scoring Engine is the governance foundation of PortfolioInSite. It replaces opinion-based prioritisation with a structured, repeatable framework — weighted scoring across Must Have, Should Have, Could Have, Won\'t Have criteria, normalised using a Fibonacci scale to create defensible priority rankings.',
+    caps: [
+      'Five-criteria weighted scoring framework — configure weights to match your organisational priorities',
+      'Fibonacci rank normalisation ensures priority spread is meaningful, not compressed',
+      'Score once, govern everywhere — scores flow through to all downstream modules automatically',
+      'Visual scoring interface built natively inside Jira Cloud — no context switching',
+      'Free forever — no feature gating on the core scoring engine'
+    ],
+    problem: 'Without a scoring framework, prioritisation is a negotiation. Loudest voice wins. The senior stakeholder\'s pet project jumps the queue. MoSCoW Scoring Engine makes priority a data output, not a political outcome.',
+    vid: 'moscow-scoring.mp4',
+    vidLabel: '⏱ ~60 seconds · Scoring interface, criteria configuration, Fibonacci ranking',
+    img: '../img/PiSscoring1.png',
+    imgAlt: 'MoSCoW Scoring Engine interface inside Jira Cloud',
+    gateH4: 'Setting up your MoSCoW scoring framework',
+    steps: [
+      { t: 'Configure your five criteria', b: 'Navigate to PortfolioInSite Settings → Scoring Criteria. Assign weights to each MoSCoW category that reflect your organisational priorities. Business value, strategic alignment, risk, and urgency are common starting weights.' },
+      { t: 'Score your first backlog item', b: 'Open any Jira issue and find the PortfolioInSite scoring panel. Rate the item across each criterion on a 1–5 scale. The tool calculates the weighted total and Fibonacci-normalised rank automatically.' },
+      { t: 'Run a batch scoring session', b: 'Use the bulk scoring view to score multiple items in a single session. This is the recommended approach for PI planning preparation — work through the entire backlog in priority order.' },
+      { t: 'Present to the steering committee', b: 'The scored backlog view shows items ranked by score with confidence indicators. Export to Confluence or use the Steering Committee Reports module (M03) to generate a presentation-ready snapshot.' }
+    ],
+    tips: [
+      { t: '💡 Calibrate with a reference item', b: 'Before scoring the whole backlog, score one well-understood feature that your team agrees is a "medium" priority. Use this as a calibration anchor for all other scores.' },
+      { t: '💡 Review weights quarterly', b: 'Business priorities shift. Review your scoring weights at the start of each PI to ensure the framework still reflects current strategy — a strategy pivot should change the weights.' },
+      { t: '💡 Score in groups, not isolation', b: 'Relative scoring is more reliable than absolute scoring. Score features in groups of 5–10 so raters can compare directly rather than scoring in isolation.' },
+      { t: '💡 Audit trail is automatic', b: 'Every scoring decision is timestamped and attributed. When the steering committee asks "why is this the top priority?", the score history answers without you needing to remember.' }
+    ],
+    related: [
+      { slug: 'ai-scoring', label: '🤖 AI-Assisted Scoring', num: 'M05+M14' },
+      { slug: 'demand-intake', label: '📥 Demand Intake Pipeline', num: 'M04' },
+      { slug: 'stakeholder-voting', label: '🗳️ Stakeholder Voting', num: 'M12' }
+    ]
+  },
+
+  'ai-scoring': {
+    num: 'M05 + M14',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Auto-Scoring & AI-Assisted Prioritisation',
+    sub: 'Rule-based auto-scoring that scales. Claude API-powered analysis that reasons. Human review where it matters, automation where it doesn\'t.',
+    chips: ['Claude API integration', 'Confidence thresholds', 'Human-in-the-loop', 'Full audit trail'],
+    overview: 'Auto-Scoring (M05) applies your governance criteria consistently at scale — no human effort for routine triage. AI-Assisted Scoring (M14) goes further: it uses the Claude API to read backlog item descriptions and recommend scores with confidence levels, explaining its reasoning. Above your confidence threshold, it auto-accepts. Below, it flags for PMO review.',
+    caps: [
+      'Rule-based auto-scoring applies your MoSCoW criteria automatically at intake — consistent, instant, zero effort',
+      'Claude API integration reads item descriptions and recommends scores with confidence levels and reasoning',
+      'Configurable confidence threshold — auto-accept above it, flag for human review below it',
+      'Full audit trail distinguishes AI decisions from human decisions — explainable governance',
+      'Confidence blending combines AI recommendation with existing scores for calibrated outcomes'
+    ],
+    problem: 'Manual scoring doesn\'t scale. A backlog of 200 items before PI planning means a scoring marathon. AI-Assisted Scoring handles the routine 80% automatically, saving PMO time for the 20% that genuinely needs human judgement.',
+    vid: 'ai-scoring.mp4',
+    vidLabel: '⏱ ~90 seconds · Auto-scoring configuration, AI recommendation flow, confidence thresholds',
+    img: '../img/PiSAutoScoreAI1.png',
+    imgAlt: 'PortfolioInSite AI-assisted scoring with Claude API and confidence indicators',
+    gateH4: 'Configuring AI-Assisted Scoring for your portfolio',
+    steps: [
+      { t: 'Enable Auto-Scoring (M05)', b: 'In PortfolioInSite Settings → Modules, enable Auto-Scoring. Define the rules: if item type = Epic and strategic-alignment keyword present, then apply these default scores. Rules run at intake before any human review.' },
+      { t: 'Connect the Claude API (M14)', b: 'Navigate to Settings → AI Configuration. Enter your Anthropic API key. Select your preferred Claude model. The system will test the connection and show a sample scoring recommendation.' },
+      { t: 'Set confidence thresholds', b: 'Define your auto-accept threshold (e.g., 85%) and your review threshold (e.g., 60%). Items above 85% are auto-accepted. Items between 60–85% are flagged for PMO review. Items below 60% are returned for manual scoring.' },
+      { t: 'Review the PMO queue', b: 'Items flagged for review appear in the PMO Review Queue with the AI\'s recommendation, confidence level, and reasoning. One-click accept, modify, or override — all tracked in the audit trail.' }
+    ],
+    tips: [
+      { t: '💡 Start conservative', b: 'Begin with a high auto-accept threshold (90%+) and lower it as you build confidence in the AI\'s recommendations. Never start at 70% — earn trust before delegating.' },
+      { t: '💡 AI reasons, you decide', b: 'The Claude API explains why it scored an item a certain way. Read the reasoning before accepting — this is how you calibrate whether the AI has understood your context.' },
+      { t: '💡 Review disagreements as training', b: 'When you override an AI recommendation, note why. After 20–30 overrides, review the patterns — they reveal where your governance criteria need refinement, not where AI is wrong.' },
+      { t: '💡 Audit trail is your shield', b: 'The audit trail shows every AI recommendation and every human decision. In a governance review, "the AI recommended X, the PMO confirmed Y because Z" is a complete answer.' }
+    ],
+    related: [
+      { slug: 'moscow-scoring', label: '🎯 MoSCoW Scoring Engine', num: 'M01' },
+      { slug: 'demand-intake', label: '📥 Demand Intake Pipeline', num: 'M04' },
+      { slug: 'stakeholder-voting', label: '🗳️ Stakeholder Voting', num: 'M12' }
+    ]
+  },
+
+  'demand-intake': {
+    num: 'M04',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Demand Intake Pipeline',
+    sub: '5-stage Kanban with auto-scoring at the front door. Capture demand, triage automatically, and surface only what matters to the steering committee.',
+    chips: ['5-stage Kanban', 'Auto-scoring at intake', 'Ageing indicators', 'Capacity guardrails'],
+    overview: 'The Demand Intake Pipeline is your governance front door. Stakeholders submit portfolio requests through a structured intake form. Requests move through five stages — Submitted, Triage, Scoring, Approved, Rejected — with auto-scoring applied at intake and ageing indicators flagging anything that stalls. Capacity guardrails prevent over-commitment before items even reach the PI backlog.',
+    caps: [
+      '5-stage Kanban: Submitted → Triage → Scoring → Approved → Rejected with drag-and-drop workflow',
+      'Auto-scoring at intake (integrates with M05) — every request arrives with an initial score',
+      'Ageing indicators flag requests stalled in any stage beyond configurable thresholds',
+      'Capacity guardrails compare pending approved items against available team capacity',
+      'Stakeholder submission portal — requestors see status without Jira access'
+    ],
+    problem: 'Without a structured intake process, demand arrives via email, Slack, hallway conversations, and someone\'s spreadsheet. Nothing is prioritised. Everything is urgent. The steering committee is asked to decide on items that should have been filtered out at the front door.',
+    vid: 'demand-intake.mp4',
+    vidLabel: '⏱ ~75 seconds · Intake form, Kanban stages, ageing indicators, capacity guardrails',
+    img: '../img/PiSPPipeline1.png',
+    imgAlt: 'PortfolioInSite demand intake pipeline with 5-stage Kanban workflow',
+    gateH4: 'Running your demand governance cycle',
+    steps: [
+      { t: 'Configure intake form fields', b: 'Define which fields stakeholders must complete when submitting a request: business justification, strategic alignment, urgency, and estimated effort. Required fields enforce quality — no data, no submission.' },
+      { t: 'Set ageing thresholds per stage', b: 'Define how long an item can sit in each stage before it triggers an ageing alert. Triage: 3 days. Scoring: 5 days. Approved (unscheduled): 21 days. Alerts go to the stage owner.' },
+      { t: 'Configure capacity guardrails', b: 'Connect the pipeline to your team capacity data. When approved items exceed available PI capacity by more than 20%, the guardrail fires — preventing a planning overcommit before it starts.' },
+      { t: 'Run weekly triage', b: 'The pipeline owner reviews the Submitted stage weekly. Items are assessed against intake criteria and moved to Triage for scoring, or rejected with a reason. Reasons are visible to the requestor.' }
+    ],
+    tips: [
+      { t: '💡 Rejection is governance', b: 'A rejection with a clear reason is better governance than an item that sits in "approved" for three PIs with no action. Rejecting promptly respects the requestor\'s time.' },
+      { t: '💡 Capacity guardrail is pre-emptive', b: 'The guardrail fires before PI planning, not during it. Finding an overcommit during planning is recoverable. Finding it in Week 3 of the PI is not.' },
+      { t: '💡 One intake channel', b: 'The intake pipeline only works if all requests flow through it. Close the side channels — Slack DMs, direct Jira epics, email requests. One front door enforces equal governance.' },
+      { t: '💡 Connect auto-scoring', b: 'With M05 enabled, every submission arrives pre-scored. The triage step becomes "do we agree with the score?" not "what is the score?" — far faster.' }
+    ],
+    related: [
+      { slug: 'moscow-scoring', label: '🎯 MoSCoW Scoring Engine', num: 'M01' },
+      { slug: 'ai-scoring', label: '🤖 AI-Assisted Scoring', num: 'M05+M14' },
+      { slug: 'capacity-demand', label: '⚖️ Capacity & Demand', num: 'M06' }
+    ]
+  },
+
+  'health-scores': {
+    num: 'M07',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Health Scores & Decay Detection',
+    sub: 'Composite health indicators with zombie detection. RAG status, risk scores, and trend analysis — stalled items surface automatically, not when it\'s too late.',
+    chips: ['Composite scoring', 'Zombie detection', 'RAG status', 'Trend analysis'],
+    overview: 'Health Scores & Decay Detection monitors the delivery health of every programme, project, and backlog item across your portfolio. It calculates a composite health score from multiple signals — delivery progress, score decay, ageing, dependency risk — and applies RAG (Red/Amber/Green) status automatically. Zombie detection flags items that have been in-progress for too long without meaningful advancement.',
+    caps: [
+      'Composite health score per portfolio item calculated from progress, ageing, dependency risk, and scoring freshness',
+      'Zombie detection — items in-progress beyond configurable thresholds are automatically flagged for review',
+      'RAG status applied automatically: Green (healthy), Amber (at risk), Red (needs intervention)',
+      'Trend analysis shows whether health is improving, stable, or declining over time',
+      'Automated escalation workflows notify owners when items breach red thresholds'
+    ],
+    problem: 'Without health scoring, the only way to know something is in trouble is when someone tells you — or when it\'s too late to recover. Portfolio managers spend hours in status meetings to collect information the system should provide automatically.',
+    vid: 'health-scores.mp4',
+    vidLabel: '⏱ ~70 seconds · Health dashboard, zombie detection, RAG status, escalation',
+    img: '../img/PiSHealthScore1.png',
+    imgAlt: 'PortfolioInSite health scores dashboard with composite indicators and RAG status',
+    gateH4: 'Configuring health monitoring for your portfolio',
+    steps: [
+      { t: 'Define health score components', b: 'Navigate to Settings → Health Scoring. Configure the weight of each component: delivery progress (how much of planned work is complete), ageing (how long the item has been active), and dependency risk (how many open blockers exist).' },
+      { t: 'Set zombie detection thresholds', b: 'Define how many days an in-progress item can exist without a meaningful status change before it is classified as a zombie. Typical: 14 days for a story, 42 days for an epic.' },
+      { t: 'Configure RAG thresholds', b: 'Set the score boundaries for Red, Amber, and Green. Example: Green ≥ 75, Amber 50–74, Red < 50. Align to your governance risk tolerance.' },
+      { t: 'Set up escalation notifications', b: 'Define who gets notified when an item goes Red. Direct to the item owner, programme manager, and (optionally) the steering committee distribution list.' }
+    ],
+    tips: [
+      { t: '💡 Trend is more important than score', b: 'An item with a score of 60 (Amber) that was 80 (Green) two weeks ago is more concerning than an item that has been stable at 55 for three months. Track the trend, not just the point-in-time score.' },
+      { t: '💡 Zombies are a governance failure', b: 'A zombie item means work started and wasn\'t completed or cancelled. Both outcomes are a governance decision that someone avoided. Use zombie detection to make that decision explicit.' },
+      { t: '💡 Review Red items weekly', b: 'Health score reviews should be a standing agenda item in your weekly portfolio sync. Red items need a named owner and a date-bound recovery plan, not just an "it\'s being worked on".' },
+      { t: '💡 Green doesn\'t mean good', b: 'A feature can be green by all health metrics but still be low value. Health scores measure delivery health — combine with MoSCoW scores and Feature Economics to get the full picture.' }
+    ],
+    related: [
+      { slug: 'steering-reports', label: '📊 Steering Committee Reports', num: 'M03' },
+      { slug: 'notifications', label: '🔔 Notifications & Alerts', num: 'M15' },
+      { slug: 'change-impact', label: '🔄 Change Impact Tracking', num: 'M09' }
+    ]
+  },
+
+  'scenario-modelling': {
+    num: 'M11',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Scenario Modelling',
+    sub: 'What-if analysis with side-by-side comparison. Model different prioritisation decisions before committing resources — see the impact before it becomes a commitment.',
+    chips: ['What-if analysis', 'Side-by-side comparison', 'Impact modelling', 'Stakeholder-ready'],
+    overview: 'Scenario Modelling lets you create multiple alternative PI prioritisation scenarios and compare them side by side — before any commitment is made. Change priorities, swap features, shift team allocations, and instantly see the downstream impact on capacity, cost, and strategic alignment. Bring the comparison to the steering committee and make the decision with data.',
+    caps: [
+      'Create unlimited named scenarios — "High Growth Focus", "Cost Optimisation", "Risk Mitigation"',
+      'Side-by-side scenario comparison showing capacity, cost, and strategic alignment for each',
+      'Impact analysis quantifies what each scenario gains and sacrifices',
+      'Scenarios can be saved, shared, and presented in Confluence via Steering Committee Reports (M03)',
+      'Scenario locking prevents changes after steering committee sign-off'
+    ],
+    problem: 'Without scenario modelling, PI planning is a single-pass negotiation. Teams commit to a plan, then discover mid-PI that it was the wrong one. Scenario modelling makes the trade-off conversation explicit before commitment — not after.',
+    vid: 'scenario-modelling.mp4',
+    vidLabel: '⏱ ~80 seconds · Creating scenarios, side-by-side comparison, impact analysis',
+    img: '../img/PiSScenrioModel1.png',
+    imgAlt: 'PortfolioInSite scenario modelling with what-if analysis and comparison view',
+    gateH4: 'Running a scenario modelling session',
+    steps: [
+      { t: 'Clone the baseline scenario', b: 'Start with the current PI backlog as Scenario A (the baseline). Clone it to create Scenario B. All changes are relative to the baseline — you can always see what changed and what it cost.' },
+      { t: 'Model your alternatives', b: 'In Scenario B, reprioritise features, swap items in and out of scope, or change team allocations. The comparison panel updates in real time as you make changes.' },
+      { t: 'Quantify the trade-offs', b: 'Review the impact analysis: what additional strategic value does Scenario B deliver? What capacity does it consume? What is the cost differential? What low-priority items are displaced?' },
+      { t: 'Present to steering committee', b: 'Use the Steering Committee Reports module (M03) to generate a presentation-ready comparison. The committee sees options and trade-offs, not just a plan — making a better-informed decision.' }
+    ],
+    tips: [
+      { t: '💡 Name scenarios meaningfully', b: '"Scenario B" tells nobody anything. "Strategic Investment Focus Q4" is a decision frame. Names shape the conversation before the data is even reviewed.' },
+      { t: '💡 Three scenarios is the sweet spot', b: 'Two scenarios creates a binary choice. Four or more overwhelms. Three scenarios — conservative, balanced, aggressive — gives the committee a meaningful decision space.' },
+      { t: '💡 Lock the chosen scenario', b: 'Once the steering committee approves a scenario, lock it immediately. Locked scenarios can be referenced but not modified — creating a clean baseline for delivery tracking.' },
+      { t: '💡 Scenario delta is the story', b: 'The comparison isn\'t "which plan looks better" — it\'s "what are we giving up and what are we gaining?" Lead with the delta, not the absolute numbers.' }
+    ],
+    related: [
+      { slug: 'investment-mix', label: '💼 Investment Mix', num: 'M08' },
+      { slug: 'steering-reports', label: '📊 Steering Committee Reports', num: 'M03' },
+      { slug: 'capacity-demand', label: '⚖️ Capacity & Demand', num: 'M06' }
+    ]
+  },
+
+  'investment-mix': {
+    num: 'M08',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Investment Mix',
+    sub: 'Run, Grow, Transform category tracking. Set target allocations, monitor actual spend, and detect drift before it becomes a boardroom conversation.',
+    chips: ['Run/Grow/Transform', 'Target vs actual', 'Drift detection', 'Boardroom-ready'],
+    overview: 'Investment Mix tracks how your portfolio spend is distributed across investment categories — typically Run (keeping the lights on), Grow (incremental improvement), and Transform (strategic change). Set target allocations at the start of the year, then monitor actual allocation quarterly. When drift exceeds tolerance, Investment Mix alerts before it becomes a surprise at the annual review.',
+    caps: [
+      'Configurable investment categories — use Run/Grow/Transform or define your own taxonomy',
+      'Set target allocation percentages per category aligned to your strategic plan',
+      'Track actual allocation in real time as features are scored and scheduled',
+      'Drift detection alerts when actual allocation deviates from targets beyond configured tolerance',
+      'Boardroom-ready investment visualisations — donut charts, trend lines, and allocation tables'
+    ],
+    problem: 'Most organisations set an investment mix in the annual planning cycle ("60% Run, 25% Grow, 15% Transform") and then discover in October that they spent 80% on Run. Investment Mix makes drift visible in real time — when it can still be corrected.',
+    vid: 'investment-mix.mp4',
+    vidLabel: '⏱ ~65 seconds · Category configuration, target setting, drift detection, reporting',
+    img: '../img/PiSInvestmentMix1.png',
+    imgAlt: 'PortfolioInSite investment mix showing Run Grow Transform allocation and drift',
+    gateH4: 'Configuring your investment mix governance',
+    steps: [
+      { t: 'Define your investment categories', b: 'Navigate to Settings → Investment Categories. Use the default Run/Grow/Transform or create categories that match your strategic planning taxonomy. Each category gets a colour and a description.' },
+      { t: 'Set target allocations', b: 'Enter target percentages for the financial year. These should come directly from your board-approved strategic plan. The total must equal 100% — the system validates this.' },
+      { t: 'Tag features by category', b: 'Each backlog item and portfolio feature is tagged with its investment category. This can be done at intake (via the Demand Pipeline) or in bulk via the category assignment view.' },
+      { t: 'Monitor drift quarterly', b: 'At each quarterly review, compare actual allocation to targets. The drift indicator shows both the absolute difference and whether the trend is improving or worsening.' }
+    ],
+    tips: [
+      { t: '💡 Transform drift is the most common failure', b: 'The most common pattern: organisations under-deliver on Transform because Run work always feels urgent. Investment Mix makes this pattern visible before it becomes a strategic failure.' },
+      { t: '💡 Drift tolerance matters', b: 'Set realistic drift tolerance — ±5% for a mature governance function, ±10% for a developing one. Too tight and every quarter triggers an escalation. Too loose and the target is meaningless.' },
+      { t: '💡 Category tagging drives accuracy', b: 'Investment Mix is only as accurate as the category tagging. Include category tagging in your intake quality check — an untagged item is an uncontrolled spend.' },
+      { t: '💡 Present at every steering committee', b: 'Investment Mix is designed for the steering committee slide deck, not just the PMO. Leadership seeing actual vs. target allocation quarterly creates accountability that internal reporting alone cannot.' }
+    ],
+    related: [
+      { slug: 'scenario-modelling', label: '🔮 Scenario Modelling', num: 'M11' },
+      { slug: 'steering-reports', label: '📊 Steering Committee Reports', num: 'M03' },
+      { slug: 'moscow-scoring', label: '🎯 MoSCoW Scoring Engine', num: 'M01' }
+    ]
+  },
+
+  'steering-reports': {
+    num: 'M03',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Steering Committee Reports',
+    sub: 'Auto-generated Confluence reports for leadership. Progress, risk, investment mix, and decisions — ready to present, not hand-assembled.',
+    chips: ['Auto-generated', 'Confluence integration', 'Steering-ready', 'Risk highlights'],
+    overview: 'Steering Committee Reports auto-generates leadership-ready portfolio reports directly into Confluence pages. Pull in health scores, investment mix, scoring summaries, key risks, and delivery highlights — formatted for a steering committee audience, not a PMO audience. The report that used to take a day to assemble takes minutes.',
+    caps: [
+      'Auto-generate Confluence pages with current portfolio status, health scores, and investment mix',
+      'Configurable report templates — what gets included and in what order',
+      'Scenario comparison reports for investment decision meetings',
+      'Risk highlights pulled automatically from Health Scores (M07) and RAID data',
+      'Scheduled report generation — produce before every steering committee, automatically'
+    ],
+    problem: 'The standard approach to steering committee reporting is a PMO analyst spending a day pulling data from Jira, formatting slides, and chasing owners for status updates. Steering Committee Reports eliminates the assembly — leaving only the decisions.',
+    vid: 'steering-reports.mp4',
+    vidLabel: '⏱ ~60 seconds · Report generation, Confluence output, template configuration',
+    img: null,
+    gateH4: 'Setting up automated steering committee reporting',
+    steps: [
+      { t: 'Connect Confluence workspace', b: 'Navigate to Settings → Integrations → Confluence. Authorise the Forge app to write to your Confluence instance. Select the target space where reports will be generated.' },
+      { t: 'Configure report template', b: 'Choose which sections appear in the report: Executive Summary, Investment Mix, Health Dashboard, Key Risks, Decision Register, and Next PI Preview. Order them by your steering committee\'s preference.' },
+      { t: 'Schedule report generation', b: 'Set a generation trigger: before each steering committee date (configure committee dates in Settings → Calendar), or manually on demand. Automated generation runs 24 hours before the meeting.' },
+      { t: 'Review and publish', b: 'The generated Confluence page is a draft — review for any data anomalies before publishing to the steering committee distribution. One review step, not a full assembly.' }
+    ],
+    tips: [
+      { t: '💡 Executive summary is the report', b: 'Most steering committee members read only the executive summary. Make it the first section, limit it to one screen, and include only: status, biggest risk, and decision needed.' },
+      { t: '💡 Decision register closes the loop', b: 'Include a decision register section that logs what was decided at the previous meeting and what happened as a result. This creates governance accountability that narrative reporting never achieves.' },
+      { t: '💡 Automate, then customise', b: 'Let the system generate the report first, then make any manual additions. Never start from scratch — the automated baseline takes 80% of the effort out.' },
+      { t: '💡 Version reports by date', b: 'Confluence automatically versions pages. Keep every steering committee report as a separate dated page — not a single page that gets overwritten. Historical reports are your governance audit trail.' }
+    ],
+    related: [
+      { slug: 'health-scores', label: '💚 Health Scores & Decay', num: 'M07' },
+      { slug: 'investment-mix', label: '💼 Investment Mix', num: 'M08' },
+      { slug: 'scenario-modelling', label: '🔮 Scenario Modelling', num: 'M11' }
+    ]
+  },
+
+  'capacity-demand': {
+    num: 'M06',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Capacity & Demand',
+    sub: 'Velocity and gap analysis across teams. See committed effort against available capacity in real time. Know before you\'re over-committed.',
+    chips: ['Velocity analysis', 'Gap detection', 'Real-time capacity', 'Cross-team view'],
+    overview: 'Capacity & Demand compares what your teams can deliver against what they\'ve been asked to deliver — continuously, not just at PI planning. It surfaces the gap between committed demand and available capacity across every team, factoring in velocity, leave, and ceremony overhead. Over-commitment becomes visible before it becomes a delivery failure.',
+    caps: [
+      'Real-time capacity vs. demand gap analysis per team and across the portfolio',
+      'Velocity-based capacity calculation incorporating historical sprint data',
+      'Leave and ceremony overhead adjustments per team and per PI',
+      'Demand pipeline integration — approved items from M04 feed directly into demand calculations',
+      'Escalation alerts when any team exceeds configurable over-commitment thresholds'
+    ],
+    problem: 'Over-commitment is the most common cause of PI delivery failure — and it\'s almost always visible in the data before the PI starts. Without real-time capacity visibility, teams find out they\'re over-committed in Week 4, not Week 0.',
+    vid: 'capacity-demand.mp4',
+    vidLabel: '⏱ ~70 seconds · Capacity dashboard, gap analysis, over-commitment alerts',
+    img: null,
+    gateH4: 'Monitoring capacity and demand across your portfolio',
+    steps: [
+      { t: 'Connect team velocity data', b: 'Capacity & Demand reads velocity from Jira sprint data automatically once connected. Review the calculated velocity baseline per team — adjust if the last 3 sprints are unrepresentative (e.g., following a major incident or holiday period).' },
+      { t: 'Apply overhead adjustments', b: 'Enter leave allocations and ceremony time per team per PI. A typical adjustment is 15–20% capacity reduction for PI ceremonies, sprint planning, retros, and Scrum of Scrums.' },
+      { t: 'Review the demand pipeline', b: 'The approved items in your Demand Pipeline (M04) automatically flow into the demand side of the capacity calculation. If Demand Pipeline is not enabled, enter demand manually.' },
+      { t: 'Act on the gap before PI planning', b: 'If the gap shows over-commitment, address it before PI planning — not during it. Use Scenario Modelling (M11) to model scope reductions and find the right balance.' }
+    ],
+    tips: [
+      { t: '💡 85% utilisation is the target', b: 'Never plan a team to 100% of capacity. 85% is the industry standard that leaves room for unplanned work, defects, and cross-team requests. The 15% buffer is governance, not slack.' },
+      { t: '💡 Velocity degrades under pressure', b: 'Teams under sustained over-commitment deliver less per sprint over time, not more. Capacity & Demand makes this feedback loop visible before the velocity decline becomes irreversible.' },
+      { t: '💡 Cross-team view is the PMO view', b: 'Individual team capacity is a Scrum Master concern. The cross-team capacity view is a PMO concern — it\'s where portfolio-level resource decisions get made.' },
+      { t: '💡 Recalculate mid-PI', b: 'Capacity changes mid-PI: people go on leave, incidents consume capacity, priorities shift. Re-run the capacity calculation at PI mid-point to catch emerging gaps before they become failures.' }
+    ],
+    related: [
+      { slug: 'demand-intake', label: '📥 Demand Intake Pipeline', num: 'M04' },
+      { slug: 'scenario-modelling', label: '🔮 Scenario Modelling', num: 'M11' },
+      { slug: 'dependency-mapping', label: '🔗 Dependency Mapping', num: 'M10' }
+    ]
+  },
+
+  'change-impact': {
+    num: 'M09',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Change Impact Tracking',
+    sub: 'Weekly diff reports showing what moved, what\'s new, and what was killed. Full audit trail of every portfolio decision.',
+    chips: ['Weekly diff reports', 'Decision audit trail', 'Change detection', 'Portfolio history'],
+    overview: 'Change Impact Tracking takes a weekly snapshot of your portfolio state and compares it to the previous week. Every item added, removed, re-prioritised, or changed status is recorded with a timestamp and owner. The result is an automatic audit trail of portfolio decisions — what changed, when, and why.',
+    caps: [
+      'Automated weekly portfolio snapshots with full diff comparison to the prior week',
+      'Change categorisation: New, Removed, Re-prioritised, Status Changed, Score Changed',
+      'Owner attribution — every change is linked to who made it in Jira',
+      'Impact assessment — changes affecting approved PI features are highlighted for review',
+      'Exportable change log for governance audit and compliance reporting'
+    ],
+    problem: 'Portfolio governance requires an audit trail. When a project is descoped mid-PI or a priority changes, there should be a record of who decided what and when. Without Change Impact Tracking, this history lives only in someone\'s memory — or not at all.',
+    vid: 'change-impact.mp4',
+    vidLabel: '⏱ ~55 seconds · Weekly diff view, change categorisation, audit trail export',
+    img: null,
+    gateH4: 'Setting up change governance',
+    steps: [
+      { t: 'Enable automated snapshots', b: 'Change Impact Tracking runs a portfolio snapshot every Sunday night by default. Configure the snapshot schedule in Settings → Change Tracking to align with your governance week.' },
+      { t: 'Review the weekly diff', b: 'Every Monday, the change summary shows everything that moved in the prior week. Items are colour-coded: green (new), red (removed), amber (changed). Review before your weekly portfolio sync.' },
+      { t: 'Flag significant changes for review', b: 'Changes affecting in-scope PI features require a review record. The system prompts for a reason when significant changes are detected — this reason becomes part of the audit trail.' },
+      { t: 'Export for governance reporting', b: 'The change log can be exported as CSV or sent to Confluence (via M03) at any time. Quarterly and annual governance reviews should reference the change log as evidence of controlled portfolio management.' }
+    ],
+    tips: [
+      { t: '💡 Changes without reasons are risks', b: 'If a feature is descoped from a PI without a documented reason, that\'s a governance gap. Change Impact Tracking surfaces this — fill the gap before the audit, not during it.' },
+      { t: '💡 Frequency of change is a signal', b: 'High change frequency (many items moving weekly) indicates an unstable portfolio or poor upfront planning. Low change frequency may indicate a portfolio that\'s too rigid. Track the trend.' },
+      { t: '💡 Scope creep has a paper trail now', b: 'New items appearing in the weekly diff that weren\'t in the PI plan are scope additions. Change Impact Tracking makes scope creep visible and traceable — the first step to controlling it.' },
+      { t: '💡 Link to steering decisions', b: 'When a significant change is flagged, link it to the steering committee decision that approved it. The audit trail then shows: change detected → steering approved → implemented. Complete governance.' }
+    ],
+    related: [
+      { slug: 'health-scores', label: '💚 Health Scores & Decay', num: 'M07' },
+      { slug: 'steering-reports', label: '📊 Steering Committee Reports', num: 'M03' },
+      { slug: 'notifications', label: '🔔 Notifications & Alerts', num: 'M15' }
+    ]
+  },
+
+  'dependency-mapping': {
+    num: 'M10',
+    tier: 'paid',
+    tierLabel: 'In UAT',
+    title: 'Dependency Mapping',
+    sub: 'Graph visualisation with cycle detection. See cross-team dependencies, identify blockers before they cascade, and map impact paths across your portfolio.',
+    chips: ['Graph visualisation', 'Cycle detection', 'Blocker identification', 'Impact path mapping'],
+    overview: 'Dependency Mapping visualises the relationships between portfolio items, teams, and delivery milestones as an interactive graph. It automatically detects circular dependencies (cycles) that would prevent delivery, surfaces blockers before they cascade across teams, and maps the impact path of any delay. Currently in UAT — the most-requested PortfolioInSite module.',
+    caps: [
+      'Interactive dependency graph — drag, zoom, filter by team, PI, or item type',
+      'Automatic cycle detection — flags circular dependencies that prevent delivery before they\'re committed',
+      'Blocker surfacing — items with open blockers are highlighted with escalation paths',
+      'Impact path analysis — select any item and see every downstream item affected by a delay',
+      'Cross-team dependency matrix — see inter-team dependency load at a glance'
+    ],
+    problem: 'Cross-team dependencies are the silent killer of PI delivery. They\'re invisible until something blocks, and by then the cascade has already started. Dependency Mapping makes the web of relationships visible before PI planning — so teams commit knowing their constraints.',
+    vid: 'dependency-mapping.mp4',
+    vidLabel: '⏱ ~85 seconds · Dependency graph, cycle detection, blocker surfacing, impact analysis',
+    img: null,
+    gateH4: 'Mapping dependencies before PI planning',
+    steps: [
+      { t: 'Import Jira issue links as dependencies', b: 'Dependency Mapping reads existing Jira issue link types (blocks, is blocked by, relates to) and visualises them automatically. No re-entry required — existing link data becomes a governance view.' },
+      { t: 'Run cycle detection', b: 'Before PI planning, run the cycle detection scan. Any circular dependency (A blocks B, B blocks C, C blocks A) is flagged immediately. Resolve cycles before they reach the PI backlog.' },
+      { t: 'Review the cross-team matrix', b: 'The dependency matrix shows how many dependencies exist between each pair of teams. Teams with 10+ inter-team dependencies need a dedicated dependency management session before PI planning.' },
+      { t: 'Use impact analysis during PI', b: 'When a blocker emerges mid-PI, run an impact path analysis to understand downstream effects. The PMO can then prioritise the resolution based on total downstream risk, not just the immediate symptom.' }
+    ],
+    tips: [
+      { t: '💡 Dependencies are commitments', b: 'Every cross-team dependency is an implicit commitment from the providing team to the consuming team. Make it explicit — log it, name both teams, and confirm the commitment at PI planning.' },
+      { t: '💡 Fewer dependencies = faster delivery', b: 'Teams with fewer external dependencies deliver more predictably. Use the dependency matrix to guide team topology decisions — high inter-team dependency load is an organisational design problem, not a planning problem.' },
+      { t: '💡 Cycle detection before commitment', b: 'A circular dependency in the PI backlog cannot be resolved without descoping something. Detect and resolve cycles before teams commit — not after 6 weeks of blocked work.' },
+      { t: '💡 Model M10 — in UAT', b: 'Dependency Mapping is currently in UAT. Beta access is available — contact us to be part of the final validation cohort before general release.' }
+    ],
+    related: [
+      { slug: 'capacity-demand', label: '⚖️ Capacity & Demand', num: 'M06' },
+      { slug: 'health-scores', label: '💚 Health Scores & Decay', num: 'M07' },
+      { slug: 'change-impact', label: '🔄 Change Impact Tracking', num: 'M09' }
+    ]
+  },
+
+  'stakeholder-voting': {
+    num: 'M12',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Stakeholder Voting',
+    sub: 'Multi-user Delphi consensus scoring. Aggregate stakeholder perspectives into defensible prioritisation decisions.',
+    chips: ['Delphi consensus', 'Multi-user voting', 'Blinded rounds', 'Aggregated scores'],
+    overview: 'Stakeholder Voting implements a structured Delphi consensus process for portfolio prioritisation. Multiple stakeholders score independently in blinded rounds — preventing anchoring bias — then the system aggregates scores, highlights outliers, and facilitates convergence. The result is a prioritisation decision that reflects collective judgment, not the loudest voice.',
+    caps: [
+      'Blinded first-round voting — stakeholders score independently without seeing others\' votes',
+      'Outlier identification — the system highlights stakeholders whose scores diverge significantly from the group',
+      'Facilitated convergence rounds — outliers provide reasoning, the group re-votes with new information',
+      'Score aggregation with configurable weighting by stakeholder role or seniority',
+      'Decision record — the final consensus score, all round data, and outlier reasoning are preserved'
+    ],
+    problem: 'Most prioritisation meetings are dominated by the most senior or most vocal person in the room. Stakeholder Voting eliminates this by separating the scoring from the discussion — preventing anchoring and surfacing genuine consensus rather than manufactured agreement.',
+    vid: 'stakeholder-voting.mp4',
+    vidLabel: '⏱ ~70 seconds · Voting session setup, blinded rounds, consensus aggregation',
+    img: null,
+    gateH4: 'Running a stakeholder voting session',
+    steps: [
+      { t: 'Configure the voting cohort', b: 'Define who votes and what their weighting is. Typically: executive sponsors (1.5x), business owners (1.0x), PMO (0.75x). Weighting is optional — unweighted consensus is often more defensible.' },
+      { t: 'Launch the blinded first round', b: 'Participants receive a voting link and score items independently. They cannot see other participants\' scores until the round closes. The facilitator controls when rounds open and close.' },
+      { t: 'Review outliers and facilitate discussion', b: 'After Round 1, the system identifies outliers — participants whose scores deviate significantly from the median. Outliers share their reasoning with the group (without knowing who the other scores belong to).' },
+      { t: 'Run convergence rounds', b: 'After outlier reasoning is shared, participants vote again with the benefit of new perspectives. Most items converge in 2 rounds. Persistent divergence is flagged for facilitated discussion before escalation to the steering committee.' }
+    ],
+    tips: [
+      { t: '💡 Blind the first round always', b: 'The moment someone says "I think this is a Must Have", every subsequent score anchors to that position. Blinded rounds are not optional — they are the mechanism that makes the process valid.' },
+      { t: '💡 Outliers are information', b: 'A score that diverges from the group isn\'t wrong — it may reflect knowledge the group doesn\'t have. The Delphi process surfaces this knowledge without creating conflict.' },
+      { t: '💡 Two rounds is usually enough', b: 'In practice, two voting rounds produce stable consensus for 80–90% of items. A third round may be needed for genuinely contested items. More than three rounds indicates a governance decision is needed, not more data.' },
+      { t: '💡 Preserve all round data', b: 'The decision record stores every round, every score, and every piece of outlier reasoning. This is your evidence that the prioritisation was systematic, not arbitrary — critical for audit and escalation.' }
+    ],
+    related: [
+      { slug: 'moscow-scoring', label: '🎯 MoSCoW Scoring Engine', num: 'M01' },
+      { slug: 'ai-scoring', label: '🤖 AI-Assisted Scoring', num: 'M05+M14' },
+      { slug: 'steering-reports', label: '📊 Steering Committee Reports', num: 'M03' }
+    ]
+  },
+
+  'notifications': {
+    num: 'M15',
+    tier: 'paid',
+    tierLabel: 'Paid Module',
+    title: 'Notifications & Alerts',
+    sub: '10-rule alert engine. Automated notifications for scoring changes, health threshold breaches, ageing items, and governance milestones.',
+    chips: ['10-rule engine', 'Configurable alerts', 'Jira + email', 'Governance triggers'],
+    overview: 'Notifications & Alerts is the governance nervous system of PortfolioInSite. A configurable 10-rule alert engine fires notifications when governance thresholds are breached — health scores go Red, items age beyond tolerance, scores change significantly, capacity guardrails trigger, or steering committee milestones approach. Nothing falls through the cracks because the system is watching.',
+    caps: [
+      'Up to 10 configurable alert rules per portfolio with AND/OR logic for conditions',
+      'Alert targets: Jira notifications, email, or both — per rule',
+      'Governance triggers: health score Red, ageing threshold, score change >30%, capacity overrun, PI milestone T-7 days',
+      'Snooze and acknowledge workflow — alerts can be snoozed with a reason for audit trail purposes',
+      'Alert history log — every notification, recipient, and acknowledgement is recorded'
+    ],
+    problem: 'Governance frameworks fail when people rely on humans to notice problems. Notifications & Alerts means the system notices — and tells the right person, at the right time, with the right context. Humans make decisions; systems track thresholds.',
+    vid: 'notifications.mp4',
+    vidLabel: '⏱ ~50 seconds · Rule configuration, alert targets, snooze workflow',
+    img: null,
+    gateH4: 'Configuring your governance alert rules',
+    steps: [
+      { t: 'Define your 10 alert rules', b: 'Navigate to Settings → Notifications. Create rules in order of governance priority. Start with the non-negotiables: Health Score Red (immediate alert), Capacity Overrun (immediate), Steering Committee T-7 (advance warning).' },
+      { t: 'Set alert targets per rule', b: 'Each rule targets a specific person or role: the item owner, the programme manager, the PMO lead, or a distribution list. Match the alert target to the person who can act on it — not just the most senior.' },
+      { t: 'Configure snooze policy', b: 'Allow recipients to snooze alerts for up to 5 days with a mandatory reason. Snoozes are logged — a pattern of the same alert being snoozed repeatedly is itself a governance signal.' },
+      { t: 'Review alert history weekly', b: 'The alert history log shows every notification fired in the last 30 days. Review weekly to identify patterns: which rules fire most frequently, which are consistently snoozed, and which never fire (may indicate rules that are too lenient).' }
+    ],
+    tips: [
+      { t: '💡 Start with 3 rules, not 10', b: 'Alert fatigue kills governance systems. Start with the three most critical rules, validate they\'re working correctly, then add more. A system with 10 rules that all fire constantly is worse than no alerts.' },
+      { t: '💡 Match alert to actor', b: 'An alert to the CFO about a minor scoring change creates noise. An alert to the team lead about their item going Red creates action. Match severity to recipient seniority.' },
+      { t: '💡 Snoozed alerts need follow-up', b: 'Build a weekly check of snoozed alerts into your PMO routine. A snoozed alert is not a resolved alert — it\'s a deferred decision that needs to be revisited.' },
+      { t: '💡 Alert history is governance evidence', b: 'The alert history log proves that governance thresholds were monitored and that responsible parties were notified. In any audit, this log is your evidence of due diligence.' }
+    ],
+    related: [
+      { slug: 'health-scores', label: '💚 Health Scores & Decay', num: 'M07' },
+      { slug: 'change-impact', label: '🔄 Change Impact Tracking', num: 'M09' },
+      { slug: 'capacity-demand', label: '⚖️ Capacity & Demand', num: 'M06' }
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════
+function getSlug() {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  return parts[parts.length - 1] || new URLSearchParams(window.location.search).get('m') || '';
+}
+
+function render() {
+  const slug = getSlug();
+  const m = MODULES[slug];
+
+  if (!m) {
+    document.getElementById('hero-title').textContent = 'Module not found';
+    document.getElementById('hero-sub').textContent = 'Return to the features page to browse all modules.';
+    return;
+  }
+
+  // Page meta
+  document.getElementById('page-title').textContent = m.title + ' — PortfolioInSite';
+  document.getElementById('page-desc').setAttribute('content', m.sub);
+
+  // Hero
+  document.getElementById('bread-label').textContent = m.title;
+  document.getElementById('hero-eyebrow').innerHTML =
+    m.num + ' &nbsp;·&nbsp; PortfolioInSite' +
+    `<span class="mod-tier tier-${m.tier}">${m.tierLabel}</span>`;
+  document.getElementById('hero-title').textContent = m.title;
+  document.getElementById('hero-sub').textContent = m.sub;
+  document.getElementById('hero-chips').innerHTML = m.chips.map(c =>
+    `<div class="hero-chip"><span>✓</span>${c}</div>`).join('');
+
+  // Public content
+  document.getElementById('pub-overview').textContent = m.overview;
+  document.getElementById('caps-list').innerHTML = m.caps.map(c => `<li>${c}</li>`).join('');
+  document.getElementById('problem-text').textContent = m.problem;
+
+  // Video
+  const vidWrap = document.getElementById('vid-wrap');
+  if (m.vid) {
+    document.getElementById('vid-label-inner').textContent = m.title + ' walkthrough · Video coming soon';
+    document.getElementById('vid-label').textContent = m.vidLabel;
+  }
+
+  // Screenshot
+  const imgBox = document.getElementById('img-box');
+  if (m.img) {
+    imgBox.innerHTML = `<img src="${m.img}" alt="${m.imgAlt}" style="width:100%;display:block;object-fit:contain;">`;
+  } else {
+    document.getElementById('img-ph-text').textContent = 'Screenshot · ' + m.title;
+  }
+
+  // Gate
+  document.getElementById('gate-h4').textContent = m.gateH4;
+  document.getElementById('gate-steps').innerHTML = m.steps.map((s, i) =>
+    `<div class="gstep"><div class="gsnum">${i+1}</div><div class="gsbody"><h5>${s.t}</h5><p>${s.b}</p></div></div>`
+  ).join('');
+  document.getElementById('gate-tips').innerHTML = m.tips.map(t =>
+    `<div class="tip"><h5>${t.t}</h5><p>${t.b}</p></div>`
+  ).join('');
+  document.getElementById('gate-title').textContent = 'Full ' + m.title + ' Playbook';
+
+  // Related
+  document.getElementById('related-grid').innerHTML = m.related.map(r =>
+    `<a href="/modules/${r.slug}" class="related-card">${r.label} <span style="color:var(--t3);font-size:11px;margin-left:4px">${r.num}</span></a>`
+  ).join('');
+
+  // CTA
+  document.getElementById('cta-title').textContent = 'Ready to activate ' + m.title + '?';
+}
+
+render();
+</script>
+
+</body>
+</html>
