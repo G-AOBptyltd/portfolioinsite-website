@@ -72,6 +72,18 @@
   to = "/pages/forecastinsite-module.html"
   status = 200
 
+# ===== PlanInSite Module Teasers =====
+[[redirects]]
+  from = "/planinsite/*"
+  to = "/pages/planinsite-module.html"
+  status = 200
+
+# ===== PortfolioInSite Web Module Teasers =====
+[[redirects]]
+  from = "/portfolioinsite-web/*"
+  to = "/pages/portfolioinsite-web-module.html"
+  status = 200
+
 # ===== 404 Fallback =====
 [[redirects]]
   from = "/*"

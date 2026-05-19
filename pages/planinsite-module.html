@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLJ1KPTDMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LLJ1KPTDMK');
+  </script>
+  <title id="page-title">PlanInSite Module | PortfolioInSite</title>
+  <meta name="description" id="page-desc" content="PlanInSite module — PI planning and capacity management for agile enterprise teams.">
+  <link rel="canonical" id="page-canonical" href="https://portfolioinsite.com.au/planinsite/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* ── Brand accent — amber for PlanInSite ── */
+    :root {
+      --pi-accent: #d97706;
+      --pi-accent-dark: #b45309;
+      --pi-accent-light: #f59e0b;
+      --pi-hero-start: #1a0f00;
+      --pi-hero-mid: #4a2500;
+      --pi-hero-end: #d97706;
+    }
+
+    /* ── Layout ── */
+    .mod-hero {
+      background: linear-gradient(135deg, var(--pi-hero-start) 0%, var(--pi-hero-mid) 60%, var(--pi-hero-end) 100%);
+      padding: 80px 0 60px;
+      color: #fff;
+    }
+    .mod-hero .breadcrumb { margin-bottom: 20px; }
+    .mod-hero .breadcrumb a,
+    .mod-hero .breadcrumb span { color: rgba(255,255,255,0.7); font-size: 14px; }
+    .mod-hero .breadcrumb a:hover { color: #fff; }
+    .mod-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .mod-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 13px; font-weight: 500; color: #fff;
+    }
+    .mod-chip::before { content: '✓'; color: var(--pi-accent-light); font-weight: 700; }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .badge-tool { background: rgba(217,119,6,0.2); color: var(--pi-accent-light); border: 1px solid rgba(217,119,6,0.4); }
+    .badge-free { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
+    .badge-paid { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+
+    /* ── Content sections ── */
+    .mod-body { padding: 60px 0; }
+    .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+    @media(max-width:768px){ .mod-grid { grid-template-columns: 1fr; } }
+
+    .caps-card {
+      background: var(--gray-50, #f8fafc);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 12px; padding: 28px;
+    }
+    .caps-card h4 { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pi-accent); margin-bottom: 16px; }
+    .caps-card ul { list-style: none; padding: 0; margin: 0; }
+    .caps-card ul li { padding: 8px 0; border-bottom: 1px solid var(--border, #e2e8f0); font-size: 15px; color: var(--text, #1e293b); display: flex; gap: 10px; }
+    .caps-card ul li:last-child { border-bottom: none; }
+    .caps-card ul li::before { content: '→'; color: var(--pi-accent); font-weight: 700; flex-shrink: 0; }
+
+    .problem-card {
+      background: #fff8ed;
+      border-left: 4px solid #f59e0b;
+      border-radius: 0 12px 12px 0;
+      padding: 24px 28px; margin: 32px 0;
+    }
+    .problem-card p { margin: 0; font-size: 15px; color: #92400e; line-height: 1.6; }
+    .problem-card strong { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #b45309; margin-bottom: 8px; }
+
+    /* ── Video slot ── */
+    .video-wrap {
+      background: #1a0f00;
+      border-radius: 16px; overflow: hidden;
+      aspect-ratio: 16/9; margin: 40px 0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-placeholder {
+      text-align: center; color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+    .video-placeholder .play-icon { font-size: 56px; margin-bottom: 12px; display: block; }
+    .video-placeholder p { font-size: 14px; margin: 0; }
+
+    /* ── Gate section ── */
+    .gate-section { position: relative; margin: 40px 0; border-radius: 16px; overflow: hidden; }
+    .gate-inner { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.7; padding: 32px; background: var(--gray-50, #f8fafc); border: 1px solid var(--border,#e2e8f0); border-radius: 16px; }
+    .gate-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.98) 60%); z-index: 1; border-radius: 16px; }
+    .gate-card { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; text-align: center; padding: 32px 24px 40px; }
+    .gate-card h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #1a0f00; }
+    .gate-card p { color: #64748b; font-size: 15px; margin-bottom: 20px; }
+    .btn-unlock {
+      display: inline-block; padding: 12px 28px;
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-dark));
+      color: #fff; font-weight: 700; font-size: 15px;
+      border-radius: 8px; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .btn-unlock:hover { opacity: .85; }
+
+    /* ── Steps ── */
+    .steps-list { margin: 0; padding: 0; list-style: none; }
+    .steps-list li {
+      display: grid; grid-template-columns: 40px 1fr;
+      gap: 16px; padding: 20px 0;
+      border-bottom: 1px solid var(--border,#e2e8f0);
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-dark));
+      color: #fff; font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; font-size: 15px; font-weight: 600; color: #1a0f00; margin-bottom: 4px; }
+    .step-body p { font-size: 14px; color: #64748b; margin: 0; line-height: 1.6; }
+
+    /* ── Tips ── */
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    @media(max-width:600px){ .tips-grid { grid-template-columns: 1fr; } }
+    .tip-card { background: #fff; border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 18px 20px; }
+    .tip-card strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #1a0f00; }
+    .tip-card p { font-size: 13px; color: #64748b; margin: 0; line-height: 1.5; }
+
+    /* ── Related ── */
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; margin-top: 20px; }
+    .related-link {
+      display: block; padding: 14px 18px;
+      background: #fff; border: 1px solid var(--border,#e2e8f0);
+      border-radius: 10px; text-decoration: none;
+      font-size: 14px; font-weight: 600; color: #1a0f00;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .related-link:hover { border-color: var(--pi-accent); box-shadow: 0 2px 12px rgba(217,119,6,.15); }
+    .related-link span { display: block; font-size: 12px; color: #94a3b8; font-weight: 400; margin-top: 2px; }
+
+    /* ── Bottom CTA ── */
+    .mod-cta {
+      background: linear-gradient(135deg, #1a0f00, #4a2500);
+      border-radius: 20px; padding: 56px 40px;
+      text-align: center; margin: 60px 0;
+    }
+    .mod-cta h2 { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .mod-cta p { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 28px; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary-cta {
+      padding: 14px 28px; background: var(--pi-accent); color: #fff;
+      font-weight: 700; font-size: 15px; border-radius: 8px;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .btn-primary-cta:hover { opacity: .85; }
+    .btn-outline-cta {
+      padding: 14px 28px; background: transparent;
+      color: rgba(255,255,255,0.85); font-weight: 600; font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 8px;
+      text-decoration: none; transition: border-color .2s;
+    }
+    .btn-outline-cta:hover { border-color: rgba(255,255,255,0.7); }
+
+    .h-section { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 22px; font-weight: 700; color: #1a0f00; margin: 48px 0 16px; }
+    .divider { border: none; border-top: 1px solid var(--border,#e2e8f0); margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav scrolled" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <div class="nav-logo-icon" style="background: linear-gradient(135deg,#d97706,#b45309);">PI</div>
+        PlanInSite
+      </a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="/tools/planinsite">Open Tool</a>
+        <a href="/pricing" class="nav-cta">Start Free Trial</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="mod-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span> / </span>
+        <a href="../index.html#tool-planinsite">PlanInSite</a>
+        <span> / </span>
+        <span id="hero-breadcrumb">Module</span>
+      </div>
+
+      <div class="badge-row" id="hero-badges">
+        <span class="badge badge-tool">PlanInSite</span>
+        <span class="badge badge-paid" id="tier-badge">Paid Module</span>
+      </div>
+
+      <h1 id="hero-title" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.15;">Module</h1>
+      <p id="hero-sub" style="font-size:18px;color:rgba(255,255,255,0.85);max-width:640px;margin:0;line-height:1.6;"></p>
+
+      <div class="mod-chips" id="hero-chips"></div>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="mod-body">
+    <div class="container">
+
+      <!-- Overview -->
+      <p id="overview-text" style="font-size:17px;line-height:1.75;color:#374151;max-width:760px;"></p>
+
+      <!-- Capabilities + Problem -->
+      <div class="mod-grid">
+        <div class="caps-card">
+          <h4>Key Capabilities</h4>
+          <ul id="caps-list"></ul>
+        </div>
+        <div>
+          <div class="problem-card">
+            <strong>Without this module…</strong>
+            <p id="problem-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video slot -->
+      <div class="video-wrap" id="video-wrap">
+        <div class="video-placeholder" id="video-placeholder">
+          <span class="play-icon">▶</span>
+          <p id="vid-label">Video walkthrough coming soon</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: How to use -->
+      <h2 class="h-section">How to use this module</h2>
+      <div class="gate-section">
+        <div class="gate-inner" id="gate-steps-inner">
+          <ol class="steps-list" id="steps-preview"></ol>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4 id="gate-heading">Unlock the full step-by-step guide</h4>
+          <p>The complete practitioner walkthrough is available with a PlanInSite licence.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing &amp; Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: Practitioner tips -->
+      <h2 class="h-section">Practitioner tips</h2>
+      <div class="gate-section">
+        <div class="gate-inner">
+          <div class="tips-grid" id="tips-preview"></div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4>Unlock practitioner tips</h4>
+          <p>Real-world tips from PI planning practitioners — included with a paid licence.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing &amp; Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Related modules -->
+      <h2 class="h-section">Related modules</h2>
+      <div class="related-grid" id="related-grid"></div>
+
+      <!-- Bottom CTA -->
+      <div class="mod-cta">
+        <h2>Ready to try PlanInSite?</h2>
+        <p>14-day free trial. Start planning your next PI in minutes.</p>
+        <div class="cta-buttons">
+          <a href="/pricing" class="btn-primary-cta">Start 14-Day Free Trial</a>
+          <a href="/tools/planinsite" class="btn-outline-cta">Already licensed? Open Tool →</a>
+          <a href="/pricing" class="btn-outline-cta">View Pricing</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="nav-logo" style="color: var(--white); margin-bottom: 0;">
+            <div class="nav-logo-icon" style="background:linear-gradient(135deg,#d97706,#b45309)">PI</div>
+            PlanInSite
+          </a>
+          <p>PI planning and capacity management for agile enterprise teams. Built by <a href="https://agilityops.com.au" style="color: var(--primary-light);">Agility Ops Business Pty Ltd</a>.</p>
+        </div>
+        <div>
+          <h4>Tool</h4>
+          <ul class="footer-links">
+            <li><a href="/pricing">Start Free Trial</a></li>
+            <li><a href="/tools/planinsite">Open Tool</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul class="footer-links">
+            <li><a href="../pages/features.html">Features</a></li>
+            <li><a href="../pages/how-it-works.html">How It Works</a></li>
+            <li><a href="../pages/docs.html">Docs</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a></li>
+            <li><a href="sla.html">SLA</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 <a href="https://agilityops.com.au">Agility Ops Business Pty Ltd</a>. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+  // ── Module data ──────────────────────────────────────────────────────────────
+  const MODULES = {
+    'import-data': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Import Data',
+      breadcrumb: 'Import Data',
+      sub: 'Load your backlog from Jira CSV or Advanced Roadmaps export in seconds. Automatic field mapping, MoSCoW detection, and preview before commit.',
+      chips: ['Jira CSV', 'Advanced Roadmaps', 'Auto field mapping', 'MoSCoW detection'],
+      overview: 'PlanInSite accepts Jira standard CSV exports and Jira Advanced Roadmaps CSV exports. Drag and drop your file to trigger automatic field detection — the tool identifies issue keys, summaries, epics, team assignments, story points, and MoSCoW priority fields. A live preview table lets you verify the mapping before committing to the backlog. Supports mixed epics, features, and stories in a single import.',
+      caps: [
+        'Jira standard CSV import — issues, summaries, story points, priorities',
+        'Jira Advanced Roadmaps CSV — includes Target Start/End, Team, Fix Version',
+        'Drag-and-drop file upload with live field preview',
+        'Automatic MoSCoW priority detection from existing Jira priority fields',
+        'Parent/epic relationship mapping for multi-level backlog hierarchy',
+        'Session-only storage — data lives in-memory; export JSON to persist'
+      ],
+      problem: 'Manually re-entering backlog data into planning tools takes hours and introduces errors. PlanInSite imports your existing Jira CSV in seconds, preserving all hierarchy, priorities, and team assignments without re-typing a single field.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full import guide',
+      steps: [
+        { t: 'Export from Jira', b: 'In Jira, navigate to your backlog or board and use "Export" → "Export CSV (current fields)" or export from Advanced Roadmaps.' },
+        { t: 'Open PlanInSite', b: 'Navigate to /tools/planinsite. The Import Data tab is shown first by default.' },
+        { t: 'Drag and drop your CSV', b: 'Drag the exported CSV file onto the import area. The tool detects column headers and maps fields automatically.' },
+        { t: 'Review the preview table', b: 'Check the preview table to confirm field mappings are correct — especially priority, story points, and epic/parent assignments.' },
+        { t: 'Confirm import', b: 'Click "Import" to load all items into the session. Navigate to Backlog Refinement to start working with your data.' }
+      ],
+      tips: [
+        { t: '💡 Use Advanced Roadmaps export for richer data', b: 'The Advanced Roadmaps export includes Target Start/End dates and Fix Version fields that unlock roadmap and PI loading features.' },
+        { t: '💡 Export JSON after import', b: 'PlanInSite stores data in-memory only. Export a JSON backup immediately after importing so you can restore quickly without re-importing.' },
+        { t: '💡 Check your MoSCoW mappings', b: 'If your Jira priorities use custom names (e.g. "Priority 1"), remap them to MoSCoW labels in the preview step before importing.' },
+        { t: '💡 Import all items, filter later', b: 'Import your full backlog — including lower-priority items. PlanInSite\'s MoSCoW filter in Backlog Refinement makes it easy to focus on what matters.' }
+      ],
+      related: [
+        { slug: 'backlog-refinement', label: 'Backlog Refinement', desc: 'Review and prioritise imported items' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Set up team velocity' },
+        { slug: 'pi-loading', label: 'PI Loading', desc: 'Allocate items to sprints' }
+      ]
+    },
+
+    'teams-capacity': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Teams & Capacity',
+      breadcrumb: 'Teams & Capacity',
+      sub: 'Configure delivery teams with sprint velocity, headcount, and capacity commitments. The foundation of accurate PI loading.',
+      chips: ['Team velocity', 'Sprint capacity', 'Headcount config', 'PI projections'],
+      overview: 'The Teams & Capacity module is where you define who is building your PI. Add each delivery team, set their sprint velocity (story points per sprint), configure headcount and public holiday adjustments, and define the number of sprints in the PI. All capacity figures feed directly into the PI Loading board to prevent overcommitment before a single item is scheduled.',
+      caps: [
+        'Create and manage multiple delivery teams with name and primary ART',
+        'Set sprint velocity (story points) per team — adjustable per sprint',
+        'Configure sprint count and duration for the PI period',
+        'Headcount and leave/public holiday capacity adjustments',
+        'Real-time PI capacity totals per team',
+        'Capacity warnings when team workload approaches or exceeds limits'
+      ],
+      problem: 'PI planning without accurate capacity data is guesswork. Teams commit to more work than their velocity supports, leading to spill-over, morale issues, and PI objectives that are never fully achieved. Configuring teams before loading the PI prevents this by making capacity constraints visible from the start.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Teams & Capacity guide',
+      steps: [
+        { t: 'Add your delivery teams', b: 'Click "+ Add Team" and enter the team name and Agile Release Train assignment for each team in the PI.' },
+        { t: 'Set sprint velocity', b: 'Enter the team\'s average story points per sprint. Use historical data from Jira for the most accurate estimate.' },
+        { t: 'Configure sprint count', b: 'Set the number of sprints in the PI (typically 4–6). This determines the total PI capacity calculation.' },
+        { t: 'Adjust for capacity constraints', b: 'Reduce capacity for known public holidays, team leave, or PI planning ceremony overhead.' },
+        { t: 'Review PI capacity totals', b: 'Confirm the total story points available per team before moving to PI Loading.' }
+      ],
+      tips: [
+        { t: '💡 Use 80% of velocity as PI capacity', b: 'Reserve 20% of sprint velocity for unplanned work, bugs, and PI planning ceremonies. Teams that plan to 100% velocity always spill.' },
+        { t: '💡 Add all teams before loading', b: 'Complete Teams & Capacity before starting PI Loading — the capacity guardrails in the loading board depend on this configuration.' },
+        { t: '💡 Factor in PI ceremonies', b: 'PI Planning, sprint reviews, retros, and demos consume capacity. Estimate ceremony overhead and subtract from available sprint time.' },
+        { t: '💡 Review velocity trends first', b: 'If a team has been declining in velocity over the last 2–3 sprints, use their most recent sprint as the benchmark, not their average.' }
+      ],
+      related: [
+        { slug: 'import-data', label: 'Import Data', desc: 'Load your Jira backlog' },
+        { slug: 'pi-loading', label: 'PI Loading', desc: 'Allocate work to teams' },
+        { slug: 'dashboard', label: 'Dashboard', desc: 'PI analytics overview' }
+      ]
+    },
+
+    'backlog-refinement': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Backlog Refinement',
+      breadcrumb: 'Backlog Refinement',
+      sub: 'Review, filter, and prioritise your imported backlog using MoSCoW scoring, inline editing, and team assignment before PI loading.',
+      chips: ['MoSCoW filtering', 'Inline editing', 'Team assignment', 'Story point review'],
+      overview: 'Backlog Refinement gives every story and feature a final review before it enters the PI loading board. Filter by MoSCoW priority to focus on Must Have and Should Have items first. Edit story points, adjust priorities, and assign team ownership inline — no modals, no round-trips to Jira. A detail table view surfaces every field; a card view lets you move quickly through large backlogs in a Kanban-style sweep.',
+      caps: [
+        'MoSCoW filter — view Must Have, Should Have, Could Have, Won\'t Have separately or combined',
+        'Inline story point editing — update estimates without leaving the refinement screen',
+        'Team assignment — allocate items to delivery teams directly in the refinement view',
+        'Detail table view — all fields visible in sortable, filterable grid',
+        'Card view — faster visual sweep for large backlogs',
+        'Item count and story point totals per priority tier',
+        'Search across summary, epic, and team fields simultaneously'
+      ],
+      problem: 'Backlogs imported from Jira always contain stale estimates, unassigned items, and priority drift. Entering PI loading with unrefined items means the sprint board fills with unknowns. Backlog Refinement catches these issues before the PI commitment is made.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Backlog Refinement guide',
+      steps: [
+        { t: 'Import your backlog first', b: 'Complete the Import Data step before starting refinement. Backlog Refinement operates on the imported item set.' },
+        { t: 'Filter by Must Have', b: 'Start with the Must Have filter to identify committed items. Verify every Must Have has a story point estimate and team assignment.' },
+        { t: 'Review story point estimates', b: 'Click any estimate to edit inline. Look for unestimated items (0 points) and outliers (very large estimates that should be split).' },
+        { t: 'Assign teams', b: 'Confirm team assignments for all Must Have and Should Have items. Unassigned items cannot be scheduled in PI Loading.' },
+        { t: 'Adjust MoSCoW priorities', b: 'Downgrade items that no longer fit the PI. Move Won\'t Have items to a separate parking lot epic to keep the backlog clean.' }
+      ],
+      tips: [
+        { t: '💡 Refine Must Haves first', b: 'Sprint for Must Have completeness before touching other tiers. A PI with clean Must Haves is a PI that can succeed even under pressure.' },
+        { t: '💡 Flag unestimated items before PI Loading', b: 'Items with 0 story points will still appear in PI Loading. Add a provisional estimate (e.g. 3 points) so capacity calculations remain accurate.' },
+        { t: '💡 Use the search to find epics', b: 'Use the search bar to quickly find all stories under a specific epic. Useful for confirming scope before a PI planning ceremony.' },
+        { t: '💡 Sort by team before handing off', b: 'Sort by team assignment before moving to PI Loading. Each team lead can then review their own items before the loading board session.' }
+      ],
+      related: [
+        { slug: 'import-data', label: 'Import Data', desc: 'Load your Jira backlog' },
+        { slug: 'pi-loading', label: 'PI Loading', desc: 'Schedule refined items' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Set team velocity first' }
+      ]
+    },
+
+    'pi-loading': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'PI Loading',
+      breadcrumb: 'PI Loading',
+      sub: 'Drag and drop backlog items into sprint slots, with live capacity guardrails preventing overcommitment before the PI starts.',
+      chips: ['Drag & drop', 'Capacity guardrails', 'Sprint allocation', 'Team loading boards'],
+      overview: 'The PI Loading board is the heart of PlanInSite. Assign backlog items to sprint slots on a per-team board. Capacity guardrails calculated from Teams & Capacity configuration update in real time as you load items — you can see remaining capacity per sprint, total PI commitment per team, and overloaded sprints flagged in red before the PI begins. Export the finalised PI plan for stakeholder review.',
+      caps: [
+        'Per-team sprint boards — each team\'s sprints shown as columns',
+        'Drag-and-drop item allocation — move items between sprints visually',
+        'Live capacity guardrails — remaining story points per sprint update as you load',
+        'Overloaded sprint detection — sprints exceeding capacity turn amber/red',
+        'PI commitment summary — total points allocated vs. available per team',
+        'Unscheduled items sidebar — see what hasn\'t been placed yet',
+        'Export PI plan as JSON for stakeholder distribution'
+      ],
+      problem: 'PI planning sessions often result in overcommitted sprints because capacity limits aren\'t visible until after the session. Teams leave planning with confidence only to discover in Sprint 1 that they\'ve overloaded by 30%. PI Loading shows overcommitment in real time, so corrections happen during planning, not after.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full PI Loading guide',
+      steps: [
+        { t: 'Complete Teams & Capacity first', b: 'PI Loading capacity guardrails require team velocity and sprint configuration to be set up before loading begins.' },
+        { t: 'Complete Backlog Refinement first', b: 'All items should have story point estimates and team assignments before being loaded into sprints.' },
+        { t: 'Open the PI Loading board', b: 'Select a team to view their sprint columns. Each sprint shows available capacity, allocated points, and remaining space.' },
+        { t: 'Load Must Have items first', b: 'Drag Must Have items from the sidebar into the appropriate sprint slot. Distribute evenly across sprints rather than front-loading Sprint 1.' },
+        { t: 'Add Should Have items to remaining capacity', b: 'Fill remaining sprint capacity with Should Have items. Stop when guardrails reach 80% — leave headroom for unplanned work.' },
+        { t: 'Resolve overloaded sprints', b: 'Any sprint flagged red is overloaded. Move items to later sprints or downgrade priority to Could Have before finalising.' }
+      ],
+      tips: [
+        { t: '💡 Load to 80%, not 100%', b: 'Teams that load every sprint to 100% of velocity consistently spill into the next PI. Stop at 80% and treat the remaining capacity as an innovation buffer.' },
+        { t: '💡 Front-load risk items', b: 'Schedule high-risk or high-dependency stories in Sprint 1 or 2 so there\'s time to recover if they spill.' },
+        { t: '💡 Keep Sprint 5 light', b: 'The final sprint of a PI is always disrupted by hardening, demos, and retros. Load Sprint 5 to 50–60% of normal velocity.' },
+        { t: '💡 Export before the ceremony ends', b: 'Export the JSON plan at the end of the PI planning ceremony. This is your baseline — any changes after can be tracked against it.' }
+      ],
+      related: [
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Configure sprint velocity' },
+        { slug: 'backlog-refinement', label: 'Backlog Refinement', desc: 'Prepare items for loading' },
+        { slug: 'dashboard', label: 'Dashboard', desc: 'PI plan analytics' }
+      ]
+    },
+
+    'dashboard': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Dashboard',
+      breadcrumb: 'Dashboard',
+      sub: 'PI plan analytics at a glance — MoSCoW distribution, team load summary, capacity utilisation charts, and sprint coverage heatmap.',
+      chips: ['PI analytics', 'MoSCoW charts', 'Team load heatmap', 'Capacity utilisation'],
+      overview: 'The PlanInSite Dashboard aggregates your PI plan into a set of visualisations for stakeholder communication. A MoSCoW distribution chart shows the relative weight of committed vs. aspirational work. Team load summary cards show per-team allocation as a percentage of total PI capacity. The sprint coverage heatmap identifies over- and under-loaded sprints across all teams simultaneously. Export the dashboard view as a PDF for PI planning retrospectives and stakeholder reporting.',
+      caps: [
+        'MoSCoW distribution doughnut chart — Must/Should/Could/Won\'t breakdown by item count and points',
+        'Team load summary cards — allocated vs. available points per team as percentage utilisation',
+        'Sprint coverage heatmap — all teams × all sprints in a single grid view',
+        'Total PI commitment summary — aggregate story points across all teams and sprints',
+        'Unscheduled item count and total story points remaining to be placed',
+        'Chart.js-powered interactive charts with hover tooltips',
+        'Print/export dashboard for stakeholder reporting'
+      ],
+      problem: 'After a PI planning session, stakeholders need a clear summary — not a spreadsheet. The PlanInSite Dashboard converts your loaded PI plan into presentation-ready visuals that communicate capacity utilisation, priority distribution, and team load balance in seconds.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Dashboard guide',
+      steps: [
+        { t: 'Complete PI Loading first', b: 'Dashboard charts populate from your PI loading data. The more complete the loading, the more meaningful the dashboard.' },
+        { t: 'Open the Dashboard tab', b: 'Navigate to the Dashboard tab. Charts render automatically from the current session data.' },
+        { t: 'Review MoSCoW distribution', b: 'Check the doughnut chart — if Must Have exceeds 60% of total points, the PI may be over-scoped with committed work.' },
+        { t: 'Check team load cards', b: 'Any team above 90% utilisation is at risk. Identify which teams are overloaded and return to PI Loading to rebalance.' },
+        { t: 'Export for stakeholders', b: 'Use the browser print function (Ctrl+P / Cmd+P) to export the dashboard as a PDF for distribution after the PI planning ceremony.' }
+      ],
+      tips: [
+        { t: '💡 60/30/10 rule for MoSCoW', b: 'A healthy PI has roughly 60% Must Have, 30% Should Have, and 10% Could Have or less. More than 70% Must Have is a red flag.' },
+        { t: '💡 Look for team load imbalance', b: 'If one team is at 95% utilisation and another at 60%, there\'s an opportunity to rebalance before the PI starts.' },
+        { t: '💡 Use the heatmap in PI retrospectives', b: 'The sprint coverage heatmap shows which sprints were overloaded vs. underutilised — useful data for capacity calibration in the next PI.' },
+        { t: '💡 Export before refreshing', b: 'PlanInSite stores data in-memory. Always export JSON and/or print the dashboard before closing the browser tab.' }
+      ],
+      related: [
+        { slug: 'pi-loading', label: 'PI Loading', desc: 'Schedule your PI items' },
+        { slug: 'teams-capacity', label: 'Teams & Capacity', desc: 'Configure team velocity' },
+        { slug: 'backlog-refinement', label: 'Backlog Refinement', desc: 'Prepare backlog items' }
+      ]
+    }
+  };
+
+  // ── Routing ──────────────────────────────────────────────────────────────────
+  const slug = location.pathname.split('/').filter(Boolean).pop() || 'import-data';
+  const mod = MODULES[slug];
+
+  if (!mod) {
+    document.getElementById('hero-title').textContent = 'Module Not Found';
+    document.getElementById('hero-sub').textContent = 'This module page does not exist. Return to the PlanInSite overview.';
+  } else {
+    // SEO
+    document.getElementById('page-title').textContent = mod.title + ' | PlanInSite';
+    document.getElementById('page-desc').setAttribute('content', mod.sub);
+    document.getElementById('page-canonical').setAttribute('href', 'https://portfolioinsite.com.au/planinsite/' + slug);
+
+    // Hero
+    document.getElementById('hero-breadcrumb').textContent = mod.breadcrumb;
+    document.getElementById('hero-title').textContent = mod.title;
+    document.getElementById('hero-sub').textContent = mod.sub;
+
+    // Tier badge
+    const tierBadge = document.getElementById('tier-badge');
+    if (mod.tier === 'included') {
+      tierBadge.className = 'badge badge-free';
+      tierBadge.textContent = 'Included';
+    } else {
+      tierBadge.className = 'badge badge-paid';
+      tierBadge.textContent = 'Paid Module';
+    }
+
+    // Chips
+    const chipsEl = document.getElementById('hero-chips');
+    mod.chips.forEach(c => {
+      const el = document.createElement('span');
+      el.className = 'mod-chip';
+      el.textContent = c;
+      chipsEl.appendChild(el);
+    });
+
+    // Overview
+    document.getElementById('overview-text').textContent = mod.overview;
+
+    // Capabilities
+    const capsList = document.getElementById('caps-list');
+    mod.caps.forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = c;
+      capsList.appendChild(li);
+    });
+
+    // Problem
+    document.getElementById('problem-text').textContent = mod.problem;
+
+    // Video
+    if (mod.vid) {
+      const wrap = document.getElementById('video-wrap');
+      const placeholder = document.getElementById('video-placeholder');
+      placeholder.style.display = 'none';
+      const vid = document.createElement('video');
+      vid.src = '../img/planinsite-videos/' + mod.vid;
+      vid.controls = true;
+      vid.preload = 'metadata';
+      wrap.appendChild(vid);
+    }
+    document.getElementById('vid-label').textContent = mod.vidLabel;
+
+    // Gate heading
+    document.getElementById('gate-heading').textContent = mod.gateH4;
+
+    // Steps (gated preview — show first 2)
+    const stepsList = document.getElementById('steps-preview');
+    mod.steps.slice(0, 2).forEach((s, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="step-num">${i + 1}</div><div class="step-body"><strong>${s.t}</strong><p>${s.b}</p></div>`;
+      stepsList.appendChild(li);
+    });
+
+    // Tips (gated preview — show first 2)
+    const tipsGrid = document.getElementById('tips-preview');
+    mod.tips.slice(0, 2).forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'tip-card';
+      div.innerHTML = `<strong>${t.t}</strong><p>${t.b}</p>`;
+      tipsGrid.appendChild(div);
+    });
+
+    // Related modules
+    const relatedGrid = document.getElementById('related-grid');
+    mod.related.forEach(r => {
+      const a = document.createElement('a');
+      a.href = '/planinsite/' + r.slug;
+      a.className = 'related-link';
+      a.innerHTML = `${r.label}<span>${r.desc}</span>`;
+      relatedGrid.appendChild(a);
+    });
+  }
+  </script>
+</body>
+</html>

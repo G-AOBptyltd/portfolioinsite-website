@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLJ1KPTDMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LLJ1KPTDMK');
+  </script>
+  <title id="page-title">PortfolioInSite Web Module | PortfolioInSite</title>
+  <meta name="description" id="page-desc" content="PortfolioInSite Web module — portfolio prioritisation and health for Jira teams.">
+  <link rel="canonical" id="page-canonical" href="https://portfolioinsite.com.au/portfolioinsite-web/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* ── Brand accent — purple for PortfolioInSite Web ── */
+    :root {
+      --pi-accent: #7c3aed;
+      --pi-accent-dark: #6d28d9;
+      --pi-accent-light: #a78bfa;
+      --pi-hero-start: #0f0620;
+      --pi-hero-mid: #2e1065;
+      --pi-hero-end: #7c3aed;
+    }
+
+    /* ── Layout ── */
+    .mod-hero {
+      background: linear-gradient(135deg, var(--pi-hero-start) 0%, var(--pi-hero-mid) 60%, var(--pi-hero-end) 100%);
+      padding: 80px 0 60px;
+      color: #fff;
+    }
+    .mod-hero .breadcrumb { margin-bottom: 20px; }
+    .mod-hero .breadcrumb a,
+    .mod-hero .breadcrumb span { color: rgba(255,255,255,0.7); font-size: 14px; }
+    .mod-hero .breadcrumb a:hover { color: #fff; }
+    .mod-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .mod-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 13px; font-weight: 500; color: #fff;
+    }
+    .mod-chip::before { content: '✓'; color: var(--pi-accent-light); font-weight: 700; }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .badge-tool { background: rgba(124,58,237,0.2); color: var(--pi-accent-light); border: 1px solid rgba(124,58,237,0.4); }
+    .badge-free { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.4); }
+    .badge-paid { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+
+    /* ── Content sections ── */
+    .mod-body { padding: 60px 0; }
+    .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+    @media(max-width:768px){ .mod-grid { grid-template-columns: 1fr; } }
+
+    .caps-card {
+      background: var(--gray-50, #f8fafc);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 12px; padding: 28px;
+    }
+    .caps-card h4 { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pi-accent); margin-bottom: 16px; }
+    .caps-card ul { list-style: none; padding: 0; margin: 0; }
+    .caps-card ul li { padding: 8px 0; border-bottom: 1px solid var(--border, #e2e8f0); font-size: 15px; color: var(--text, #1e293b); display: flex; gap: 10px; }
+    .caps-card ul li:last-child { border-bottom: none; }
+    .caps-card ul li::before { content: '→'; color: var(--pi-accent); font-weight: 700; flex-shrink: 0; }
+
+    .problem-card {
+      background: #f5f0ff;
+      border-left: 4px solid #7c3aed;
+      border-radius: 0 12px 12px 0;
+      padding: 24px 28px; margin: 32px 0;
+    }
+    .problem-card p { margin: 0; font-size: 15px; color: #4c1d95; line-height: 1.6; }
+    .problem-card strong { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #6d28d9; margin-bottom: 8px; }
+
+    /* ── Video slot ── */
+    .video-wrap {
+      background: #0f0620;
+      border-radius: 16px; overflow: hidden;
+      aspect-ratio: 16/9; margin: 40px 0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .video-wrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .video-placeholder {
+      text-align: center; color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+    .video-placeholder .play-icon { font-size: 56px; margin-bottom: 12px; display: block; }
+    .video-placeholder p { font-size: 14px; margin: 0; }
+
+    /* ── Gate section ── */
+    .gate-section { position: relative; margin: 40px 0; border-radius: 16px; overflow: hidden; }
+    .gate-inner { filter: blur(5px); user-select: none; pointer-events: none; opacity: 0.7; padding: 32px; background: var(--gray-50, #f8fafc); border: 1px solid var(--border,#e2e8f0); border-radius: 16px; }
+    .gate-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.98) 60%); z-index: 1; border-radius: 16px; }
+    .gate-card { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; text-align: center; padding: 32px 24px 40px; }
+    .gate-card h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #0f0620; }
+    .gate-card p { color: #64748b; font-size: 15px; margin-bottom: 20px; }
+    .btn-unlock {
+      display: inline-block; padding: 12px 28px;
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-dark));
+      color: #fff; font-weight: 700; font-size: 15px;
+      border-radius: 8px; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .btn-unlock:hover { opacity: .85; }
+
+    /* ── Steps ── */
+    .steps-list { margin: 0; padding: 0; list-style: none; }
+    .steps-list li {
+      display: grid; grid-template-columns: 40px 1fr;
+      gap: 16px; padding: 20px 0;
+      border-bottom: 1px solid var(--border,#e2e8f0);
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-dark));
+      color: #fff; font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body strong { display: block; font-size: 15px; font-weight: 600; color: #0f0620; margin-bottom: 4px; }
+    .step-body p { font-size: 14px; color: #64748b; margin: 0; line-height: 1.6; }
+
+    /* ── Tips ── */
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    @media(max-width:600px){ .tips-grid { grid-template-columns: 1fr; } }
+    .tip-card { background: #fff; border: 1px solid var(--border,#e2e8f0); border-radius: 10px; padding: 18px 20px; }
+    .tip-card strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #0f0620; }
+    .tip-card p { font-size: 13px; color: #64748b; margin: 0; line-height: 1.5; }
+
+    /* ── Related ── */
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; margin-top: 20px; }
+    .related-link {
+      display: block; padding: 14px 18px;
+      background: #fff; border: 1px solid var(--border,#e2e8f0);
+      border-radius: 10px; text-decoration: none;
+      font-size: 14px; font-weight: 600; color: #0f0620;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .related-link:hover { border-color: var(--pi-accent); box-shadow: 0 2px 12px rgba(124,58,237,.15); }
+    .related-link span { display: block; font-size: 12px; color: #94a3b8; font-weight: 400; margin-top: 2px; }
+
+    /* ── Bottom CTA ── */
+    .mod-cta {
+      background: linear-gradient(135deg, #0f0620, #2e1065);
+      border-radius: 20px; padding: 56px 40px;
+      text-align: center; margin: 60px 0;
+    }
+    .mod-cta h2 { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .mod-cta p { color: rgba(255,255,255,0.75); font-size: 16px; margin-bottom: 28px; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary-cta {
+      padding: 14px 28px; background: var(--pi-accent); color: #fff;
+      font-weight: 700; font-size: 15px; border-radius: 8px;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .btn-primary-cta:hover { opacity: .85; }
+    .btn-outline-cta {
+      padding: 14px 28px; background: transparent;
+      color: rgba(255,255,255,0.85); font-weight: 600; font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 8px;
+      text-decoration: none; transition: border-color .2s;
+    }
+    .btn-outline-cta:hover { border-color: rgba(255,255,255,0.7); }
+
+    .h-section { font-family: 'Plus Jakarta Sans',sans-serif; font-size: 22px; font-weight: 700; color: #0f0620; margin: 48px 0 16px; }
+    .divider { border: none; border-top: 1px solid var(--border,#e2e8f0); margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav scrolled" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <div class="nav-logo-icon" style="background: linear-gradient(135deg,#7c3aed,#6d28d9);">PW</div>
+        PortfolioInSite Web
+      </a>
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../pages/features.html">Features</a>
+        <a href="/tools/portfolioinsite">Open Tool</a>
+        <a href="/pricing" class="nav-cta">Start Free Trial</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="mod-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span> / </span>
+        <a href="../index.html#tool-portfolioinsite-web">PortfolioInSite Web</a>
+        <span> / </span>
+        <span id="hero-breadcrumb">Module</span>
+      </div>
+
+      <div class="badge-row" id="hero-badges">
+        <span class="badge badge-tool">PortfolioInSite Web</span>
+        <span class="badge badge-paid" id="tier-badge">Paid Module</span>
+      </div>
+
+      <h1 id="hero-title" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.15;">Module</h1>
+      <p id="hero-sub" style="font-size:18px;color:rgba(255,255,255,0.85);max-width:640px;margin:0;line-height:1.6;"></p>
+
+      <div class="mod-chips" id="hero-chips"></div>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="mod-body">
+    <div class="container">
+
+      <!-- Overview -->
+      <p id="overview-text" style="font-size:17px;line-height:1.75;color:#374151;max-width:760px;"></p>
+
+      <!-- Capabilities + Problem -->
+      <div class="mod-grid">
+        <div class="caps-card">
+          <h4>Key Capabilities</h4>
+          <ul id="caps-list"></ul>
+        </div>
+        <div>
+          <div class="problem-card">
+            <strong>Without this module…</strong>
+            <p id="problem-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video slot -->
+      <div class="video-wrap" id="video-wrap">
+        <div class="video-placeholder" id="video-placeholder">
+          <span class="play-icon">▶</span>
+          <p id="vid-label">Video walkthrough coming soon</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: How to use -->
+      <h2 class="h-section">How to use this module</h2>
+      <div class="gate-section">
+        <div class="gate-inner" id="gate-steps-inner">
+          <ol class="steps-list" id="steps-preview"></ol>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4 id="gate-heading">Unlock the full step-by-step guide</h4>
+          <p>The complete practitioner walkthrough is available with a PortfolioInSite Web licence.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing &amp; Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Gated: Practitioner tips -->
+      <h2 class="h-section">Practitioner tips</h2>
+      <div class="gate-section">
+        <div class="gate-inner">
+          <div class="tips-grid" id="tips-preview"></div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <h4>Unlock practitioner tips</h4>
+          <p>Real-world tips from portfolio management practitioners — included with a paid licence.</p>
+          <a href="/pricing" class="btn-unlock">View Pricing &amp; Get Access</a>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Related modules -->
+      <h2 class="h-section">Related modules</h2>
+      <div class="related-grid" id="related-grid"></div>
+
+      <!-- Bottom CTA -->
+      <div class="mod-cta">
+        <h2>Ready to try PortfolioInSite Web?</h2>
+        <p>14-day free trial. Start prioritising your portfolio in minutes.</p>
+        <div class="cta-buttons">
+          <a href="/pricing" class="btn-primary-cta">Start 14-Day Free Trial</a>
+          <a href="/tools/portfolioinsite" class="btn-outline-cta">Already licensed? Open Tool →</a>
+          <a href="/pricing" class="btn-outline-cta">View Pricing</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="nav-logo" style="color: var(--white); margin-bottom: 0;">
+            <div class="nav-logo-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">PW</div>
+            PortfolioInSite Web
+          </a>
+          <p>Portfolio prioritisation and health for Jira teams. Built by <a href="https://agilityops.com.au" style="color: var(--primary-light);">Agility Ops Business Pty Ltd</a>.</p>
+        </div>
+        <div>
+          <h4>Tool</h4>
+          <ul class="footer-links">
+            <li><a href="/pricing">Start Free Trial</a></li>
+            <li><a href="/tools/portfolioinsite">Open Tool</a></li>
+            <li><a href="/pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul class="footer-links">
+            <li><a href="../pages/features.html">Features</a></li>
+            <li><a href="../pages/how-it-works.html">How It Works</a></li>
+            <li><a href="../pages/docs.html">Docs</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="https://agilityops.com.au/pages/privacy.html" target="_blank">Privacy Policy</a></li>
+            <li><a href="https://agilityops.com.au/pages/terms.html" target="_blank">Terms of Service</a></li>
+            <li><a href="sla.html">SLA</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 <a href="https://agilityops.com.au">Agility Ops Business Pty Ltd</a>. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script>
+  // ── Module data ──────────────────────────────────────────────────────────────
+  const MODULES = {
+    'backlog-triage': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Backlog Triage',
+      breadcrumb: 'Backlog Triage',
+      sub: 'Import your Jira backlog via CSV or Advanced Roadmaps export and triage items using MoSCoW filtering, search, and inline priority adjustment.',
+      chips: ['Jira CSV import', 'MoSCoW triage', 'Inline editing', 'Advanced Roadmaps'],
+      overview: 'Backlog Triage is the starting point for PortfolioInSite Web. Import your Jira backlog via standard CSV or Jira Advanced Roadmaps CSV and immediately begin triaging with MoSCoW priority filtering. Review items by epic, team, status, and effort. Adjust priorities inline without leaving the view. A search bar spans all fields — summary, epic, team, and fix version — for rapid item location across large backlogs.',
+      caps: [
+        'Jira CSV and Advanced Roadmaps CSV import with automatic field mapping',
+        'MoSCoW priority filter — view Must/Should/Could/Won\'t Have tiers separately',
+        'Inline priority and story point editing — no modals',
+        'Search across summary, epic, team, status, and fix version fields',
+        'Item count and story point totals per priority tier',
+        'Parent/epic hierarchy display with rollup counts',
+        'Export filtered view to CSV for stakeholder distribution'
+      ],
+      problem: 'Large Jira backlogs become unmanageable over time — hundreds of items with inconsistent priorities, stale estimates, and orphaned stories. Backlog Triage gives the Portfolio Manager a structured view to sweep the backlog systematically, applying MoSCoW priorities that reflect current business value before every planning cycle.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Backlog Triage guide',
+      steps: [
+        { t: 'Export your Jira backlog', b: 'In Jira, navigate to your board or backlog and export as CSV. Advanced Roadmaps export includes richer planning data.' },
+        { t: 'Import into PortfolioInSite Web', b: 'Drag and drop the CSV onto the import area. The tool auto-maps Jira field headers to internal fields.' },
+        { t: 'Filter by Must Have', b: 'Start with the Must Have filter. These are your non-negotiable deliverables — ensure every item has a valid estimate and team assignment.' },
+        { t: 'Adjust priorities inline', b: 'Click the priority label on any item to change it. Demote items that don\'t meet the Must Have threshold to Should Have or below.' }
+      ],
+      tips: [
+        { t: '💡 Triage before every PI planning cycle', b: 'Run a backlog triage session two weeks before PI planning. It ensures the planning session starts with a clean, prioritised backlog.' },
+        { t: '💡 Use search to find orphaned stories', b: 'Search for items with no epic assigned. These are often forgotten stories that should either be assigned to an epic or removed.' },
+        { t: '💡 Export Must Have tier for PI scope', b: 'Export the filtered Must Have view after triage. This becomes the scope input for your PI planning session.' },
+        { t: '💡 Advanced Roadmaps adds roadmap context', b: 'The Advanced Roadmaps CSV includes Target Start/End dates — enabling roadmap scheduling in the Roadmap module.' }
+      ],
+      related: [
+        { slug: 'epics-features', label: 'Epics & Features', desc: 'Review epic-level scope' },
+        { slug: 'dashboard', label: 'Dashboard', desc: 'Portfolio analytics' },
+        { slug: 'backlog-health', label: 'Backlog Health', desc: 'Detect staleness and drift' }
+      ]
+    },
+
+    'epics-features': {
+      tier: 'included', tierLabel: 'Included',
+      title: 'Epics & Features',
+      breadcrumb: 'Epics & Features',
+      sub: 'Review your portfolio at epic level — rollup story point totals, completion percentages, team assignments, and fix version groupings.',
+      chips: ['Epic rollup', 'Story point totals', 'Completion %', 'Fix version grouping'],
+      overview: 'The Epics & Features view groups your backlog by parent epic, surfacing rollup story point totals, MoSCoW distribution per epic, team ownership, and completion percentages based on Done vs. total items. Filter by fix version to see which epics are targeting a specific release. The view is optimised for Portfolio Manager and Product Owner conversations — showing scope and progress at the right altitude without drowning in individual stories.',
+      caps: [
+        'Epic grouping with rollup story points, item counts, and completion percentage',
+        'MoSCoW distribution per epic — Must/Should/Could breakdown at a glance',
+        'Team ownership per epic — identify epics without a clear team lead',
+        'Fix version filter — see which epics are targeting a specific release',
+        'Expand/collapse per epic to drill into child stories',
+        'Sort epics by story points, completion %, or MoSCoW weight',
+        'Highlight epics with unestimated or unassigned child stories'
+      ],
+      problem: 'Story-level views hide the portfolio picture. Stakeholders need to see how epics are progressing, which ones are under-resourced, and whether the Must Have epics have enough team capacity assigned. The Epics & Features view provides the altitude that story lists cannot.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Epics & Features guide',
+      steps: [
+        { t: 'Import your backlog first', b: 'The Epics & Features view requires an imported backlog with parent/epic relationships. Complete the Backlog Triage import step first.' },
+        { t: 'Review epic rollup totals', b: 'Check total story points per epic. Epics with 0 points assigned are either empty or have unestimated stories — both need attention.' },
+        { t: 'Check completion percentages', b: 'Completion % is calculated from Done items vs. total. Epics with stalled completion % (no movement across PIs) may need re-evaluation.' },
+        { t: 'Filter by fix version', b: 'Use the fix version filter to see which epics are scoped for the upcoming release. Validate that Must Have epics have team capacity.' }
+      ],
+      tips: [
+        { t: '💡 Epics without team assignments are risk', b: 'An epic with no team lead has no clear delivery owner. Assign team ownership at the epic level before PI planning.' },
+        { t: '💡 Completion % stalls signal blockers', b: 'An epic stuck at 30–40% completion across two PIs usually has an undiscussed blocker. Raise it in the next portfolio review.' },
+        { t: '💡 Use fix version grouping for release planning', b: 'The fix version filter maps directly to Jira Fix Version — use it to build a release view that\'s always current.' },
+        { t: '💡 Sort by MoSCoW weight for prioritisation', b: 'Sort epics by Must Have story points descending to see your most critical committed work at the top.' }
+      ],
+      related: [
+        { slug: 'backlog-triage', label: 'Backlog Triage', desc: 'Import and triage stories' },
+        { slug: 'roadmap', label: 'Roadmap', desc: 'Timeline view of epics' },
+        { slug: 'product-owner', label: 'Product Owner', desc: 'Product Owner workbench' }
+      ]
+    },
+
+    'dashboard': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Dashboard',
+      breadcrumb: 'Dashboard',
+      sub: 'Executive portfolio dashboard — MoSCoW distribution, completion trends, team allocation heatmap, and story point burn analytics.',
+      chips: ['MoSCoW charts', 'Completion trends', 'Team heatmap', 'Burn analytics'],
+      overview: 'The PortfolioInSite Web Dashboard presents your imported backlog as an executive-ready portfolio overview. A MoSCoW doughnut chart shows the priority distribution by story points and item count. Completion trend lines track Done % over time per epic. A team allocation heatmap surfaces which teams are overloaded with Must Have work. KPI cards at the top summarise total backlog size, total story points, Must Have commitment, and completion percentage — all updating live as you triage and adjust.',
+      caps: [
+        'KPI cards: total items, total story points, Must Have %, completion %',
+        'MoSCoW distribution doughnut chart — story points and item count',
+        'Team allocation heatmap — Must Have points per team',
+        'Epic completion bars — Done % per epic in a ranked bar chart',
+        'Unestimated item count and percentage — quality signal for planning readiness',
+        'Interactive Chart.js charts with hover tooltips',
+        'Print-optimised layout for stakeholder reporting'
+      ],
+      problem: 'Portfolio Managers spend hours building status reports from Jira exports and pivot tables. The PortfolioInSite Web Dashboard replaces that manual work with live charts that update as soon as the backlog is imported — turning a two-hour job into a two-minute refresh.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Dashboard guide',
+      steps: [
+        { t: 'Import and triage your backlog', b: 'Dashboard charts populate from the imported and triaged backlog. Complete Backlog Triage before reviewing the Dashboard.' },
+        { t: 'Review KPI cards', b: 'Check total story points, Must Have %, and completion % at the top. These are the headline metrics for executive reporting.' },
+        { t: 'Analyse MoSCoW distribution', b: 'A healthy portfolio has Must Have below 60% of total points. If Must Have dominates, the backlog is over-committed.' },
+        { t: 'Check team allocation heatmap', b: 'Identify teams carrying disproportionate Must Have load. This signals resourcing risk before PI planning begins.' },
+        { t: 'Export for stakeholders', b: 'Print the dashboard (Cmd+P / Ctrl+P) for a clean PDF stakeholder report. Charts print cleanly in both light and dark mode.' }
+      ],
+      tips: [
+        { t: '💡 Run the dashboard before every portfolio review', b: 'Import the latest Jira export immediately before a portfolio review meeting. The dashboard takes 30 seconds to populate and gives real-time status.' },
+        { t: '💡 Track Must Have % over time', b: 'If Must Have % is growing each PI, the portfolio is accumulating debt. This is a governance signal that requires a backlog grooming sprint.' },
+        { t: '💡 Unestimated % is a planning risk indicator', b: 'High unestimated % means velocity forecasts are unreliable. Target under 10% unestimated items before PI planning.' },
+        { t: '💡 Use team heatmap for resourcing conversations', b: 'Screenshot the team allocation heatmap for resourcing conversations with engineering leads. It\'s the most actionable view in the dashboard.' }
+      ],
+      related: [
+        { slug: 'backlog-triage', label: 'Backlog Triage', desc: 'Import and triage first' },
+        { slug: 'backlog-health', label: 'Backlog Health', desc: 'Detect staleness' },
+        { slug: 'strategic-map', label: 'Strategic Map', desc: 'Value vs. effort quadrant' }
+      ]
+    },
+
+    'strategic-map': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Strategic Map',
+      breadcrumb: 'Strategic Map',
+      sub: 'Value vs. effort quadrant map — surface Quick Wins, Strategic Bets, Fill-ins, and Time Sinks across your portfolio at a glance.',
+      chips: ['Quadrant map', 'Quick Wins', 'Strategic Bets', 'Value scoring'],
+      overview: 'The Strategic Map plots every epic and feature on a 2×2 quadrant matrix: Value (MoSCoW priority score) vs. Effort (story points). Quick Wins (high value, low effort) should be prioritised first. Strategic Bets (high value, high effort) need dedicated planning. Fill-ins (low value, low effort) are optional. Time Sinks (low value, high effort) should be challenged and removed. The quadrant updates live as you adjust priorities and estimates in the triage view.',
+      caps: [
+        '2×2 value vs. effort quadrant matrix — live from triaged backlog data',
+        'Quick Wins — high MoSCoW score, low story points: immediate action items',
+        'Strategic Bets — high value, high effort: multi-sprint planned initiatives',
+        'Fill-ins — low value, low effort: defer or batch into innovation sprints',
+        'Time Sinks — low value, high effort: remove or descope ruthlessly',
+        'Hover tooltips showing item summary, team, and epic on each data point',
+        'Click-through to full item details in Backlog Triage view'
+      ],
+      problem: 'Without a strategic view, backlogs get filled with Time Sinks — low-value, high-effort work that occupies teams without delivering business outcomes. The Strategic Map makes this visible at the portfolio level, giving PMO and Product leadership the data to challenge and remove low-value work before it enters the PI.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Strategic Map guide',
+      steps: [
+        { t: 'Ensure your backlog is triaged', b: 'The Strategic Map uses MoSCoW priority and story point estimates as axes. Items without estimates appear at the origin — triage first.' },
+        { t: 'Open the Strategic Map tab', b: 'The quadrant populates immediately from your current backlog. Each dot represents one epic or feature.' },
+        { t: 'Identify Quick Wins', b: 'Items in the top-left quadrant (high value, low effort) should be scheduled in the next available sprint. These are low-risk, high-reward.' },
+        { t: 'Challenge Time Sinks', b: 'Items in the bottom-right quadrant (low value, high effort) should be escalated for removal or descoping. Each Time Sink blocks capacity for Quick Wins.' },
+        { t: 'Plan Strategic Bets', b: 'Items in the top-right quadrant need multi-sprint planning. Ensure they have capacity reserved in the PI before committing.' }
+      ],
+      tips: [
+        { t: '💡 Use in portfolio reviews to challenge scope', b: 'Show the Strategic Map in your next portfolio review. Time Sink items generate immediate discussion and are often removed on the spot.' },
+        { t: '💡 Quick Wins are your sprint filler', b: 'When a sprint has spare capacity, Quick Wins from the Could Have tier are the safest fill — low risk, genuine business value.' },
+        { t: '💡 Recalculate after each triage cycle', b: 'The quadrant updates live. After a triage session, open the Strategic Map to see how the priority landscape has shifted.' },
+        { t: '💡 Strategic Bets need explicit resourcing', b: 'Strategic Bets in the top-right often have no dedicated team. Name the team in the Backlog Triage view so the Strategic Map reflects ownership.' }
+      ],
+      related: [
+        { slug: 'dashboard', label: 'Dashboard', desc: 'Portfolio analytics overview' },
+        { slug: 'backlog-triage', label: 'Backlog Triage', desc: 'Set MoSCoW priorities' },
+        { slug: 'epics-features', label: 'Epics & Features', desc: 'Epic-level detail' }
+      ]
+    },
+
+    'roadmap': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Roadmap',
+      breadcrumb: 'Roadmap',
+      sub: 'Timeline view of your portfolio epics — Target Start and End dates from Jira Advanced Roadmaps, grouped by fix version and team.',
+      chips: ['Timeline view', 'Target dates', 'Fix version lanes', 'Team grouping'],
+      overview: 'The Roadmap module renders your portfolio as a horizontal timeline using Target Start and End dates from the Jira Advanced Roadmaps CSV export. Epics are displayed as bars on a swimlane grid, grouped by fix version or team. The view highlights epics with date conflicts, missing end dates, or gaps between sequential epics in the same team lane. A print view generates a clean roadmap PDF for executive and stakeholder presentations.',
+      caps: [
+        'Horizontal timeline with swimlanes grouped by fix version or team',
+        'Epic bars sized by Target Start and Target End date from Jira Advanced Roadmaps',
+        'Date conflict detection — overlapping epics flagged in the same team lane',
+        'Missing end date detection — epics without Target End shown as open-ended',
+        'Fix version filter — focus the timeline on a specific release',
+        'Print/PDF export for stakeholder presentations',
+        'Colour-coded by MoSCoW priority tier'
+      ],
+      problem: 'Jira Advanced Roadmaps requires a paid Jira Premium subscription and its output is locked inside Jira. Portfolio Managers who need a simple timeline for stakeholders without Jira access have no clean option. The PortfolioInSite Web Roadmap generates a shareable, presentation-ready timeline from any Advanced Roadmaps CSV export.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Roadmap guide',
+      steps: [
+        { t: 'Export from Jira Advanced Roadmaps', b: 'The Roadmap module requires a Jira Advanced Roadmaps CSV export (not standard Jira CSV). This includes Target Start, Target End, and Fix Version fields.' },
+        { t: 'Import into PortfolioInSite Web', b: 'Import the Advanced Roadmaps CSV via the Backlog Triage import step. Target dates are auto-detected.' },
+        { t: 'Open the Roadmap tab', b: 'The timeline renders immediately. Epics appear as bars on swimlanes grouped by fix version by default.' },
+        { t: 'Check for date conflicts', b: 'Epics flagged in amber or red have overlapping dates in the same team lane. Resolve conflicts in Jira and re-export.' },
+        { t: 'Switch to team grouping', b: 'Toggle from fix version grouping to team grouping to see each team\'s timeline commitment and identify overloaded periods.' }
+      ],
+      tips: [
+        { t: '💡 Advanced Roadmaps CSV required for dates', b: 'Standard Jira CSV does not include Target Start/End dates. The Roadmap module only populates with an Advanced Roadmaps CSV export.' },
+        { t: '💡 Print mode for executive packs', b: 'Open the browser print dialog from the Roadmap tab for a clean, paginated PDF that renders timeline bars correctly without UI chrome.' },
+        { t: '💡 Use fix version filter for release planning', b: 'Filter to a single fix version to show stakeholders exactly what\'s committed for that release, coloured by MoSCoW priority.' },
+        { t: '💡 Refresh weekly during PI execution', b: 'Re-export from Jira and re-import weekly during PI execution to keep the roadmap current. The import takes under 30 seconds.' }
+      ],
+      related: [
+        { slug: 'epics-features', label: 'Epics & Features', desc: 'Epic-level scope view' },
+        { slug: 'strategic-map', label: 'Strategic Map', desc: 'Value vs. effort quadrant' },
+        { slug: 'dashboard', label: 'Dashboard', desc: 'Portfolio analytics' }
+      ]
+    },
+
+    'product-owner': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Product Owner',
+      breadcrumb: 'Product Owner',
+      sub: 'Product Owner workbench — per-product backlog view with MoSCoW scoring, sprint readiness check, and story point burn tracking.',
+      chips: ['PO workbench', 'Sprint readiness', 'Per-product view', 'Burn tracking'],
+      overview: 'The Product Owner view is a focused workbench for Product Owners managing a specific product or value stream within the portfolio. It surfaces all backlog items assigned to a product or epic group, with MoSCoW scores, sprint readiness indicators, and story point burn tracking. A readiness checklist flags items missing estimates, team assignments, or acceptance criteria markers — the key blockers to sprint planning. Product Owners can filter, adjust priorities, and export a ready-to-plan sprint backlog without leaving the view.',
+      caps: [
+        'Per-product or per-epic-group filtered view of the full backlog',
+        'Sprint readiness indicators — flag items missing estimates or team assignments',
+        'MoSCoW priority scoring per item with inline adjustment',
+        'Story point burn tracking — cumulative points Done vs. remaining per product',
+        'Acceptance criteria readiness marker — flag items without clear definition of done',
+        'Export sprint-ready items to CSV for import into Jira sprint planning',
+        'Sort by readiness score to surface fully-prepared items at the top'
+      ],
+      problem: 'Product Owners working across multiple epics in a large Jira board lose their individual product context. The Product Owner view restores that context — filtering to their product scope and surfacing sprint readiness issues that would otherwise be discovered (too late) during sprint planning.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Product Owner guide',
+      steps: [
+        { t: 'Select your product or epic group', b: 'Use the product/epic filter to scope the view to your product. Items from other products are hidden.' },
+        { t: 'Review sprint readiness', b: 'Items with a red readiness indicator are missing estimates, team assignments, or acceptance criteria flags — resolve these before sprint planning.' },
+        { t: 'Adjust MoSCoW priorities', b: 'Confirm that your Must Have items for the upcoming sprint are correct. Inline adjustment updates the full backlog immediately.' },
+        { t: 'Track burn progress', b: 'The burn tracking chart shows cumulative Done story points vs. remaining per PI. Use it to assess PI velocity and forecast remaining work.' }
+      ],
+      tips: [
+        { t: '💡 Run the readiness check weekly', b: 'Open the Product Owner view every Monday and resolve any red readiness items before the week\'s sprint planning session.' },
+        { t: '💡 Export the sprint-ready list for planning', b: 'Export the filtered sprint-ready items to CSV and import directly into your Jira sprint planning board to skip manual copy-paste.' },
+        { t: '💡 Burn chart = PI health signal', b: 'If cumulative burn is flattening mid-PI, there\'s a delivery issue. Raise it in the next portfolio review before it becomes a PI objective miss.' },
+        { t: '💡 Use PO view in refinement sessions', b: 'Open the Product Owner view on a shared screen during backlog refinement ceremonies to drive the readiness conversation with the delivery team.' }
+      ],
+      related: [
+        { slug: 'backlog-triage', label: 'Backlog Triage', desc: 'Full backlog management' },
+        { slug: 'epics-features', label: 'Epics & Features', desc: 'Epic-level overview' },
+        { slug: 'backlog-health', label: 'Backlog Health', desc: 'Staleness detection' }
+      ]
+    },
+
+    'backlog-health': {
+      tier: 'paid', tierLabel: 'Paid',
+      title: 'Backlog Health',
+      breadcrumb: 'Backlog Health',
+      sub: 'Detect staleness, priority drift, and unestimated items across the backlog. A health score per epic and per team surfaces governance risk before it becomes a problem.',
+      chips: ['Health scoring', 'Staleness detection', 'Priority drift', 'Governance risk'],
+      overview: 'Backlog Health analyses your portfolio backlog against a configurable set of health indicators: item age (how long since last status change), unestimated ratio (% of items without story points), MoSCoW drift (items promoted above their natural tier), and orphaned stories (stories without a parent epic). Each epic receives a health score from 0–100. The health guide explains each indicator, its threshold, and how to remediate. Export the full health report for governance and audit purposes.',
+      caps: [
+        'Health score per epic (0–100) based on configurable thresholds',
+        'Staleness detection — items unchanged in status for N days flagged in amber/red',
+        'Unestimated ratio — % of stories without story point estimates per epic',
+        'MoSCoW drift detection — items upgraded to Must Have without justification',
+        'Orphaned story detection — stories with no parent epic assigned',
+        'Portfolio-level health summary — aggregate score across all epics',
+        'Export full health report as CSV for governance and audit records',
+        'Health guide — explanations of each indicator, thresholds, and remediation steps'
+      ],
+      problem: 'Backlog health deteriorates silently. Items age without status changes, estimates drift or disappear, and Must Have lists inflate through well-intentioned but unjustified promotions. By the time these issues surface in a PI planning session, it\'s too late to clean up without delaying the start of the PI. Backlog Health catches and quantifies these issues weeks in advance.',
+      vid: null,
+      vidLabel: 'Video walkthrough coming soon',
+      gateH4: 'Unlock the full Backlog Health guide',
+      steps: [
+        { t: 'Import your backlog', b: 'Backlog Health analyses the imported backlog. Complete the Backlog Triage import step first for accurate results.' },
+        { t: 'Open Backlog Health', b: 'Navigate to the Backlog Health tab. Epic health scores populate immediately from the imported data.' },
+        { t: 'Review epic health scores', b: 'Epics scoring below 60 need attention before PI planning. Identify the top 3 lowest-scoring epics and prioritise remediation.' },
+        { t: 'Drill into each indicator', b: 'Click an epic to see its breakdown by indicator — staleness, unestimated ratio, drift, and orphaned stories each show separately.' },
+        { t: 'Export the health report', b: 'Export the full health report as CSV for your next portfolio governance review or for sharing with Product Owners.' }
+      ],
+      tips: [
+        { t: '💡 Run health check 4 weeks before PI planning', b: 'A 4-week buffer gives Product Owners time to remediate issues — re-estimating stories, removing orphans, and correcting priority drift — before planning.' },
+        { t: '💡 Target 80+ health score for all epics', b: 'PI planning runs smoothly when all epics score above 80. Use the health threshold as a PI planning gate criterion.' },
+        { t: '💡 Staleness is the most common failure mode', b: 'Items unchanged for 30+ days are often forgotten scope. A staleness sweep removes these from Must Have before they inflate PI commitments.' },
+        { t: '💡 Use the health report in governance reviews', b: 'The exported CSV health report satisfies portfolio governance audit requirements in many regulated organisations. Schedule a monthly health export as a governance cadence.' }
+      ],
+      related: [
+        { slug: 'backlog-triage', label: 'Backlog Triage', desc: 'Review and fix individual items' },
+        { slug: 'dashboard', label: 'Dashboard', desc: 'Portfolio analytics overview' },
+        { slug: 'epics-features', label: 'Epics & Features', desc: 'Epic-level scope view' }
+      ]
+    }
+  };
+
+  // ── Routing ──────────────────────────────────────────────────────────────────
+  const slug = location.pathname.split('/').filter(Boolean).pop() || 'backlog-triage';
+  const mod = MODULES[slug];
+
+  if (!mod) {
+    document.getElementById('hero-title').textContent = 'Module Not Found';
+    document.getElementById('hero-sub').textContent = 'This module page does not exist. Return to the PortfolioInSite Web overview.';
+  } else {
+    // SEO
+    document.getElementById('page-title').textContent = mod.title + ' | PortfolioInSite Web';
+    document.getElementById('page-desc').setAttribute('content', mod.sub);
+    document.getElementById('page-canonical').setAttribute('href', 'https://portfolioinsite.com.au/portfolioinsite-web/' + slug);
+
+    // Hero
+    document.getElementById('hero-breadcrumb').textContent = mod.breadcrumb;
+    document.getElementById('hero-title').textContent = mod.title;
+    document.getElementById('hero-sub').textContent = mod.sub;
+
+    // Tier badge
+    const tierBadge = document.getElementById('tier-badge');
+    if (mod.tier === 'included') {
+      tierBadge.className = 'badge badge-free';
+      tierBadge.textContent = 'Included';
+    } else {
+      tierBadge.className = 'badge badge-paid';
+      tierBadge.textContent = 'Paid Module';
+    }
+
+    // Chips
+    const chipsEl = document.getElementById('hero-chips');
+    mod.chips.forEach(c => {
+      const el = document.createElement('span');
+      el.className = 'mod-chip';
+      el.textContent = c;
+      chipsEl.appendChild(el);
+    });
+
+    // Overview
+    document.getElementById('overview-text').textContent = mod.overview;
+
+    // Capabilities
+    const capsList = document.getElementById('caps-list');
+    mod.caps.forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = c;
+      capsList.appendChild(li);
+    });
+
+    // Problem
+    document.getElementById('problem-text').textContent = mod.problem;
+
+    // Video
+    if (mod.vid) {
+      const wrap = document.getElementById('video-wrap');
+      const placeholder = document.getElementById('video-placeholder');
+      placeholder.style.display = 'none';
+      const vid = document.createElement('video');
+      vid.src = '../img/portfolioinsite-web-videos/' + mod.vid;
+      vid.controls = true;
+      vid.preload = 'metadata';
+      wrap.appendChild(vid);
+    }
+    document.getElementById('vid-label').textContent = mod.vidLabel;
+
+    // Gate heading
+    document.getElementById('gate-heading').textContent = mod.gateH4;
+
+    // Steps (gated preview — show first 2)
+    const stepsList = document.getElementById('steps-preview');
+    mod.steps.slice(0, 2).forEach((s, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="step-num">${i + 1}</div><div class="step-body"><strong>${s.t}</strong><p>${s.b}</p></div>`;
+      stepsList.appendChild(li);
+    });
+
+    // Tips (gated preview — show first 2)
+    const tipsGrid = document.getElementById('tips-preview');
+    mod.tips.slice(0, 2).forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'tip-card';
+      div.innerHTML = `<strong>${t.t}</strong><p>${t.b}</p>`;
+      tipsGrid.appendChild(div);
+    });
+
+    // Related modules
+    const relatedGrid = document.getElementById('related-grid');
+    mod.related.forEach(r => {
+      const a = document.createElement('a');
+      a.href = '/portfolioinsite-web/' + r.slug;
+      a.className = 'related-link';
+      a.innerHTML = `${r.label}<span>${r.desc}</span>`;
+      relatedGrid.appendChild(a);
+    });
+  }
+  </script>
+</body>
+</html>
