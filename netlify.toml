@@ -48,10 +48,11 @@
   status = 200
 
 # ===== Pricing =====
+# Central pricing page lives on agilityops.com.au — redirect there (single source of truth)
 [[redirects]]
   from = "/pricing"
-  to = "/pages/pricing.html"
-  status = 200
+  to = "https://agilityops.com.au/pages/pricing"
+  status = 302
 
 # ===== Playbook =====
 [[redirects]]
