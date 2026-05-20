@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Exclude app tool pages (standalone web tools, not marketing pages)
+Disallow: /tools/
+
+# Exclude dynamic CMS-rendered pages
+Disallow: /pages/product.html
+Disallow: /pages/content.html
+Disallow: /pages/module.html
+
+Sitemap: https://portfolioinsite.com.au/sitemap.xml

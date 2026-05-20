@@ -140,6 +140,11 @@ portfolioinsite-website/
     ├── features.html       — Module showcase with product screenshots
     ├── how-it-works.html   — Installation and setup guide
     ├── docs.html           — Documentation
+    ├── module.html         — Dynamic Jira module teaser (self-contained, inline JS required)
+    ├── forecastinsite-module.html   — ForecastInSite module teaser (blue #0284c7 brand)
+    ├── forecastinsite-playbook.html — ForecastInSite playbook (fully self-contained, hpp-* CSS prefix)
+    ├── planinsite-module.html       — PlanInSite module teaser (amber #d97706 brand)
+    ├── portfolioinsite-web-module.html — PortfolioInSite Web module teaser (purple #7c3aed brand)
     ├── privacy.html        — Local privacy policy (DEPRECATED — footer now links to agilityops.com.au)
     ├── terms.html          — Local terms (DEPRECATED — footer now links to agilityops.com.au)
     └── sla.html            — Service level agreement (still local)
@@ -180,6 +185,7 @@ InSite Suite tools are hosted as standalone HTML apps under `/tools/`. This site
 ## Deployment History
 
 - **April 17, 2026:** Central API integration — added `js/notion-cms.js`, `pages/product.html`, `pages/content.html`, created `netlify.toml` with SPA redirects and API proxy. Part of AOB Centralised Payment Platform Phase 1.
+- **May 19, 2026:** Suite homepage redesign — standardised Products dropdown nav across all pages, added module teaser pages for PlanInSite and PortfolioInSite Web, fixed CTA routing, fixed licence modal contact details across all tools.
 
 ## Related Repositories
 
@@ -218,6 +224,14 @@ InSite Suite tools are hosted as standalone HTML apps under `/tools/`. This site
 - Dependency Mapping (M10) is in UAT — mark with amber badge, not "available"
 - Strategic Quadrant Map is a future standalone module — not currently screenshotted
 - **Legal page consolidation (6 Mar 2026):** Local privacy/terms pages had placeholder content (e.g. `[ABN Placeholder]`). Simplified by pointing footer links to the canonical pages on agilityops.com.au
+- **`pages/module.html` is self-contained** — has no `<script src="../js/main.js">` reference. Any nav JS (dropdown toggles, hamburger) must be inlined at the bottom of the existing `<script>` block.
+- **`pages/forecastinsite-playbook.html` is self-contained** — no shared CSS/JS. Uses `hpp-*` CSS class prefix (not `ndp-*`) for its nav dropdown to avoid future conflicts. Dropdown JS also inlined.
+- **CTA routing rule (CRITICAL):** NEVER link directly to `/tools/*` as a trial or purchase CTA. ALL purchase/trial CTAs must go to `/pricing`. The only acceptable direct `/tools/*` link is "Already licensed? Open Tool →" at the bottom of module teaser pages.
+- **Licence modal contact details:** All three web tools (portfolioinsite.html, forecastinsite.html, planinsite.html) show `support@agilityops.com.au` and link to `portfolioinsite.com.au/pricing` in their licence activation modals.
+- **Notion Pricing DB is empty** — pricing data for agilityops.com.au/pages/pricing is hardcoded in `aob-corporate-hub/pages/pricing.html` STRIPE_LINKS object, not from Notion.
+- **Bundle Stripe prices must match the pricing page calculation** — bundle = 30% off sum of all 5 tools per tier. The pricing page calculates dynamically; Stripe prices must match exactly. Always verify with the TOOLS data in pricing.html before creating Stripe prices.
+- **Bundle tierKey mapping:** The pricing page uses short codes (`s/t/b/mb`) internally for tier selection. These map to Stripe key names via `tierLabelMap = {s:'starter', t:'team', b:'business', mb:'med-business'}`. The full key format is `bundle_{tier}_{billing}` e.g. `bundle_team_monthly`.
+- **Stripe prices are immutable** — once a price has been used in a transaction, the amount cannot be edited. Create a new price and archive the old one. Lookup keys can be reused only after removing from the old price first.
 
 ## Workflow Preferences
 
