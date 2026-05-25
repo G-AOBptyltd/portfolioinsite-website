@@ -10431,6 +10431,7 @@ function renderAll() {
 var LIC_STORAGE_KEY = 'forecastinsite_licence';
 var LIC_PRODUCT = 'FCT';
 var LIC_TRIAL_DAYS = 90;
+var LIC_VALIDATE_URL = 'https://api.agilityops.com.au/api/licence-validate';
 
 function getLicState() {
   try { var raw = localStorage.getItem(LIC_STORAGE_KEY); if (raw) return JSON.parse(raw); } catch(e) {}
@@ -10538,12 +10539,56 @@ function computeLicHash(payload) {
   return hex.substring(0, 4).padStart(4, '0');
 }
 
-function activateLicence() {
+async function getDeviceFingerprint() {
+  try {
+    var raw = [
+      navigator.userAgent,
+      navigator.language,
+      screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+      String(navigator.hardwareConcurrency || 0),
+    ].join('|');
+    var data = new TextEncoder().encode(raw);
+    var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map(function(b) { return b.toString(16).padStart(2, '0'); })
+      .join('')
+      .substring(0, 32);
+  } catch (e) {
+    var fp = localStorage.getItem('aob_device_fp');
+    if (!fp) {
+      fp = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+      try { localStorage.setItem('aob_device_fp', fp); } catch(x) {}
+    }
+    return fp.substring(0, 32);
+  }
+}
+
+async function activateLicence() {
   var key = document.getElementById('licKeyInput').value;
   var msgEl = document.getElementById('licValidationMsg');
   if (!key.trim()) { msgEl.innerHTML = '<div class="lic-status err">Please enter a licence key.</div>'; return; }
   var result = validateLicKey(key);
   if (!result.valid) { msgEl.innerHTML = '<div class="lic-status err">' + result.msg + '</div>'; return; }
+
+  // \u2500\u2500 Server-side seat validation \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  try {
+    var fingerprint = await getDeviceFingerprint();
+    var res = await fetch(LIC_VALIDATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key.trim().toUpperCase(), fingerprint: fingerprint }),
+    });
+    var data = await res.json();
+    if (!res.ok || !data.valid) {
+      msgEl.innerHTML = '<div class="lic-status err">' + (data && data.message ? data.message : 'Activation rejected by server.') + '</div>';
+      return;
+    }
+  } catch (fetchErr) {
+    // Network error \u2014 fail open so users are not blocked by connectivity issues.
+    console.warn('Server validation unavailable \u2014 activating offline:', fetchErr.message);
+  }
+
   var prev = getLicState();
   var lic = {
     type: 'licensed',
