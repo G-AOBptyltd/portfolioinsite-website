@@ -9,7 +9,7 @@ Marketing website for PortfolioInSite, an AI-native portfolio governance platfor
 **GitHub:** https://github.com/G-AOBptyltd/portfolioinsite-website
 **Visibility:** Public repo
 **Hosting:** Netlify (auto-deploys from main branch)
-**Analytics:** Google Analytics G-LLJ1KPTDMK
+**Analytics:** Google Analytics G-EFMMW3Q8LK
 **Parent brand:** https://agilityops.com.au
 
 ## Product Context
@@ -184,10 +184,10 @@ InSite Suite tools are hosted as standalone HTML apps under `/tools/`. This site
 
 ## Deployment History
 
-- **May 25, 2026:** Seat enforcement live — ForecastInSite (`FCT`), PlanInSite (`PLN`), and PortfolioInSite web (`POI`) tools now call `/api/licence-validate` server-side on activation. Added `LIC_VALIDATE_URL`, `getDeviceFingerprint()` (SHA-256 + localStorage fallback), and upgraded `activateLicence()` to async in all three tools. Fail-open on network errors. Verified with 3-browser test on production: seats 1/2 ✅, 2/2 ✅, 3rd browser blocked with seat_limit message ✅. Branch: `feature/seat-enforcement`, merged to main.
 - **April 17, 2026:** Central API integration — added `js/notion-cms.js`, `pages/product.html`, `pages/content.html`, created `netlify.toml` with SPA redirects and API proxy. Part of AOB Centralised Payment Platform Phase 1.
 - **May 19, 2026:** Suite homepage redesign — standardised Products dropdown nav across all pages, added module teaser pages for PlanInSite and PortfolioInSite Web, fixed CTA routing, fixed licence modal contact details across all tools.
 - **May 20, 2026:** GA4 dedicated property — replaced shared agilityops G-LLJ1KPTDMK tag with dedicated portfolioinsite.com.au property G-EFMMW3Q8LK. og:image added at img/og-image.png (1200×630px branded social share image).
+- **May 25, 2026:** Seat enforcement live — ForecastInSite (`FCT`), PlanInSite (`PLN`), and PortfolioInSite web (`POI`) tools now call `/api/licence-validate` server-side on activation. Added `LIC_VALIDATE_URL`, `getDeviceFingerprint()` (SHA-256 + localStorage fallback), and upgraded `activateLicence()` to async in all three tools. Fail-open on network errors. Verified with 3-browser test on production: seats 1/2 ✅, 2/2 ✅, 3rd browser blocked with seat_limit message ✅. Branch: `feature/seat-enforcement`, merged to main.
 
 ## Related Repositories
 
