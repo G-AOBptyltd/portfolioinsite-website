@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanInSite Playbook — PI Planning &amp; Capacity Management</title>
+  <meta name="description" content="The complete practitioner guide to PlanInSite. Learn how to import your Jira backlog, configure team velocity, run backlog refinement, and load your PI with confidence.">
+  <meta property="og:title" content="PlanInSite Playbook">
+  <meta property="og:description" content="Step-by-step guidance for every module in PlanInSite — the lean agile PI Planning and capacity management platform.">
+  <meta property="og:image" content="https://portfolioinsite.com.au/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="canonical" href="https://portfolioinsite.com.au/planinsite/playbook">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ac: #d97706;
+      --ac-dark: #b45309;
+      --ac-light: #fffbeb;
+      --bg: #ffffff;
+      --bg1: #f8fafc;
+      --bg2: #f1f5f9;
+      --t1: #0f172a;
+      --t2: #475569;
+      --t3: #94a3b8;
+      --bdr: #e2e8f0;
+      --sidebar-w: 256px;
+      --header-h: 64px;
+      --green: #10b981;
+      --amber: #d97706;
+      --red: #ef4444;
+      --purple: #7c3aed;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── TOP HEADER ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 200;
+      gap: 16px;
+    }
+    .hdr-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .hdr-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hdr-logo svg { width: 18px; height: 18px; color: #fff; }
+    .hdr-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--t1); }
+    .hdr-badge { background: var(--ac); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.5px; }
+    .hdr-title { font-size: 13px; color: var(--t2); font-weight: 500; border-left: 1px solid var(--bdr); padding-left: 16px; }
+    .hdr-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Products nav dropdown ── */
+    .hdr-products { position: relative; }
+    .hdr-products-btn {
+      background: none; border: 1px solid var(--bdr); border-radius: 6px;
+      cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;
+      font-weight: 500; color: var(--t2); display: inline-flex;
+      align-items: center; gap: 5px; padding: 6px 12px; transition: all 0.2s;
+    }
+    .hdr-products-btn:hover,
+    .hdr-products-btn[aria-expanded="true"] { border-color: var(--ac); color: var(--ac); }
+    .hdr-chevron { transition: transform 0.2s; }
+    .hdr-products-btn[aria-expanded="true"] .hdr-chevron { transform: rotate(180deg); }
+    .hdr-products-panel {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      background: #fff; border: 1px solid var(--bdr);
+      border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      padding: 20px 24px; z-index: 300; min-width: 560px;
+    }
+    .hdr-products-panel.open { display: block; }
+    .hpp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .hpp-col { display: flex; flex-direction: column; gap: 4px; }
+    .hpp-tool { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+    .hpp-badge { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
+    .hpp-link { font-size: 12px; color: var(--t2); font-weight: 500; padding: 3px 0; display: block; text-decoration: none; transition: color 0.15s; }
+    .hpp-link:hover { color: var(--ac); }
+    .hpp-tool-link { color: #94a3b8; font-style: italic; }
+
+    .btn-primary {
+      background: var(--ac);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--ac-dark); }
+    .btn-outline {
+      background: transparent;
+      color: var(--t1);
+      border: 1px solid var(--bdr);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ac); color: var(--ac); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: fixed;
+      top: var(--header-h);
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      background: var(--bg1);
+      border-right: 1px solid var(--bdr);
+      padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 2px; }
+    .sb-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      padding: 0 16px 8px;
+      margin-top: 12px;
+    }
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t2);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all .12s;
+      cursor: pointer;
+    }
+    .sb-link:hover { color: var(--t1); background: var(--bg2); }
+    .sb-link.active { color: var(--ac); border-left-color: var(--ac); background: var(--ac-light); font-weight: 600; }
+    .sb-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+    .sb-lock { margin-left: auto; font-size: 11px; color: var(--t3); }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── HERO ── */
+    .playbook-hero {
+      background: linear-gradient(135deg, #1c0f00 0%, #7c3a00 60%, #b45309 100%);
+      padding: 64px 48px;
+      color: #fff;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(217,119,6,.25);
+      border: 1px solid rgba(217,119,6,.5);
+      color: #fcd34d;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .hero-title span { color: #fcd34d; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,.7); max-width: 560px; margin-bottom: 28px; line-height: 1.7; }
+    .hero-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .hero-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,.6); }
+    .hero-stat strong { color: #fff; font-weight: 600; }
+
+    /* ── SECTION ── */
+    .module-section {
+      padding: 56px 48px;
+      border-bottom: 1px solid var(--bdr);
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+    .module-section:nth-child(even) { background: var(--bg1); }
+
+    .mod-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .mod-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .mod-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .mod-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .mod-icon.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .mod-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .mod-icon.slate { background: linear-gradient(135deg, #64748b, #475569); }
+    .mod-icon.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .mod-icon.teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .mod-icon.blue { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+
+    .mod-meta { flex: 1; }
+    .mod-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--t1);
+      margin-bottom: 8px;
+    }
+    .mod-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+    }
+    .badge-sm { background: #fffbeb; color: #92400e; }
+    .badge-pm { background: #f0fdf4; color: #15803d; }
+    .badge-dm { background: #eff6ff; color: #1d4ed8; }
+    .badge-all { background: var(--ac-light); color: var(--ac-dark); }
+    .badge-new { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+    /* ── PUBLIC CONTENT ── */
+    .pub-overview {
+      font-size: 15px;
+      color: var(--t2);
+      line-height: 1.75;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+    .pub-caps {
+      background: var(--bg2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .pub-caps h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 12px;
+    }
+    .pub-caps ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .pub-caps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--t2);
+    }
+    .pub-caps li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--ac);
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-wrap {
+      background: var(--t1);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      position: relative;
+      aspect-ratio: 16/9;
+      max-width: 720px;
+    }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+      color: rgba(255,255,255,.5);
+    }
+    .video-placeholder .play-ring {
+      width: 56px; height: 56px;
+      border: 2px solid rgba(217,119,6,.5);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fcd34d;
+      font-size: 20px;
+    }
+    .video-placeholder p { font-size: 12px; text-align: center; max-width: 180px; }
+    .video-label {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: -20px;
+      margin-bottom: 28px;
+    }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .img-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      border: 1px solid var(--bdr);
+      max-width: 720px;
+    }
+    .img-placeholder {
+      background: var(--bg2);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--t3);
+      font-size: 13px;
+    }
+    .img-placeholder span { font-size: 28px; }
+
+    /* ── GATE ── */
+    .gate-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .gate-inner {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .gate-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 25%, rgba(255,255,255,0.97) 55%);
+      z-index: 1;
+    }
+    .module-section:nth-child(even) .gate-fade {
+      background: linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.6) 25%, rgba(248,250,252,0.97) 55%);
+    }
+    .gate-card {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px 36px;
+      text-align: center;
+    }
+    .gate-lock { font-size: 28px; margin-bottom: 10px; }
+    .gate-card h3 { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--t2); max-width: 360px; margin-bottom: 18px; line-height: 1.6; }
+    .btn-unlock {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--ac);
+      color: #fff;
+      text-decoration: none;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-unlock:hover { background: var(--ac-dark); }
+    .btn-module-overview {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ac);
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity .15s;
+    }
+    .btn-module-overview:hover { opacity: 1; text-decoration: underline; }
+
+    /* ── GATED CONTENT SAMPLE ── */
+    .gated-steps { padding: 0 0 16px; }
+    .gated-steps h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 14px; }
+    .step { display: flex; gap: 14px; margin-bottom: 16px; }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--ac); color: #fff;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body h5 { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+    .step-body p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .tip-card {
+      background: var(--bg2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--ac);
+    }
+    .tip-card h5 { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .tip-card p { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    /* ── METRICS STRIP ── */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: var(--bg);
+      border: 1px solid var(--bdr);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-card .metric-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--ac); }
+    .metric-card .metric-lbl { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--bdr);
+    }
+
+    /* ── ROLE GUIDE CARDS ── */
+    .role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-bottom: 28px; }
+    .role-card { border-radius: var(--radius); padding: 20px; border: 1px solid var(--bdr); }
+    .role-card.sm { border-top: 3px solid #d97706; }
+    .role-card.pm { border-top: 3px solid #10b981; }
+    .role-card.dm { border-top: 3px solid #0ea5e9; }
+    .role-card h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .role-card p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+    .role-emoji { font-size: 20px; margin-bottom: 8px; }
+
+    /* ── CSV TABLE ── */
+    .csv-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .csv-table th { background: var(--bg2); padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--t2); border-bottom: 1px solid var(--bdr); font-weight: 700; }
+    .csv-table td { padding: 10px 14px; border-bottom: 1px solid var(--bdr); color: var(--t2); vertical-align: top; font-size: 12px; }
+    .csv-table tr:last-child td { border-bottom: none; }
+    .csv-table td:first-child { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--t1); font-size: 11px; }
+    .badge-req { background: #fef2f2; color: #dc2626; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+    .badge-rec { background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+    .badge-opt { background: #f0fdf4; color: #15803d; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+
+    /* ── CAPACITY EXPLAINER ── */
+    .cap-formula {
+      background: var(--bg2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      border-left: 4px solid var(--ac);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--t1);
+    }
+    .cap-formula .lbl { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--t3); margin-bottom: 8px; }
+    .cap-formula .eq { font-size: 16px; font-weight: 600; color: var(--ac); }
+
+    /* ── FOOTER ── */
+    .playbook-footer {
+      background: var(--t1);
+      color: rgba(255,255,255,.6);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .playbook-footer a { color: #fcd34d; text-decoration: none; font-size: 13px; }
+    .playbook-footer p { font-size: 13px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .module-section { padding: 36px 24px; }
+      .playbook-hero { padding: 40px 24px; }
+      .hero-title { font-size: 28px; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .hdr-title { display: none; }
+      .playbook-footer { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     TOP HEADER
+════════════════════════════════════════ -->
+<header class="site-header">
+  <a href="https://portfolioinsite.com.au" class="hdr-brand">
+    <div class="hdr-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <span class="hdr-name">PlanInSite</span>
+    <span class="hdr-badge">PI</span>
+  </a>
+  <span class="hdr-title">Playbook &amp; Practitioner Guide</span>
+  <div class="hdr-right">
+    <div class="hdr-products">
+      <button class="hdr-products-btn" aria-expanded="false" aria-haspopup="true">
+        Products <svg class="hdr-chevron" viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="hdr-products-panel">
+        <div class="hpp-grid">
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#06b6d4;">PortfolioInSite</div>
+            <span class="hpp-badge">Jira App</span>
+            <a href="/modules/moscow-scoring" class="hpp-link">Modules</a>
+            <a href="/pages/features.html" class="hpp-link">Features</a>
+            <a href="/pages/how-it-works.html" class="hpp-link">How It Works</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#7c3aed;">PortfolioInSite Web</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/portfolioinsite-web/backlog-triage" class="hpp-link">Modules</a>
+            <a href="/pages/portfolioinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#0284c7;">ForecastInSite</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/forecastinsite/getting-started" class="hpp-link">Modules</a>
+            <a href="/pages/forecastinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#d97706;">PlanInSite</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/planinsite/import-data" class="hpp-link">Modules</a>
+            <a href="/pages/planinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="/pricing" class="btn-outline">Start Free Trial →</a>
+    <a href="/pricing" class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Unlock Full Playbook
+    </a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     LAYOUT
+════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-label">Getting Started</div>
+    <a class="sb-link active" href="#getting-started" onclick="setActive(this)"><span class="sb-icon">🚀</span> Getting Started</a>
+    <a class="sb-link" href="#roles" onclick="setActive(this)"><span class="sb-icon">🎭</span> Roles Guide</a>
+
+    <div class="sb-label">Core Modules</div>
+    <a class="sb-link" href="#import-data" onclick="setActive(this)"><span class="sb-icon">📥</span> Import Data</a>
+    <a class="sb-link" href="#teams-capacity" onclick="setActive(this)"><span class="sb-icon">👥</span> Teams &amp; Capacity</a>
+    <a class="sb-link" href="#backlog-refinement" onclick="setActive(this)"><span class="sb-icon">🔍</span> Backlog Refinement</a>
+
+    <div class="sb-label">Advanced</div>
+    <a class="sb-link" href="#pi-loading" onclick="setActive(this)"><span class="sb-icon">🎯</span> PI Loading <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#dashboard" onclick="setActive(this)"><span class="sb-icon">📊</span> Dashboard <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#configuration" onclick="setActive(this)"><span class="sb-icon">⚙️</span> Configuration <span class="sb-lock">🔒</span></a>
+
+    <div class="sb-label">Reference</div>
+    <a class="sb-link" href="#csv-field-guide" onclick="setActive(this)"><span class="sb-icon">🗂️</span> CSV Field Guide</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="playbook-hero">
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        PlanInSite — Practitioner Playbook
+      </div>
+      <h1 class="hero-title">Where Plans<br><span>Are Forged.</span></h1>
+      <p class="hero-sub">Everything you need to import your Jira backlog, configure team velocity, run backlog refinement sessions, and load your PI with real capacity data — from Import Data to PI Loading dashboard.</p>
+      <div class="hero-meta">
+        <span class="hero-stat"><strong>6</strong> modules covered</span>
+        <span class="hero-stat"><strong>3</strong> role-specific guides</span>
+        <span class="hero-stat">Jira · Advanced Roadmaps · Any CSV</span>
+        <span class="hero-stat">100% browser-based, no install</span>
+      </div>
+    </div>
+
+    <!-- ════════ GETTING STARTED ════════ -->
+    <section class="module-section" id="getting-started">
+      <div class="mod-header">
+        <div class="mod-icon">🚀</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Getting Started</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PlanInSite is a fully browser-based PI Planning and capacity management tool. Import your Jira CSV, define your teams and velocity, run a backlog refinement session, and see exactly how much of your PI capacity is committed — all without leaving the browser. No install, no database, no accounts to manage.</p>
+
+      <div class="pub-caps">
+        <h4>What you get out of the box</h4>
+        <ul>
+          <li>CSV import from Jira, Advanced Roadmaps, or any standard sprint board export — field auto-detection included</li>
+          <li>Team velocity configuration with sprints-per-PI and capacity factor — calculates PI capacity in story points automatically</li>
+          <li>Backlog Refinement workspace — inline editing of items, sprint assignment, and capacity bar per team per sprint</li>
+          <li>PI Loading view — colour-coded capacity utilisation per team across all sprints in the PI</li>
+          <li>Sprint Summary and Team Summary views — see workload distribution at a glance</li>
+          <li>Local storage persistence — your last PI planning session is always waiting when you return</li>
+          <li>Dark and light theme</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap" id="vid-getting-started">
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Getting Started walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~2 minutes · Import, configure teams, load PI</p>
+
+      <div class="section-divider">Step-by-step guide</div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>How to run your first PI planning session</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Export your sprint backlog from Jira</h5><p>In Jira, navigate to your board, filter to the items you want to plan, and export as CSV (all fields). Include Issue Key, Summary, Type, Status, Story Points, Assignee, Sprint, Epic Link, and Component for best results.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Import into PlanInSite</h5><p>Click Import Data, drag-drop your CSV or click to browse. The tool auto-maps Jira's column names. Review the preview table before confirming the import.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Configure your teams</h5><p>In Teams & Capacity, add each delivery team, set their average velocity (story points per sprint), the number of sprints in your PI, and the capacity factor (%). PlanInSite calculates PI capacity automatically.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Assign items in Backlog Refinement</h5><p>Use Backlog Refinement to assign items to teams and sprints. The capacity bar for each sprint updates in real time — green means under capacity, amber means approaching limit, red means over-committed.</p></div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Review PI Loading</h5><p>Switch to PI Loading to see your full PI visualised as a grid — teams on rows, sprints in columns, with colour-coded utilisation. This is the view you share with the PI planning room.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Set your PI config first</h5><p>Before importing items, configure your sprints-per-PI and sprint length in the config sidebar. This ensures capacity calculations are correct from the start — don't change these mid-session.</p></div>
+            <div class="tip-card"><h5>💡 Items must have story points</h5><p>Capacity calculations require story points. Import a CSV where all items (or at least all Stories and Tasks) have story points set. Unpointed items count as zero capacity load — they'll hide over-commitment.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full setup guide is in the licensed playbook</h3>
+          <p>Unlock the complete PI planning workflow, Jira export configuration guide, capacity factor guidance, and multi-team planning tips.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+          <a href="/planinsite/import-data" class="btn-module-overview">Module overview →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ ROLES GUIDE ════════ -->
+    <section class="module-section" id="roles">
+      <div class="mod-header">
+        <div class="mod-icon green">🎭</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Roles Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PlanInSite serves three roles in the PI planning process. Each role interacts with the tool differently — understanding your role prevents you wasting time in modules that aren't yours to manage, and helps you ask the right questions during planning sessions.</p>
+
+      <div class="role-cards">
+        <div class="role-card sm">
+          <div class="role-emoji">🏃</div>
+          <h4>Scrum Master / Agile Coach</h4>
+          <p>Your home is Teams & Capacity and Backlog Refinement. Configure team velocity, facilitate the sprint loading conversation, and use the capacity bar to keep the team honest about what they're committing to.</p>
+        </div>
+        <div class="role-card pm">
+          <div class="role-emoji">📋</div>
+          <h4>Programme / Release Train Manager</h4>
+          <p>PI Loading is your primary view. Across all teams and all sprints, you're ensuring the PI is achievable — no team is overloaded in Sprint 1 and empty in Sprint 5. Use the Dashboard for executive reporting.</p>
+        </div>
+        <div class="role-card dm">
+          <div class="role-emoji">🧩</div>
+          <h4>Product Owner / Product Manager</h4>
+          <p>Your role is in Import Data and Backlog Refinement — get your prioritised backlog in, assign items to sprints, and work with the Scrum Master to fit them within team capacity. The scoring from PortfolioInSite Web flows directly in.</p>
+        </div>
+      </div>
+
+      <div class="pub-caps">
+        <h4>Shared capabilities across all roles</h4>
+        <ul>
+          <li>Real-time capacity bars — visual commitment indicator per team per sprint, updates as items are assigned</li>
+          <li>Sprint Summary and Team Summary toggle — switch views without losing your context</li>
+          <li>Inline item editing — update story points, sprint assignment, team, and status without a modal</li>
+          <li>Sort and filter across type, team, sprint, and status in the Backlog Refinement table</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ════════ IMPORT DATA ════════ -->
+    <section class="module-section" id="import-data">
+      <div class="mod-header">
+        <div class="mod-icon blue">📥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Import Data</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Import Data is the entry point for every PI planning session. Drop in a CSV from Jira or Advanced Roadmaps and the tool auto-detects your columns. A preview table lets you verify field mapping before committing — preventing silent mismatches that corrupt capacity calculations.</p>
+
+      <div class="pub-caps">
+        <h4>Supported import sources</h4>
+        <ul>
+          <li><strong>Jira board CSV export</strong> — standard Jira backlog or board export with all fields. The most common import path.</li>
+          <li><strong>Jira Advanced Roadmaps CSV</strong> — includes team assignments and sprint planning fields. Best for multi-team PIs already using AR.</li>
+          <li><strong>Azure DevOps query export</strong> — maps Work Item Type, Title, State, Assigned To, Story Points, and Area Path automatically.</li>
+          <li><strong>Any standard CSV</strong> — as long as it has an ID/key column, a title/summary, and story points. Use the field mapper for non-standard headers.</li>
+        </ul>
+      </div>
+
+      <div class="metrics-strip">
+        <div class="metric-card"><div class="metric-val">CSV</div><div class="metric-lbl">Import format</div></div>
+        <div class="metric-card"><div class="metric-val">Auto</div><div class="metric-lbl">Column detection</div></div>
+        <div class="metric-card"><div class="metric-val">Live</div><div class="metric-lbl">Preview before import</div></div>
+        <div class="metric-card"><div class="metric-val">∞</div><div class="metric-lbl">Items per import</div></div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🔑 Sprint field is critical</h5><p>Items without a Sprint value cannot be assigned to a sprint automatically. Either pre-assign sprints in Jira before exporting, or assign them manually in Backlog Refinement after import.</p></div>
+        <div class="tip-card"><h5>⚠️ Re-importing replaces data</h5><p>Re-importing a CSV replaces the current dataset. If you've made manual changes in Backlog Refinement, export first or note your assignments before re-importing an updated file.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ TEAMS & CAPACITY ════════ -->
+    <section class="module-section" id="teams-capacity">
+      <div class="mod-header">
+        <div class="mod-icon amber">👥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Teams &amp; Capacity</h2>
+          <div class="mod-badges">
+            <span class="badge badge-sm">Scrum Master</span>
+            <span class="badge badge-pm">Programme</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Teams & Capacity is where you define each delivery team, their average velocity (story points per sprint), and your PI configuration. PlanInSite calculates the total PI capacity for each team automatically — this number drives the capacity bars in Backlog Refinement and the utilisation view in PI Loading.</p>
+
+      <div class="cap-formula">
+        <div class="lbl">PI Capacity formula</div>
+        <div class="eq">PI Capacity = Velocity × Sprints per PI × Capacity Factor</div>
+      </div>
+
+      <div class="pub-caps">
+        <h4>Key fields in Teams & Capacity</h4>
+        <ul>
+          <li><strong>Team name</strong> — must match exactly how the team appears in your CSV's Team or Component column for auto-assignment to work</li>
+          <li><strong>Average velocity</strong> — story points the team completes in a typical sprint. Use the last 3–6 sprint average from SprintINSite Web for accuracy.</li>
+          <li><strong>Sprints per PI</strong> — how many delivery sprints in this PI (not counting the IP sprint). Default: 5.</li>
+          <li><strong>Capacity factor (%)</strong> — how much of theoretical capacity the team can actually commit. Accounts for leave, ceremonies, and unplanned work. Typical range: 70–85%.</li>
+        </ul>
+      </div>
+
+      <div class="img-wrap">
+        <div class="img-placeholder">
+          <span>👥</span>
+          <p>Teams &amp; Capacity screenshot — coming soon</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>📊 Use SprintINSite Web for velocity</h5><p>SprintINSite Web calculates your trailing average velocity from Jira sprint data automatically. Export the team velocity report and use those numbers directly in PlanInSite's capacity configuration.</p></div>
+        <div class="tip-card"><h5>⚡ Capacity factor matters</h5><p>A team with 40 pts/sprint × 5 sprints = 200pt theoretical PI capacity. At 80% capacity factor, their real PI commitment ceiling is 160 pts. Over-committing the remaining 40 pts creates sprint 4–5 burnout.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ BACKLOG REFINEMENT ════════ -->
+    <section class="module-section" id="backlog-refinement">
+      <div class="mod-header">
+        <div class="mod-icon purple">🔍</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Backlog Refinement</h2>
+          <div class="mod-badges">
+            <span class="badge badge-sm">Scrum Master</span>
+            <span class="badge badge-dm">Product Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Backlog Refinement is the planning workspace where items are assigned to teams and sprints. The capacity bar for each team and sprint updates in real time as you make assignments — giving immediate visual feedback on whether the sprint is green (within capacity), amber (approaching limit), or red (over-committed).</p>
+
+      <div class="pub-caps">
+        <h4>What you can do in Backlog Refinement</h4>
+        <ul>
+          <li>Assign any item to a team and sprint using the inline selectors — no drag-and-drop friction</li>
+          <li>Live capacity bar per sprint per team — green (&lt;85%), amber (85–100%), red (&gt;100% of PI capacity per sprint)</li>
+          <li>Sprint Summary toggle — see all items grouped by sprint with aggregate story points and team breakdown</li>
+          <li>Team Summary toggle — see all items grouped by team with sprint-by-sprint loading</li>
+          <li>Filter by type, team, sprint, status, or keyword to focus on specific planning scenarios</li>
+          <li>Inline story point editing — adjust estimates directly in the table without a separate modal</li>
+          <li>Sort by any column to find unassigned items, high-point items, or specific work types quickly</li>
+        </ul>
+      </div>
+
+      <div class="img-wrap">
+        <div class="img-placeholder">
+          <span>🔍</span>
+          <p>Backlog Refinement screenshot — coming soon</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🚦 Watch the amber zone</h5><p>Sprints at 85–100% capacity look fine on paper but collapse when an unplanned item arrives. Build a buffer — aim to plan each sprint to ~80%, leaving 20% for emergent work and bugs.</p></div>
+        <div class="tip-card"><h5>🔢 Unpointed items are invisible</h5><p>Items without story points show as 0pt in the capacity bar — masking over-commitment. Before your PI planning session, ensure all Stories and Tasks have story point estimates in Jira.</p></div>
+        <div class="tip-card"><h5>🔄 Sprint distribution matters</h5><p>Avoid front-loading Sprint 1 with all the hard work. A well-loaded PI builds confidence early (Sprint 1–2 manageable), delivers peak value in the middle (Sprint 3–4), and has capacity buffer for surprises (Sprint 5).</p></div>
+        <div class="tip-card"><h5>🏷️ Filter to Unassigned first</h5><p>Start every refinement session by filtering to unassigned items. Work through them systematically before adjusting already-assigned items — this prevents the common trap of endlessly re-shuffling the same items.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ PI LOADING (LOCKED) ════════ -->
+    <section class="module-section" id="pi-loading">
+      <div class="mod-header">
+        <div class="mod-icon">🎯</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">PI Loading</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Programme</span>
+            <span class="badge badge-sm">Scrum Master</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PI Loading gives you the helicopter view of the entire PI — all teams on rows, all sprints in columns, with colour-coded capacity utilisation in each cell. This is the view you project in PI planning rooms and send to stakeholders as the committed PI plan.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Reading the PI Loading grid</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Green cells — healthy commitment</h5><p>Team is committed within their sprint capacity for this sprint. Aim for all cells to be green by the end of PI planning — this means no team is over-committed and there's sprint buffer for emergent work.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Amber cells — approaching limit</h5><p>Team is 85–100% loaded for this sprint. Acceptable if the work is all Must Have, but be careful — a single unplanned item tips this sprint red. Consider shifting one story to the next sprint.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Red cells — over-committed</h5><p>Team has more story points assigned than their sprint capacity allows. This will cause missed sprint goals. Return to Backlog Refinement, filter to the over-loaded team and sprint, and move items out.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Click to drill down</h5><p>Click any cell to see the items contributing to that team-sprint's load — a quick way to identify what to move when a sprint is over-committed.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>PI Loading guide is in the licensed playbook</h3>
+          <p>Unlock PI Loading interpretation, rebalancing strategies, and export templates for stakeholder reporting.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ DASHBOARD (LOCKED) ════════ -->
+    <section class="module-section" id="dashboard">
+      <div class="mod-header">
+        <div class="mod-icon slate">📊</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Dashboard</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Programme</span>
+            <span class="badge badge-all">Reporting</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Dashboard provides an executive summary of the current PI plan — total story points committed, team utilisation percentages, sprint loading distribution, and item type breakdown. Designed for PI health checks and weekly status reporting during execution.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Dashboard panels</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>PI summary cards</h5><p>Total items, total story points, teams configured, sprints in PI, and overall capacity utilisation across the PI — the five numbers you report to leadership every week.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Team utilisation chart</h5><p>Bar chart showing each team's committed points vs available PI capacity — sorted by utilisation. Over-committed teams show above the 100% line in red.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Sprint loading chart</h5><p>Line chart of total story points per sprint across the PI — ideal shape is a smooth curve peaking in Sprint 3–4. Spikes in Sprint 1 or valleys in Sprint 5 indicate rebalancing is needed.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Item type breakdown</h5><p>Donut chart showing the distribution of stories, bugs, tasks, and features in the planned PI. A healthy PI has a mix — a bug-heavy PI signals quality debt that will impact velocity mid-PI.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Dashboard guide is in the licensed playbook</h3>
+          <p>Unlock Dashboard interpretation, PI health benchmarks, and weekly reporting workflow templates.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ CSV FIELD GUIDE ════════ -->
+    <section class="module-section" id="csv-field-guide">
+      <div class="mod-header">
+        <div class="mod-icon green">🗂️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">CSV Field Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Users</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PlanInSite's import engine auto-detects Jira's standard column names. Understanding which fields are critical and which are optional prevents the most common import failures — especially the "0 rows loaded" scenario caused by missing sprint data or unrecognised column names.</p>
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:#991b1b;">
+        <strong>⚠️ Hard rule:</strong> Every item must have a <strong>Sprint</strong> value to appear in the capacity calculations. Items without a Sprint field value load as unassigned and contribute zero to the capacity bar — even if they have story points.
+      </div>
+
+      <table class="csv-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Requirement</th>
+            <th>Recognised column names</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Issue Key</td>
+            <td><span class="badge-req">Required</span></td>
+            <td><code>Issue key</code>, <code>ID</code>, <code>Key</code>, <code>Number</code>, <code>Ticket</code></td>
+            <td>Used as the unique row identifier. Must be present in every row.</td>
+          </tr>
+          <tr>
+            <td>Summary</td>
+            <td><span class="badge-req">Required</span></td>
+            <td><code>Summary</code>, <code>Title</code>, <code>Name</code>, <code>Subject</code></td>
+            <td>The display title of the item. Truncated in the table at 80 chars.</td>
+          </tr>
+          <tr>
+            <td>Sprint</td>
+            <td><span class="badge-req">Required</span></td>
+            <td><code>Sprint</code>, <code>Iteration</code>, <code>Sprint Name</code></td>
+            <td>Items without a Sprint value cannot be placed in the capacity bar. <strong>Must be present.</strong></td>
+          </tr>
+          <tr>
+            <td>Story Points</td>
+            <td><span class="badge-req">Required</span></td>
+            <td><code>Story Points</code>, <code>Story point estimate</code>, <code>Points</code>, <code>Effort</code>, <code>Size</code>, <code>Estimate</code></td>
+            <td>Drives all capacity calculations. Items with no story points count as 0pt — hiding over-commitment.</td>
+          </tr>
+          <tr>
+            <td>Issue Type</td>
+            <td><span class="badge-rec">Recommended</span></td>
+            <td><code>Issue Type</code>, <code>Type</code>, <code>Work Item Type</code></td>
+            <td>Used for type-filter in Backlog Refinement and type breakdown in Dashboard.</td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td><span class="badge-rec">Recommended</span></td>
+            <td><code>Status</code>, <code>State</code>, <code>Resolution</code></td>
+            <td>Used for status filter and done/in-progress/to-do grouping.</td>
+          </tr>
+          <tr>
+            <td>Team / Component</td>
+            <td><span class="badge-rec">Recommended</span></td>
+            <td><code>Team</code>, <code>Component/s</code>, <code>Component</code>, <code>Squad</code>, <code>Area Path</code></td>
+            <td>Auto-assigns items to teams if the value matches a configured team name exactly (case-insensitive).</td>
+          </tr>
+          <tr>
+            <td>Assignee</td>
+            <td><span class="badge-opt">Optional</span></td>
+            <td><code>Assignee</code>, <code>Owner</code>, <code>Assigned To</code></td>
+            <td>Used for assignee filter in Backlog Refinement.</td>
+          </tr>
+          <tr>
+            <td>Epic Link</td>
+            <td><span class="badge-opt">Optional</span></td>
+            <td><code>Epic Link</code>, <code>Epic</code>, <code>Parent</code>, <code>Epic Name</code></td>
+            <td>Used for epic filter grouping in Backlog Refinement.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-divider">Common Import Failures</div>
+
+      <div class="tips-grid">
+        <div class="tip-card" style="border-left-color:#ef4444">
+          <h5>❌ Zero rows imported</h5>
+          <p>Most common cause: Sprint column is missing or uses a non-standard header (e.g. "Iteration" not auto-detected). Check your CSV header row — rename the sprint column to <code>Sprint</code> before re-importing.</p>
+        </div>
+        <div class="tip-card" style="border-left-color:#ef4444">
+          <h5>❌ All items show as 0 pts</h5>
+          <p>Story points column header not recognised. Common culprits: <code>story_points</code> (underscore), <code>SP</code>, or a custom field name like <code>T-Shirt Size</code>. Rename to <code>Story Points</code> in the CSV before importing.</p>
+        </div>
+        <div class="tip-card" style="border-left-color:#f59e0b">
+          <h5>⚠️ QA/SIT boards — zero sprint items</h5>
+          <p>Test boards in Jira often have no sprint assigned (items sit in a testing workflow, not a sprint). These export with blank Sprint fields. Pre-filter your export to only include sprint items, or assign sprints in Jira first.</p>
+        </div>
+        <div class="tip-card" style="border-left-color:#f59e0b">
+          <h5>⚠️ Custom team field not mapping</h5>
+          <p>If your team name is in a custom Jira field (e.g. "Fixed By", "Squad"), it won't auto-map to the Team column. Export the field and rename its column header to <code>Team</code> or <code>Component</code> before importing.</p>
+        </div>
+      </div>
+
+      <div class="section-divider">Recommended Jira JQL for PI Planning Export</div>
+
+      <div class="cap-formula">
+        <div class="lbl">JQL starter — active and planned sprints</div>
+        <div class="eq" style="font-size:13px;word-break:break-all;">project = YOUR_PROJECT AND sprint in openSprints() ORDER BY created ASC</div>
+      </div>
+
+      <div class="cap-formula">
+        <div class="lbl">JQL — include future planned sprints</div>
+        <div class="eq" style="font-size:13px;word-break:break-all;">project = YOUR_PROJECT AND sprint in openSprints() OR sprint in futureSprints() ORDER BY created ASC</div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>📋 Export all fields</h5><p>When exporting from Jira, choose "Export to CSV (all fields)" not "current fields" — this ensures Sprint, Story Points, and Component are included even if they're not visible on your current board view.</p></div>
+        <div class="tip-card"><h5>🔄 Advanced Roadmaps export</h5><p>If you're using Jira Advanced Roadmaps, use the AR CSV export which includes team and sprint planning fields in the correct format. This is the cleanest import path for multi-team PIs.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ CONFIGURATION (LOCKED) ════════ -->
+    <section class="module-section" id="configuration">
+      <div class="mod-header">
+        <div class="mod-icon slate">⚙️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Configuration</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Configuration controls your PI structure — sprints per PI, sprint duration, capacity factor defaults, and the capacity colour thresholds. These settings flow into every capacity calculation in the tool. Set them before importing data and avoid changing them mid-session.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Key configuration settings</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Sprints per PI</h5><p>How many delivery sprints in this Program Increment — not including the IP sprint. SAFe standard is 4 or 5. This drives the PI Loading grid column count.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Sprint duration (weeks)</h5><p>Length of each sprint — typically 1 or 2 weeks. This is used for date range display in the PI Loading view.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Default capacity factor (%)</h5><p>Applied to new teams as a default. Typical range 70–85%. Individual teams can override this in Teams & Capacity.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Capacity colour thresholds</h5><p>The amber threshold (default 85%) and red threshold (default 100%) can be adjusted to match your organisation's risk tolerance for sprint over-commitment.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Configuration guide is in the licensed playbook</h3>
+          <p>Unlock capacity factor guidance, PI structure recommendations for SAFe vs Scrum, and organisation-specific calibration templates.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="playbook-footer" style="margin-left:var(--sidebar-w)">
+  <div>
+    <p style="font-weight:600;color:#fff;margin-bottom:4px">PlanInSite</p>
+    <p>Part of the AOB InSite Suite — lean agile tooling for delivery teams</p>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <a href="https://portfolioinsite.com.au">portfolioinsite.com.au</a>
+    <a href="/pages/forecastinsite-playbook.html">ForecastInSite Playbook</a>
+    <a href="/pages/portfolioinsite-playbook.html">PortfolioInSite Web Playbook</a>
+    <a href="/pricing">Pricing</a>
+  </div>
+</footer>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Products dropdown
+  const btn = document.querySelector('.hdr-products-btn');
+  const panel = document.querySelector('.hdr-products-panel');
+  btn.addEventListener('click', () => {
+    const open = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', e => {
+    if (!btn.contains(e.target) && !panel.contains(e.target)) {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Scroll spy
+  const sections = document.querySelectorAll('.module-section[id]');
+  const links = document.querySelectorAll('.sb-link[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

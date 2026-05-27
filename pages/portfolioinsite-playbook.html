@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PortfolioInSite Web Playbook — Lean Agile Backlog Prioritisation</title>
+  <meta name="description" content="The complete practitioner guide to PortfolioInSite Web. Learn how to score your backlog with MoSCoW, map value vs effort, manage epics, and govern your lean agile portfolio.">
+  <meta property="og:title" content="PortfolioInSite Web Playbook">
+  <meta property="og:description" content="Step-by-step guidance for every module in PortfolioInSite Web — the lean agile backlog prioritisation platform.">
+  <meta property="og:image" content="https://portfolioinsite.com.au/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="canonical" href="https://portfolioinsite.com.au/portfolioinsite-web/playbook">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ac: #7c3aed;
+      --ac-dark: #6d28d9;
+      --ac-light: #f5f3ff;
+      --bg: #ffffff;
+      --bg1: #f8fafc;
+      --bg2: #f1f5f9;
+      --t1: #0f172a;
+      --t2: #475569;
+      --t3: #94a3b8;
+      --bdr: #e2e8f0;
+      --sidebar-w: 256px;
+      --header-h: 64px;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #7c3aed;
+      --radius: 10px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── TOP HEADER ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 200;
+      gap: 16px;
+    }
+    .hdr-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .hdr-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hdr-logo svg { width: 18px; height: 18px; color: #fff; }
+    .hdr-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--t1); }
+    .hdr-badge { background: var(--ac); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.5px; }
+    .hdr-title { font-size: 13px; color: var(--t2); font-weight: 500; border-left: 1px solid var(--bdr); padding-left: 16px; }
+    .hdr-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ── Products nav dropdown ── */
+    .hdr-products { position: relative; }
+    .hdr-products-btn {
+      background: none; border: 1px solid var(--bdr); border-radius: 6px;
+      cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;
+      font-weight: 500; color: var(--t2); display: inline-flex;
+      align-items: center; gap: 5px; padding: 6px 12px; transition: all 0.2s;
+    }
+    .hdr-products-btn:hover,
+    .hdr-products-btn[aria-expanded="true"] { border-color: var(--ac); color: var(--ac); }
+    .hdr-chevron { transition: transform 0.2s; }
+    .hdr-products-btn[aria-expanded="true"] .hdr-chevron { transform: rotate(180deg); }
+    .hdr-products-panel {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      background: #fff; border: 1px solid var(--bdr);
+      border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      padding: 20px 24px; z-index: 300; min-width: 560px;
+    }
+    .hdr-products-panel.open { display: block; }
+    .hpp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .hpp-col { display: flex; flex-direction: column; gap: 4px; }
+    .hpp-tool { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+    .hpp-badge { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
+    .hpp-link { font-size: 12px; color: var(--t2); font-weight: 500; padding: 3px 0; display: block; text-decoration: none; transition: color 0.15s; }
+    .hpp-link:hover { color: var(--ac); }
+    .hpp-tool-link { color: #94a3b8; font-style: italic; }
+
+    .btn-primary {
+      background: var(--ac);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: var(--ac-dark); }
+    .btn-outline {
+      background: transparent;
+      color: var(--t1);
+      border: 1px solid var(--bdr);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .15s;
+    }
+    .btn-outline:hover { border-color: var(--ac); color: var(--ac); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: fixed;
+      top: var(--header-h);
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      background: var(--bg1);
+      border-right: 1px solid var(--bdr);
+      padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 2px; }
+    .sb-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      padding: 0 16px 8px;
+      margin-top: 12px;
+    }
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t2);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all .12s;
+      cursor: pointer;
+    }
+    .sb-link:hover { color: var(--t1); background: var(--bg2); }
+    .sb-link.active { color: var(--ac); border-left-color: var(--ac); background: var(--ac-light); font-weight: 600; }
+    .sb-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+    .sb-lock { margin-left: auto; font-size: 11px; color: var(--t3); }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── HERO ── */
+    .playbook-hero {
+      background: linear-gradient(135deg, #1e1b4b 0%, #3b1a6b 60%, #6d28d9 100%);
+      padding: 64px 48px;
+      color: #fff;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,58,237,.25);
+      border: 1px solid rgba(124,58,237,.5);
+      color: #c4b5fd;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .hero-title span { color: #c4b5fd; }
+    .hero-sub { font-size: 16px; color: rgba(255,255,255,.7); max-width: 560px; margin-bottom: 28px; line-height: 1.7; }
+    .hero-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .hero-stat { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,.6); }
+    .hero-stat strong { color: #fff; font-weight: 600; }
+
+    /* ── SECTION ── */
+    .module-section {
+      padding: 56px 48px;
+      border-bottom: 1px solid var(--bdr);
+      scroll-margin-top: calc(var(--header-h) + 16px);
+    }
+    .module-section:nth-child(even) { background: var(--bg1); }
+
+    .mod-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .mod-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--ac), var(--ac-dark));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .mod-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+    .mod-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .mod-icon.amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .mod-icon.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .mod-icon.slate { background: linear-gradient(135deg, #64748b, #475569); }
+    .mod-icon.indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .mod-icon.teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+
+    .mod-meta { flex: 1; }
+    .mod-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--t1);
+      margin-bottom: 8px;
+    }
+    .mod-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+    }
+    .badge-po { background: #f5f3ff; color: #6d28d9; }
+    .badge-pm { background: #f0fdf4; color: #15803d; }
+    .badge-dm { background: #fdf4ff; color: #7e22ce; }
+    .badge-all { background: var(--ac-light); color: var(--ac-dark); }
+    .badge-new { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+    /* ── PUBLIC CONTENT ── */
+    .pub-overview {
+      font-size: 15px;
+      color: var(--t2);
+      line-height: 1.75;
+      margin-bottom: 24px;
+      max-width: 680px;
+    }
+    .pub-caps {
+      background: var(--bg2);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .pub-caps h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+      margin-bottom: 12px;
+    }
+    .pub-caps ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .pub-caps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--t2);
+    }
+    .pub-caps li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--ac);
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-wrap {
+      background: var(--t1);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      position: relative;
+      aspect-ratio: 16/9;
+      max-width: 720px;
+    }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+      color: rgba(255,255,255,.5);
+    }
+    .video-placeholder .play-ring {
+      width: 56px; height: 56px;
+      border: 2px solid rgba(124,58,237,.5);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #c4b5fd;
+      font-size: 20px;
+    }
+    .video-placeholder p { font-size: 12px; text-align: center; max-width: 180px; }
+    .video-label {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: -20px;
+      margin-bottom: 28px;
+    }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .img-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+      border: 1px solid var(--bdr);
+      max-width: 720px;
+    }
+    .img-placeholder {
+      background: var(--bg2);
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--t3);
+      font-size: 13px;
+    }
+    .img-placeholder span { font-size: 28px; }
+
+    /* ── GATE ── */
+    .gate-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .gate-inner {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .gate-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 25%, rgba(255,255,255,0.97) 55%);
+      z-index: 1;
+    }
+    .module-section:nth-child(even) .gate-fade {
+      background: linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.6) 25%, rgba(248,250,252,0.97) 55%);
+    }
+    .gate-card {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px 36px;
+      text-align: center;
+    }
+    .gate-lock { font-size: 28px; margin-bottom: 10px; }
+    .gate-card h3 { font-size: 18px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .gate-card p { font-size: 13px; color: var(--t2); max-width: 360px; margin-bottom: 18px; line-height: 1.6; }
+    .btn-unlock {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--ac);
+      color: #fff;
+      text-decoration: none;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .15s;
+    }
+    .btn-unlock:hover { background: var(--ac-dark); }
+    .btn-module-overview {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ac);
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity .15s;
+    }
+    .btn-module-overview:hover { opacity: 1; text-decoration: underline; }
+
+    /* ── GATED CONTENT SAMPLE ── */
+    .gated-steps { padding: 0 0 16px; }
+    .gated-steps h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 14px; }
+    .step { display: flex; gap: 14px; margin-bottom: 16px; }
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--ac); color: #fff;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body h5 { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+    .step-body p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+
+    .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .tip-card {
+      background: var(--bg2);
+      border-radius: 8px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--ac);
+    }
+    .tip-card h5 { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 4px; }
+    .tip-card p { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    /* ── METRICS STRIP ── */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: var(--bg);
+      border: 1px solid var(--bdr);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+    }
+    .metric-card .metric-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--ac); }
+    .metric-card .metric-lbl { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 28px 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--t3);
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--bdr);
+    }
+
+    /* ── ROLE GUIDE CARDS ── */
+    .role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin-bottom: 28px; }
+    .role-card { border-radius: var(--radius); padding: 20px; border: 1px solid var(--bdr); }
+    .role-card.po { border-top: 3px solid #7c3aed; }
+    .role-card.pm { border-top: 3px solid #10b981; }
+    .role-card.dm { border-top: 3px solid #0ea5e9; }
+    .role-card h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .role-card p { font-size: 13px; color: var(--t2); line-height: 1.55; }
+    .role-emoji { font-size: 20px; margin-bottom: 8px; }
+
+    /* ── SCORING TABLE ── */
+    .scoring-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .scoring-table th { background: var(--bg2); padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--t2); border-bottom: 1px solid var(--bdr); font-weight: 700; }
+    .scoring-table td { padding: 10px 14px; border-bottom: 1px solid var(--bdr); color: var(--t2); vertical-align: top; }
+    .scoring-table tr:last-child td { border-bottom: none; }
+    .scoring-table td:first-child { font-weight: 600; color: var(--t1); }
+
+    /* ── MOSCOW PILLS ── */
+    .moscow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; margin-bottom: 24px; }
+    .moscow-pill { border-radius: 8px; padding: 16px 18px; border: 1px solid; }
+    .mp-must { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.3); }
+    .mp-should { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+    .mp-could { background: rgba(124,58,237,.08); border-color: rgba(124,58,237,.3); }
+    .mp-wont { background: rgba(100,116,139,.08); border-color: rgba(100,116,139,.3); }
+    .moscow-pill strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .mp-must strong { color: #dc2626; }
+    .mp-should strong { color: #d97706; }
+    .mp-could strong { color: #7c3aed; }
+    .mp-wont strong { color: #64748b; }
+    .moscow-pill p { font-size: 12px; color: var(--t2); line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    .playbook-footer {
+      background: var(--t1);
+      color: rgba(255,255,255,.6);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .playbook-footer a { color: #c4b5fd; text-decoration: none; font-size: 13px; }
+    .playbook-footer p { font-size: 13px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .module-section { padding: 36px 24px; }
+      .playbook-hero { padding: 40px 24px; }
+      .hero-title { font-size: 28px; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .hdr-title { display: none; }
+      .playbook-footer { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     TOP HEADER
+════════════════════════════════════════ -->
+<header class="site-header">
+  <a href="https://portfolioinsite.com.au" class="hdr-brand">
+    <div class="hdr-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    </div>
+    <span class="hdr-name">PortfolioInSite</span>
+    <span class="hdr-badge">Web</span>
+  </a>
+  <span class="hdr-title">Playbook &amp; Practitioner Guide</span>
+  <div class="hdr-right">
+    <div class="hdr-products">
+      <button class="hdr-products-btn" aria-expanded="false" aria-haspopup="true">
+        Products <svg class="hdr-chevron" viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="hdr-products-panel">
+        <div class="hpp-grid">
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#06b6d4;">PortfolioInSite</div>
+            <span class="hpp-badge">Jira App</span>
+            <a href="/modules/moscow-scoring" class="hpp-link">Modules</a>
+            <a href="/pages/features.html" class="hpp-link">Features</a>
+            <a href="/pages/how-it-works.html" class="hpp-link">How It Works</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#7c3aed;">PortfolioInSite Web</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/portfolioinsite-web/backlog-triage" class="hpp-link">Modules</a>
+            <a href="/pages/portfolioinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#0284c7;">ForecastInSite</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/forecastinsite/getting-started" class="hpp-link">Modules</a>
+            <a href="/pages/forecastinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+          <div class="hpp-col">
+            <div class="hpp-tool" style="color:#d97706;">PlanInSite</div>
+            <span class="hpp-badge">Standalone</span>
+            <a href="/planinsite/import-data" class="hpp-link">Modules</a>
+            <a href="/pages/planinsite-playbook.html" class="hpp-link">Playbook</a>
+            <a href="/pricing" class="hpp-link hpp-tool-link">Start Free Trial →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="/pricing" class="btn-outline">Start Free Trial →</a>
+    <a href="/pricing" class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Unlock Full Playbook
+    </a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     LAYOUT
+════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-label">Getting Started</div>
+    <a class="sb-link active" href="#getting-started" onclick="setActive(this)"><span class="sb-icon">🚀</span> Getting Started</a>
+    <a class="sb-link" href="#roles" onclick="setActive(this)"><span class="sb-icon">🎭</span> Roles Guide</a>
+
+    <div class="sb-label">Core Modules</div>
+    <a class="sb-link" href="#backlog-triage" onclick="setActive(this)"><span class="sb-icon">🎯</span> Backlog Triage</a>
+    <a class="sb-link" href="#moscow-scoring" onclick="setActive(this)"><span class="sb-icon">⚖️</span> MoSCoW Scoring</a>
+    <a class="sb-link" href="#epics-features" onclick="setActive(this)"><span class="sb-icon">⚡</span> Epics &amp; Features</a>
+    <a class="sb-link" href="#strategic-map" onclick="setActive(this)"><span class="sb-icon">🗺️</span> Strategic Map</a>
+
+    <div class="sb-label">Advanced</div>
+    <a class="sb-link" href="#dashboard" onclick="setActive(this)"><span class="sb-icon">📊</span> Dashboard <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#roadmap" onclick="setActive(this)"><span class="sb-icon">🗓️</span> Roadmap <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#product-owner" onclick="setActive(this)"><span class="sb-icon">👤</span> Product Owner <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#backlog-health" onclick="setActive(this)"><span class="sb-icon">❤️</span> Backlog Health <span class="sb-lock">🔒</span></a>
+
+    <div class="sb-label">Reference</div>
+    <a class="sb-link" href="#configuration" onclick="setActive(this)"><span class="sb-icon">⚙️</span> Configuration <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#csv-import" onclick="setActive(this)"><span class="sb-icon">📥</span> CSV Import Guide</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="playbook-hero">
+      <div class="hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+        PortfolioInSite Web — Practitioner Playbook
+      </div>
+      <h1 class="hero-title">Know What Matters.<br><span>Cut What Doesn't.</span></h1>
+      <p class="hero-sub">Everything you need to score your backlog with MoSCoW, map value vs effort on the strategic quadrant, manage epics and features, and visualise your roadmap — all in the browser, no install required.</p>
+      <div class="hero-meta">
+        <span class="hero-stat"><strong>10</strong> modules covered</span>
+        <span class="hero-stat"><strong>3</strong> role-specific guides</span>
+        <span class="hero-stat">Jira · ServiceNow · Azure DevOps · Any CSV</span>
+        <span class="hero-stat">100% browser-based, no install</span>
+      </div>
+    </div>
+
+    <!-- ════════ GETTING STARTED ════════ -->
+    <section class="module-section" id="getting-started">
+      <div class="mod-header">
+        <div class="mod-icon">🚀</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Getting Started</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PortfolioInSite Web is a fully browser-based backlog prioritisation and portfolio visibility platform. There is nothing to install — paste a Jira URL or upload a CSV, score your backlog with MoSCoW in minutes, and export results back to your team. All data stays in your browser.</p>
+
+      <div class="pub-caps">
+        <h4>What you get out of the box</h4>
+        <ul>
+          <li>MoSCoW scoring with five weighted criteria across every item in your backlog — Must Have, Should Have, Could Have, Won't Have</li>
+          <li>Strategic Map (value vs effort quadrant) with bubble clustering and zoom — instantly see where your portfolio should focus</li>
+          <li>Epic and Feature hierarchy view — roll up scores and understand delivery risk across parent work items</li>
+          <li>Backlog Health scoring — age, stagnation, type mix, and assignee distribution at a glance</li>
+          <li>Roadmap timeline with MoSCoW colour bands — visualise sequencing across teams and quarters</li>
+          <li>CSV import from Jira, ServiceNow, Azure DevOps, Advanced Roadmaps, or any standard export</li>
+          <li>Full CSV and Advanced Roadmaps export so scored items flow back into your delivery pipeline</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap" id="vid-getting-started">
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Getting Started walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~2 minutes · Import, score, export</p>
+
+      <div class="section-divider">Step-by-step guide</div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>How to get your first backlog scored</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Export your backlog from Jira</h5><p>In Jira, run a board or backlog view filtered to your project. Use the Export → CSV (all fields) option. PortfolioInSite reads Jira's standard column names automatically.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Import into PortfolioInSite</h5><p>Click the Import button in the tool header. Drag-drop your CSV or paste a URL. The tool auto-detects ID, Summary, Type, Status, Assignee, Story Points, Epic, and Component columns.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Score with MoSCoW</h5><p>Each item starts Unscored. In the Backlog Triage tab, use the inline score selectors to rate Business Value, User Impact, Strategic Alignment, Time Sensitivity, and Effort Complexity. The weighted algorithm assigns a MoSCoW band automatically.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Validate on the Strategic Map</h5><p>Switch to Strategic Map to see your portfolio plotted value (Y) vs effort (X). High-value, low-effort items (top-left) are your quick wins — consider re-prioritising if they sit in Won't Have.</p></div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Export and share</h5><p>Use Export CSV (Standard) to get a scored file you can share with the team or re-import. Use Export for Advanced Roadmaps to generate the PI-ready format Jira expects.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Set your Jira URL</h5><p>Paste your Atlassian site URL in the site bar (e.g. <code>https://your-org.atlassian.net</code>) to make issue IDs clickable — it dramatically speeds up review.</p></div>
+            <div class="tip-card"><h5>💡 Use the filter bar first</h5><p>Before scoring, filter to a single component, epic, or assignee. Scoring in focused batches takes 30 minutes vs 2 hours for a full unfiltered backlog.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full step-by-step guide is in the licensed playbook</h3>
+          <p>Unlock the complete setup guide, scoring calibration tips, Jira export settings, and field mapping reference with a PortfolioInSite Web licence.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+          <a href="/portfolioinsite-web/getting-started" class="btn-module-overview">Module overview →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ ROLES GUIDE ════════ -->
+    <section class="module-section" id="roles">
+      <div class="mod-header">
+        <div class="mod-icon green">🎭</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Roles Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PortfolioInSite Web is designed for three distinct roles. Each brings different intent to the same dataset — understanding which lens you're working from helps you focus on the right modules and avoid drowning in data not relevant to your decisions.</p>
+
+      <div class="role-cards">
+        <div class="role-card po">
+          <div class="role-emoji">🧩</div>
+          <h4>Product Owner / BA</h4>
+          <p>Your primary home is Backlog Triage. Score items, manage MoSCoW bands, and maintain the Strategic Map. Focus: getting the right things to the top of the backlog for the next sprint.</p>
+        </div>
+        <div class="role-card pm">
+          <div class="role-emoji">📋</div>
+          <h4>Portfolio / Programme Manager</h4>
+          <p>Use Epics & Features and the Roadmap for cross-team visibility. Your goal is ensuring the portfolio is aligned to strategy, and the right epics are being prioritised for PI planning.</p>
+        </div>
+        <div class="role-card dm">
+          <div class="role-emoji">🔍</div>
+          <h4>Delivery / Scrum Master</h4>
+          <p>Backlog Health is your primary signal. Monitor stagnation, age, and assignee load. Use the Dashboard to track sprint-over-sprint velocity and MoSCoW distribution trends.</p>
+        </div>
+      </div>
+
+      <div class="pub-caps">
+        <h4>Shared capabilities across all roles</h4>
+        <ul>
+          <li>CSV import from any source — Jira, ServiceNow, Azure DevOps, Advanced Roadmaps, or manual entry</li>
+          <li>Real-time filter bar — filter by type, status, assignee, epic, component, or MoSCoW band instantly</li>
+          <li>Inline editing — update scores, titles, assignees, and status without leaving the triage table</li>
+          <li>Dark and light theme that persists across sessions</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ════════ BACKLOG TRIAGE ════════ -->
+    <section class="module-section" id="backlog-triage">
+      <div class="mod-header">
+        <div class="mod-icon purple">🎯</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Backlog Triage</h2>
+          <div class="mod-badges">
+            <span class="badge badge-po">Product Owner</span>
+            <span class="badge badge-pm">Portfolio</span>
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Backlog Triage is the primary workspace in PortfolioInSite Web. Every imported item lands here, and scoring happens inline — no separate form, no context switching. The table supports full filtering, sorting, bulk operations, and inline editing for all key fields.</p>
+
+      <div class="pub-caps">
+        <h4>What you can do in Backlog Triage</h4>
+        <ul>
+          <li>Score any item with the five MoSCoW criteria — Business Value, User Impact, Strategic Alignment, Time Sensitivity, and Effort Complexity</li>
+          <li>Filter the full list by MoSCoW band, type, status, assignee, epic, component, or project using the filter bar</li>
+          <li>Click any Jira ID to jump directly to the issue in Jira (requires your site URL to be set)</li>
+          <li>Add items manually if they don't exist in your Jira export — useful for risk items, spike work, or ad-hoc requests</li>
+          <li>Sort by score, age, effort, type, or any column header — multi-level sorting supported</li>
+          <li>Row-level actions: edit inline, delete, or duplicate any item</li>
+        </ul>
+      </div>
+
+      <div class="metrics-strip">
+        <div class="metric-card"><div class="metric-val">5</div><div class="metric-lbl">Scoring criteria</div></div>
+        <div class="metric-card"><div class="metric-val">20</div><div class="metric-lbl">Max score per item</div></div>
+        <div class="metric-card"><div class="metric-val">4</div><div class="metric-lbl">MoSCoW bands</div></div>
+        <div class="metric-card"><div class="metric-val">∞</div><div class="metric-lbl">Items supported</div></div>
+      </div>
+
+      <div class="img-wrap">
+        <div class="img-placeholder">
+          <span>🎯</span>
+          <p>Backlog Triage screenshot — coming soon</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🎯 Score in context</h5><p>Run a triage session with the PO and a BA together — live scoring in the tool surfaces instant disagreement and drives better backlog conversations than any spreadsheet.</p></div>
+        <div class="tip-card"><h5>⚠️ Unscored ≠ Won't Have</h5><p>New imports land as Unscored. Use the Unscored chip filter to work through them systematically — don't let them pile up or they'll distort your MoSCoW distribution charts.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ MoSCoW SCORING ════════ -->
+    <section class="module-section" id="moscow-scoring">
+      <div class="mod-header">
+        <div class="mod-icon amber">⚖️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">MoSCoW Scoring</h2>
+          <div class="mod-badges">
+            <span class="badge badge-po">Product Owner</span>
+            <span class="badge badge-all">Core Feature</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PortfolioInSite Web implements a weighted MoSCoW algorithm across five criteria, each scored 1–4. The combined weighted score determines the MoSCoW band automatically — removing the subjectivity of manual band assignment and making prioritisation auditable and defensible to stakeholders.</p>
+
+      <div class="moscow-grid">
+        <div class="moscow-pill mp-must">
+          <strong>Must Have</strong>
+          <p>Non-negotiable. Must be delivered in the current PI/sprint. Failure to deliver = project failure. Regulatory, safety, or core-function items.</p>
+        </div>
+        <div class="moscow-pill mp-should">
+          <strong>Should Have</strong>
+          <p>High value and expected, but the project can proceed without it short-term. Will be delivered if capacity allows — strong candidate for next PI.</p>
+        </div>
+        <div class="moscow-pill mp-could">
+          <strong>Could Have</strong>
+          <p>Nice to have. Positive impact if included but won't be missed if dropped. First items cut when capacity is tight. Used to fill sprint buffers.</p>
+        </div>
+        <div class="moscow-pill mp-wont">
+          <strong>Won't Have (this time)</strong>
+          <p>Explicitly out of scope for this PI. Not rejected permanently — it signals clear expectation management. Revisit in future PI planning.</p>
+        </div>
+      </div>
+
+      <div class="section-divider">The Five Scoring Criteria</div>
+
+      <table class="scoring-table">
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th>What to consider</th>
+            <th>Score 1</th>
+            <th>Score 4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Business Value</td>
+            <td>Revenue, cost saving, compliance, or strategic gain</td>
+            <td>Negligible impact</td>
+            <td>Critical business outcome</td>
+          </tr>
+          <tr>
+            <td>User Impact</td>
+            <td>How much does this improve the user's experience or unblock their workflow?</td>
+            <td>Minor convenience</td>
+            <td>Removes a major blocker</td>
+          </tr>
+          <tr>
+            <td>Strategic Alignment</td>
+            <td>Does this align to the current PI objective or OKR?</td>
+            <td>No alignment</td>
+            <td>Core to the current strategy</td>
+          </tr>
+          <tr>
+            <td>Time Sensitivity</td>
+            <td>Is there a deadline, regulatory date, or dependency forcing delivery now?</td>
+            <td>Flexible timing</td>
+            <td>Hard deadline or external commitment</td>
+          </tr>
+          <tr>
+            <td>Effort Complexity</td>
+            <td>Inverse score — lower effort = higher score (quick wins rank up)</td>
+            <td>High complexity</td>
+            <td>Simple, well-understood work</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>📐 Calibrate first</h5><p>Before scoring a full backlog, score 5 representative items as a team. Lock in your 1 and 4 anchors for each criterion — this ensures consistency across hundreds of items.</p></div>
+        <div class="tip-card"><h5>🔄 Re-score each PI</h5><p>MoSCoW scores should be refreshed each PI planning cycle. Strategic alignment shifts; what was a Could Have in Q1 may be a Must Have in Q3 after market feedback.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ EPICS & FEATURES ════════ -->
+    <section class="module-section" id="epics-features">
+      <div class="mod-header">
+        <div class="mod-icon indigo">⚡</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Epics &amp; Features</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio</span>
+            <span class="badge badge-po">Product Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Epics & Features tab groups your backlog by Epic, rolling up MoSCoW scores across all child items to give you a portfolio-level view of prioritisation. It surfaces delivery risk — epics with a high proportion of Must Have children but low completion rates are your first warning signal.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Epic roll-up view — see the MoSCoW distribution (Must/Should/Could/Won't) for every epic's children</li>
+          <li>Aggregate score and completion rate per epic — instantly identify which epics are most strategically loaded</li>
+          <li>Filter child items by MoSCoW band within an epic — drill into what's blocking or at risk</li>
+          <li>Inline epic editing — update epic titles, assignees, and components without leaving the view</li>
+          <li>Orphaned items detection — items with no parent epic are flagged for housekeeping</li>
+        </ul>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🔍 Look for Must-heavy epics</h5><p>An epic where 80%+ of children score Must Have is a red flag — either the scoring is uncalibrated or the epic is genuinely critical. Escalate to leadership before PI planning.</p></div>
+        <div class="tip-card"><h5>🧹 Housekeep orphans</h5><p>Orphaned items (no epic) accumulate quickly. Run a monthly housekeeping pass to assign them — orphans skew your Backlog Health scores and Strategic Map clustering.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ STRATEGIC MAP ════════ -->
+    <section class="module-section" id="strategic-map">
+      <div class="mod-header">
+        <div class="mod-icon teal">🗺️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Strategic Map</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio</span>
+            <span class="badge badge-po">Product Owner</span>
+            <span class="badge badge-all">High Value</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Strategic Map plots every item on a value (Y axis) vs effort (X axis) quadrant. Items bubble-cluster when they share the same coordinates — hover any bubble to see the cluster contents. The quadrant gives you an immediate visual answer to the question "where should we focus next?"</p>
+
+      <div class="pub-caps">
+        <h4>Reading the quadrant</h4>
+        <ul>
+          <li><strong>Top-left (high value, low effort)</strong> — Quick Wins. If these are scored Won't Have, question why — they're your easiest strategic gains</li>
+          <li><strong>Top-right (high value, high effort)</strong> — Strategic Investments. Must Haves typically live here — they need capacity planning and dependency mapping</li>
+          <li><strong>Bottom-left (low value, low effort)</strong> — Fill Work. Could Haves and backlog padding. Useful for filling sprint buffers but shouldn't be in Must Have</li>
+          <li><strong>Bottom-right (low value, high effort)</strong> — Avoid. Any Must Have item in this quadrant warrants an urgent review — you may be building the wrong thing</li>
+        </ul>
+      </div>
+
+      <div class="img-wrap">
+        <div class="img-placeholder">
+          <span>🗺️</span>
+          <p>Strategic Map quadrant screenshot — coming soon</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🔍 Zoom to investigate clusters</h5><p>Large clusters in the bottom-right quadrant are a warning sign. Use the mouse wheel or pinch to zoom in, then hover individual bubbles to identify which items are piling up in low-value, high-effort territory.</p></div>
+        <div class="tip-card"><h5>🎯 Click to cross-navigate</h5><p>Click any bubble on the Strategic Map to jump directly to that item in the Backlog Triage tab with the row highlighted — great for live stakeholder sessions.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ DASHBOARD (LOCKED) ════════ -->
+    <section class="module-section" id="dashboard">
+      <div class="mod-header">
+        <div class="mod-icon slate">📊</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Dashboard</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Dashboard provides an executive-level summary of your backlog prioritisation state — MoSCoW distribution, score trends, type mix, and assignee workload in a single view. Designed for stakeholder reporting and PI review preparation.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>What's in the Dashboard</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>MoSCoW distribution chart</h5><p>Stacked bar showing the split of Must/Should/Could/Won't across your entire backlog — and how it changes over time.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Scoring completion rate</h5><p>What percentage of your backlog has been scored. Target 100% before PI planning — unscored items are invisible to prioritisation.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Type and assignee breakdown</h5><p>Donut charts showing the distribution of types (Epic, Feature, Story, Bug) and assignees across your MoSCoW bands.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Score distribution histogram</h5><p>Frequency distribution of raw scores (0–20) to identify scoring cliff effects — a healthy backlog has a bell-curve distribution, not a spike at the extremes.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Dashboard guide is in the licensed playbook</h3>
+          <p>Unlock the full Dashboard guide, chart interpretation tips, and stakeholder reporting templates with a PortfolioInSite Web licence.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ ROADMAP (LOCKED) ════════ -->
+    <section class="module-section" id="roadmap">
+      <div class="mod-header">
+        <div class="mod-icon amber">🗓️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Roadmap</h2>
+          <div class="mod-badges">
+            <span class="badge badge-pm">Portfolio</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Roadmap renders a Gantt-style timeline of your backlog items coloured by MoSCoW band, grouped by assignee or team. Visualise sequencing, identify scheduling conflicts, and communicate delivery intent to stakeholders — all driven by the scores you've already assigned.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>How to use the Roadmap</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Set start and due dates</h5><p>Roadmap bars are driven by start and end dates on each item. Edit these inline in the Backlog Triage tab or import them from Jira's due date field.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Group by assignee or team</h5><p>Use the group-by selector to switch between assignee lanes (individual workload view) and team lanes (portfolio delivery view).</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Filter to MoSCoW bands</h5><p>Use the band filter to isolate Must Have items only — the cleanest way to present a committed roadmap to leadership without noise from Could and Won't items.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Roadmap guide is in the licensed playbook</h3>
+          <p>Unlock Roadmap configuration, date import tips, and stakeholder communication templates.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ PRODUCT OWNER (LOCKED) ════════ -->
+    <section class="module-section" id="product-owner">
+      <div class="mod-header">
+        <div class="mod-icon purple">👤</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Product Owner View</h2>
+          <div class="mod-badges">
+            <span class="badge badge-po">Product Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Product Owner view gives POs a personal workspace — a prioritised list of their own items ranked by MoSCoW score, with sprint assignment controls and a capacity bar showing how much of their PI commitment is Must Have vs Could Have.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Product Owner capabilities</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Personal backlog view</h5><p>Filtered automatically to items assigned to the current PO — reducing noise from cross-team items while keeping the full portfolio context available.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Sprint assignment</h5><p>Drag items into sprint buckets directly from this view — changes reflect immediately in the Backlog Triage table.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>PI capacity bar</h5><p>Visual bar showing Must/Should/Could/Won't item counts and story points against the PI capacity ceiling — immediate visual confirmation of over-commitment.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Product Owner guide is in the licensed playbook</h3>
+          <p>Unlock sprint assignment workflows, capacity planning tips, and PI review preparation guides.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ BACKLOG HEALTH (LOCKED) ════════ -->
+    <section class="module-section" id="backlog-health">
+      <div class="mod-header">
+        <div class="mod-icon red">❤️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Backlog Health</h2>
+          <div class="mod-badges">
+            <span class="badge badge-dm">Delivery Manager</span>
+            <span class="badge badge-pm">Portfolio</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Backlog Health analyses your backlog for stagnation, age, orphaned items, type imbalance, and assignee overload — producing a health score that surfaces debt before it becomes a delivery risk. Run a health check before every PI planning session.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Health metrics explained</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Age and stagnation</h5><p>Items that have sat untouched in a To Do or In Progress state for more than N days (configurable) are flagged as stagnant. High stagnation = backlog decay.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Type mix health</h5><p>A healthy backlog has a balanced mix of Stories, Features, and Bugs. An 80%+ bug backlog is a quality signal; an 80%+ Epic backlog lacks decomposition.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Scoring completeness</h5><p>Percentage of items with a MoSCoW score assigned. Unscored items are blind spots in your prioritisation — target 100% before PI planning.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Assignee concentration</h5><p>Items unassigned or heavily concentrated on a single person indicate single points of failure. Health flags when any one assignee holds >40% of Must Have items.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Backlog Health guide is in the licensed playbook</h3>
+          <p>Unlock health score interpretation, remediation playbooks, and pre-PI planning health checklist templates.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ CSV IMPORT GUIDE ════════ -->
+    <section class="module-section" id="csv-import">
+      <div class="mod-header">
+        <div class="mod-icon green">📥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">CSV Import Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Users</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">PortfolioInSite Web accepts CSV exports from Jira, ServiceNow, Azure DevOps, Jira Advanced Roadmaps, and any standard spreadsheet export. The import engine auto-detects common column names and maps them — but knowing the expected format prevents surprises.</p>
+
+      <div class="pub-caps">
+        <h4>Recognised CSV column names</h4>
+        <ul>
+          <li><strong>Issue Key / ID</strong> — <code>Issue key</code>, <code>ID</code>, <code>Key</code>, <code>Ticket</code>, <code>Number</code></li>
+          <li><strong>Summary / Title</strong> — <code>Summary</code>, <code>Title</code>, <code>Name</code>, <code>Subject</code></li>
+          <li><strong>Issue Type</strong> — <code>Issue Type</code>, <code>Type</code>, <code>Work Item Type</code>, <code>Category</code></li>
+          <li><strong>Status</strong> — <code>Status</code>, <code>State</code>, <code>Resolution</code></li>
+          <li><strong>Assignee</strong> — <code>Assignee</code>, <code>Owner</code>, <code>Assigned To</code></li>
+          <li><strong>Story Points / Effort</strong> — <code>Story Points</code>, <code>Story point estimate</code>, <code>Points</code>, <code>Effort</code>, <code>Size</code></li>
+          <li><strong>Epic / Parent</strong> — <code>Epic Link</code>, <code>Epic</code>, <code>Parent</code>, <code>Epic Name</code></li>
+          <li><strong>Component</strong> — <code>Component/s</code>, <code>Component</code>, <code>Team</code></li>
+        </ul>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card"><h5>🔑 Story Points required for Effort axis</h5><p>The Strategic Map's X axis (effort) is driven by Story Points. Items without story points plot at X=0 — score them before using the quadrant for portfolio decisions.</p></div>
+        <div class="tip-card"><h5>⚠️ Large exports (1000+ items)</h5><p>For boards with 1000+ items, pre-filter in Jira before exporting (e.g. to a single component or Epic Link). The tool handles large files but triage sessions are faster when scoped.</p></div>
+        <div class="tip-card"><h5>📋 ServiceNow exports</h5><p>ServiceNow uses <code>Number</code> for the ticket ID and <code>Short description</code> for the summary. These are auto-mapped. Ensure you export <code>State</code> and <code>Assignment group</code> for full field coverage.</p></div>
+        <div class="tip-card"><h5>🔵 Azure DevOps exports</h5><p>Use the Query → Export to CSV feature in Azure DevOps. Include <code>Work Item Type</code>, <code>Title</code>, <code>State</code>, <code>Assigned To</code>, <code>Story Points</code>, and <code>Area Path</code> (mapped to Component) for best results.</p></div>
+      </div>
+    </section>
+
+    <!-- ════════ CONFIGURATION (LOCKED) ════════ -->
+    <section class="module-section" id="configuration">
+      <div class="mod-header">
+        <div class="mod-icon slate">⚙️</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Configuration</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Configuration controls scoring weights, MoSCoW thresholds, Jira site URL, column visibility, and data persistence settings. Default weights work well for most teams — but calibration for your organisation's context significantly improves scoring accuracy.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Key configuration options</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Scoring criterion weights</h5><p>Adjust the relative weight of each of the five scoring criteria to match your organisation's priorities. A compliance-heavy team may weight Time Sensitivity at 2× the default.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>MoSCoW band thresholds</h5><p>The score ranges that map to each MoSCoW band can be adjusted. Default: Must Have ≥15, Should Have ≥10, Could Have ≥5, Won't Have &lt;5.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Jira site URL</h5><p>Set your Atlassian site URL (e.g. https://your-org.atlassian.net) to make issue IDs in the triage table clickable links back to Jira.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Configuration guide is in the licensed playbook</h3>
+          <p>Unlock weight calibration guides, threshold recommendations by team type, and export configuration templates.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="playbook-footer" style="margin-left:var(--sidebar-w)">
+  <div>
+    <p style="font-weight:600;color:#fff;margin-bottom:4px">PortfolioInSite Web</p>
+    <p>Part of the AOB InSite Suite — lean agile tooling for delivery teams</p>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap">
+    <a href="https://portfolioinsite.com.au">portfolioinsite.com.au</a>
+    <a href="/pages/forecastinsite-playbook.html">ForecastInSite Playbook</a>
+    <a href="/pages/planinsite-playbook.html">PlanInSite Playbook</a>
+    <a href="/pricing">Pricing</a>
+  </div>
+</footer>
+
+<script>
+  function setActive(el) {
+    document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Products dropdown
+  const btn = document.querySelector('.hdr-products-btn');
+  const panel = document.querySelector('.hdr-products-panel');
+  btn.addEventListener('click', () => {
+    const open = panel.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', e => {
+    if (!btn.contains(e.target) && !panel.contains(e.target)) {
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Scroll spy
+  const sections = document.querySelectorAll('.module-section[id]');
+  const links = document.querySelectorAll('.sb-link[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
