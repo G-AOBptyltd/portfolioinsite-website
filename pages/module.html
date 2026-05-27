@@ -52,12 +52,11 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 36px; font-weight: 800; line-height: 1.15;
       margin-bottom: 14px; max-width: 640px;
-      display: flex; align-items: center; gap: 14px;
     }
-    .hero-jira-icon {
-      flex-shrink: 0;
-      width: 30px; height: 30px;
-      display: inline-flex; align-items: center; justify-content: center;
+    .mod-tier-jira {
+      background: rgba(38,132,255,.18);
+      color: #5aacff;
+      border: 1px solid rgba(38,132,255,.4);
     }
     .mod-hero-sub {
       font-size: 15px; color: rgba(255,255,255,.72);
@@ -866,9 +865,9 @@ function render() {
   document.getElementById('bread-label').textContent = m.title;
   document.getElementById('hero-eyebrow').innerHTML =
     m.num + ' &nbsp;·&nbsp; PortfolioInSite' +
-    `<span class="mod-tier tier-${m.tier}">${m.tierLabel}</span>`;
-  document.getElementById('hero-title').innerHTML =
-    `<span class="hero-jira-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="30" height="30" aria-label="Jira app"><defs><linearGradient id="jg-a" x1="21.2" y1="12.2" x2="14.1" y2="8.4" gradientUnits="userSpaceOnUse"><stop offset=".18" stop-color="#0052cc"/><stop offset="1" stop-color="#2684ff"/></linearGradient><linearGradient id="jg-b" x1="13.9" y1="19" x2="6.8" y2="15.2" gradientUnits="userSpaceOnUse"><stop offset=".18" stop-color="#0052cc"/><stop offset="1" stop-color="#2684ff"/></linearGradient></defs><path d="M28.7 1.4H15.3C15.3 5 18.2 7.9 21.9 7.9h2.6v2.5c0 3.7 3 6.6 6.6 6.6V2.7c0-.7-.6-1.3-1.4-1.3z" fill="#2684FF"/><path d="M21.2 8.1H7.8c0 3.7 2.9 6.6 6.6 6.6h2.6v2.5c0 3.7 3 6.6 6.6 6.6V9.5c0-.8-.6-1.4-1.4-1.4z" fill="url(#jg-a)"/><path d="M13.7 14.9H.3c0 3.7 2.9 6.6 6.6 6.6H9.5v2.5c0 3.7 2.9 6.6 6.6 6.6V16.2c0-.7-.6-1.3-1.4-1.3z" fill="url(#jg-b)"/></svg></span><span>${m.title}</span>`;
+    `<span class="mod-tier tier-${m.tier}">${m.tierLabel}</span>` +
+    `<span class="mod-tier mod-tier-jira">Jira App</span>`;
+  document.getElementById('hero-title').textContent = m.title;
   document.getElementById('hero-sub').textContent = m.sub;
   document.getElementById('hero-chips').innerHTML = m.chips.map(c =>
     `<div class="hero-chip"><span>✓</span>${c}</div>`).join('');
