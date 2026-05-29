@@ -321,11 +321,6 @@ function aobGateCheck(){
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
 Playbook
 </a>
-<div class="theme-toggle">
-<button class="theme-btn active" data-theme="light" onclick="setTheme('light')" title="Light">&#9788;</button>
-<button class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Dark">&#9790;</button>
-<button class="theme-btn" data-theme="system" onclick="setTheme('system')" title="System">&#9881;</button>
-</div>
 <span class="lic-badge trial" id="licBadge" onclick="openLicModal()" title="Click to manage licence">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 <span id="licBadgeText">TRIAL</span>
@@ -339,16 +334,12 @@ Playbook
 </div>
 <button class="btn" onclick="syncJira()" id="btnSync" style="display:none;border-color:rgba(16,185,129,.4);color:var(--hi)" title="Re-fetch from Jira"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3"/><path d="M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>Sync</button>
 <button class="btn btn-p" onclick="openMod()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button>
-<button class="btn btn-sm" onclick="if(confirm('Reset all data?')){localStorage.removeItem('ge_v10');localStorage.removeItem('ge_v10_site');D=[];render();toast('Reset','inf')}" style="color:var(--t3)">&#x27F2; Reset</button>
+<button class="btn btn-sm" onclick="poiResetData()" style="color:var(--red);border-color:var(--red)">Reset Data</button>
+<button class="btn" onclick="openPoiConfig()" style="display:flex;align-items:center;gap:5px;font-family:inherit">&#9881; Config</button>
 </div>
 </header>
-<div class="site-bar">
-<span class="lbl">Jira Site URL</span>
-<input id="siteUrl" placeholder="https://your-site.atlassian.net" oninput="saveCfg()">
-<span style="color:var(--t3)">&larr; Set to make IDs clickable</span>
-<span style="margin-left:auto;font-size:11px;color:var(--t3)">Jira &middot; ServiceNow &middot; Azure DevOps &middot; Any CSV</span>
-<span style="font-size:10px;color:var(--ac);margin-left:12px"><a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:none">PortfolioInSite</a></span>
-</div>
+<!-- siteUrl input retained for saveCfg() compatibility; visible in Config drawer -->
+<input id="siteUrl" style="display:none" placeholder="https://your-site.atlassian.net" oninput="saveCfg();var m=document.getElementById('cfgSiteUrl');if(m)m.value=this.value">
 <nav class="tabs" id="navTabs">
 <div class="tab on" data-t="triage">Backlog Triage <span class="tc" id="cntT">0</span></div>
 <div class="tab" data-t="epics">Epics &amp; Features <span class="tc" id="cntE">0</span></div>
@@ -360,8 +351,63 @@ Playbook
 <div class="tab" data-t="guide">Scoring Guide</div>
 <div class="tab" data-t="legend">Columns</div>
 <div class="tab" data-t="agehelp">Health Guide</div>
-<div class="tab" data-t="help">❓ Help</div>
+<div class="tab" data-t="help">❓ Help Tips</div>
 </nav>
+
+<!-- POI Config Drawer -->
+<div id="poiCfgOverlay" onclick="closePoiConfig()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1999"></div>
+<div id="poiCfgDrawer" style="display:none;position:fixed;top:0;right:0;width:380px;height:100vh;background:var(--bg1);border-left:1px solid var(--bdr);z-index:2000;overflow-y:auto;padding:28px 24px;box-shadow:-4px 0 24px rgba(0,0,0,.2)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+    <h2 style="margin:0;font-size:17px;font-weight:700;color:var(--t1)">&#9881; Config</h2>
+    <button onclick="closePoiConfig()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--t3);line-height:1">&#215;</button>
+  </div>
+
+  <!-- Theme -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#127912; Theme</h3>
+    <div style="display:flex;gap:8px">
+      <button id="poiThemeLight" onclick="setTheme('light')" style="flex:1;padding:7px 0;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9788; Light</button>
+      <button id="poiThemeDark" onclick="setTheme('dark')" style="flex:1;padding:7px 0;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9790; Dark</button>
+      <button id="poiThemeSystem" onclick="setTheme('system')" style="flex:1;padding:7px 0;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9881; System</button>
+    </div>
+  </div>
+
+  <!-- Jira Integration -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#128279; Jira Integration</h3>
+    <label style="font-size:11px;color:var(--t2);display:block;margin-bottom:6px">Jira Site URL</label>
+    <input id="cfgSiteUrl" placeholder="https://your-site.atlassian.net" oninput="document.getElementById('siteUrl').value=this.value;saveCfg()" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:12px">
+    <p style="font-size:11px;color:var(--t3);margin-top:6px">Makes issue keys clickable links to Jira</p>
+  </div>
+
+  <!-- Scoring Dimensions -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#127919; Scoring Dimensions</h3>
+    <div id="cfgQLabels" style="display:grid;gap:10px"></div>
+    <button onclick="resetQLabels()" style="margin-top:10px;padding:5px 12px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--t3);cursor:pointer;font-size:12px;font-family:inherit">Reset to defaults</button>
+  </div>
+
+  <!-- Default Landing Tab -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#127968; Default Landing Tab</h3>
+    <select id="cfgDefaultTab" onchange="saveDefaultTab()" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+      <option value="triage">Backlog Triage</option>
+      <option value="epics">Epics &amp; Features</option>
+      <option value="dash">Dashboard</option>
+      <option value="quadrant">Strategic Map</option>
+      <option value="roadmap">Roadmap</option>
+      <option value="poview">Product Owner</option>
+    </select>
+  </div>
+
+  <!-- Data Management -->
+  <div>
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#128190; Data Management</h3>
+    <button onclick="poiResetData()" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--red);background:transparent;color:var(--red);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600">Reset Data</button>
+    <p style="font-size:11px;color:var(--t3);margin-top:6px">Clears all items and resets to an empty state.</p>
+  </div>
+</div>
+
 <main class="mc">
 <div class="tp on" id="p-triage">
 <div class="tb">
@@ -1035,8 +1081,6 @@ document.addEventListener('click', (e) => {
 
 function setTheme(mode) {
   localStorage.setItem('ge_v13_theme', mode);
-  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.theme-btn[data-theme="${mode}"]`).classList.add('active');
 
   if (mode === 'system') {
     const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
@@ -1045,7 +1089,117 @@ function setTheme(mode) {
     document.documentElement.setAttribute('data-theme', mode);
   }
 
+  // Update Config drawer theme buttons
+  ['Light','Dark','System'].forEach(t => {
+    const btn = document.getElementById('poiTheme' + t);
+    if (!btn) return;
+    const active = mode === t.toLowerCase();
+    btn.style.background = active ? 'var(--ac)' : 'transparent';
+    btn.style.color = active ? '#fff' : 'var(--t2)';
+    btn.style.borderColor = active ? 'var(--ac)' : 'var(--bdr)';
+  });
+
   updateChartTheme();
+}
+
+// ── POI Config Drawer ──────────────────────────────────────────────────────
+
+function openPoiConfig() {
+  const overlay = document.getElementById('poiCfgOverlay');
+  const drawer = document.getElementById('poiCfgDrawer');
+  if (!overlay || !drawer) return;
+
+  // Sync Jira URL
+  const cfgUrl = document.getElementById('cfgSiteUrl');
+  const siteUrl = document.getElementById('siteUrl');
+  if (cfgUrl && siteUrl) cfgUrl.value = siteUrl.value;
+
+  // Render scoring dimension labels
+  renderQLabels();
+
+  // Sync default tab
+  const defTab = localStorage.getItem('ge_v13_default_tab') || 'triage';
+  const sel = document.getElementById('cfgDefaultTab');
+  if (sel) sel.value = defTab;
+
+  // Sync theme buttons
+  const curTheme = localStorage.getItem('ge_v13_theme') || 'light';
+  ['Light','Dark','System'].forEach(t => {
+    const btn = document.getElementById('poiTheme' + t);
+    if (!btn) return;
+    const active = curTheme === t.toLowerCase();
+    btn.style.background = active ? 'var(--ac)' : 'transparent';
+    btn.style.color = active ? '#fff' : 'var(--t2)';
+    btn.style.borderColor = active ? 'var(--ac)' : 'var(--bdr)';
+  });
+
+  overlay.style.display = 'block';
+  drawer.style.display = 'block';
+}
+
+function closePoiConfig() {
+  const overlay = document.getElementById('poiCfgOverlay');
+  const drawer = document.getElementById('poiCfgDrawer');
+  if (overlay) overlay.style.display = 'none';
+  if (drawer) drawer.style.display = 'none';
+}
+
+function renderQLabels() {
+  const container = document.getElementById('cfgQLabels');
+  if (!container) return;
+  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  container.innerHTML = QUESTIONS.map((q, i) => {
+    const val = saved[q.k] || q.f;
+    return `<div style="display:grid;grid-template-columns:56px 1fr;align-items:center;gap:8px">
+      <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;background:var(--bg2);border:1px solid var(--bdr);text-align:center;color:var(--t3)">${q.s}</span>
+      <input value="${val.replace(/"/g,'&quot;')}" oninput="saveQLabel('${q.k}',this.value)" style="padding:6px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-family:inherit">
+    </div>`;
+  }).join('');
+}
+
+function saveQLabel(key, val) {
+  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  saved[key] = val;
+  localStorage.setItem('ge_v13_qlabels', JSON.stringify(saved));
+  // Update the live QUESTIONS array so scoring UI reflects the new label
+  const q = QUESTIONS.find(x => x.k === key);
+  if (q) q.f = val;
+  render();
+}
+
+function resetQLabels() {
+  if (!confirm('Reset scoring dimension labels to defaults?')) return;
+  localStorage.removeItem('ge_v13_qlabels');
+  const defaults = [
+    { k:'q1', f:'Effort (Fibonacci)' },
+    { k:'q2', f:'Regulatory / Compliance' },
+    { k:'q3', f:'Business Value' },
+    { k:'q4', f:'Risk if Ignored' },
+    { k:'q5', f:'Ready to Execute' }
+  ];
+  defaults.forEach(d => { const q = QUESTIONS.find(x => x.k === d.k); if (q) q.f = d.f; });
+  renderQLabels();
+  render();
+}
+
+function loadQLabels() {
+  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  QUESTIONS.forEach(q => { if (saved[q.k]) q.f = saved[q.k]; });
+}
+
+function saveDefaultTab(tab) {
+  const val = tab || document.getElementById('cfgDefaultTab')?.value || 'triage';
+  localStorage.setItem('ge_v13_default_tab', val);
+}
+
+function poiResetData() {
+  if (!confirm('You will delete all your working data. This cannot be undone.\n\nAre you sure?')) return;
+  ['ge_v13','ge_v13_site','ge_v13_theme','ge_v13_qlabels','ge_v13_default_tab',
+   'ge_v12','ge_v11','ge_v10','ge_v10_site','ge_v10_sync','blr_v9'].forEach(k => localStorage.removeItem(k));
+  D = [];
+  closePoiConfig();
+  render();
+  toast('All data reset', 'inf');
 }
 
 function loadTheme() {
@@ -1882,7 +2036,7 @@ function rHelp(){
   const tip=(ic,ti,bo)=>`<div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:10px;padding:14px 16px;"><div style="font-size:13px;font-weight:700;margin-bottom:5px;">${ic} ${ti}</div><div style="font-size:12.5px;color:var(--t2);line-height:1.6;">${bo}</div></div>`;
   el.innerHTML=`
     <div style="max-width:900px;padding:16px 0;">
-      <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:6px;">❓ PortfolioInSite Web Help</h2>
+      <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:6px;">❓ PortfolioInSite Web Help Tips</h2>
       <p style="color:var(--t2);font-size:14px;margin-bottom:24px;">AI-native portfolio governance for enterprise delivery teams. Score your backlog with MoSCoW, map value vs effort on the Strategic Map, track Epics, and govern health — all browser-based, no install required.</p>
 
       <h3 style="font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;">Tab Overview</h3>
@@ -3812,7 +3966,16 @@ async function activateLicence() {
 }
 
 // Init
-load();loadCfg();loadTheme();initTabSwitching();render();showSyncBtn();
+load();loadCfg();loadTheme();loadQLabels();initTabSwitching();
+// Apply default landing tab
+(function(){
+  const def = localStorage.getItem('ge_v13_default_tab');
+  if (def && def !== 'triage') {
+    const t = document.querySelector(`#navTabs [data-t="${def}"]`);
+    if (t) t.click();
+  }
+})();
+render();showSyncBtn();
 initLicence();
 </script>
 <script>

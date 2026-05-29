@@ -1133,13 +1133,10 @@ function aobGateCheck(){
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 <span id="licBadgeText">TRIAL</span>
 </span>
-            <button onclick="openConfig()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:6px 10px;cursor:pointer;color:var(--t2);font-size:14px;display:flex;align-items:center;gap:4px" title="Configuration">&#9881;</button>
-            <div style="display:flex;align-items:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:20px;padding:2px;height:30px">
-                <button id="darkBtn" onclick="setTheme('dark')" style="width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;background:transparent;color:var(--t3)" title="Dark">&#9790;</button>
-                <button id="lightBtn" onclick="setTheme('light')" style="width:26px;height:26px;border-radius:50%;border:none;background:var(--ac);color:#fff;box-shadow:0 1px 4px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s" title="Light">&#9788;</button>
-            </div>
             <button class="btn btn-secondary" onclick="exportData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">⬇ Export</button>
             <button class="btn btn-primary" onclick="openPlnImport()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">📥 Import</button>
+            <button class="btn btn-secondary" onclick="plnResetData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;color:var(--red);border-color:var(--red)">Reset Data</button>
+            <button onclick="openConfig()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--t2);font-size:13px;display:flex;align-items:center;gap:5px;font-family:inherit" title="Configuration">&#9881; Config</button>
         </div>
     </header>
 
@@ -1151,7 +1148,7 @@ function aobGateCheck(){
         <button class="tab-btn" onclick="switchTab(2)">🔍 Backlog Refinement</button>
         <button class="tab-btn" onclick="switchTab(3)">🎯 PI Loading</button>
         <button class="tab-btn" onclick="switchTab(4)">📈 Dashboard</button>
-        <button class="tab-btn" onclick="switchTab(5)">❓ Help</button>
+        <button class="tab-btn" onclick="switchTab(5)">❓ Help Tips</button>
     </div>
 
     <!-- IMPORT MODAL -->
@@ -1379,7 +1376,7 @@ function aobGateCheck(){
         <div class="tab-content" id="tab-5">
           <div style="max-width:900px;">
             <div class="card" style="margin-bottom:20px;">
-              <div class="card-title">❓ PlanInSite Help</div>
+              <div class="card-title">❓ PlanInSite Help Tips</div>
               <p style="color:var(--t2);font-size:14px;margin-top:6px;">PI Planning &amp; Capacity Management for SAFe delivery teams. Import your Jira backlog, configure team velocity, load your board, and track PI execution — all in the browser, no install required.</p>
             </div>
 
@@ -1489,7 +1486,16 @@ function aobGateCheck(){
 
     <div class="config-overlay" id="configOverlay" onclick="closeConfig()"></div>
     <div class="config-drawer" id="configDrawer">
-        <h2>⚙ Configuration <button onclick="closeConfig()" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer">✕</button></h2>
+        <h2>⚙ Config <button onclick="closeConfig()" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer">✕</button></h2>
+
+        <div class="config-section">
+            <h3>🎨 Theme</h3>
+            <div style="display:flex;gap:8px">
+                <button id="cfgThemeLight" onclick="setTheme('light')" style="padding:6px 18px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9788; Light</button>
+                <button id="cfgThemeDark" onclick="setTheme('dark')" style="padding:6px 18px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9790; Dark</button>
+                <button id="cfgThemeSystem" onclick="setTheme('system')" style="padding:6px 18px;border-radius:20px;border:1px solid var(--bdr);background:transparent;color:var(--t2);cursor:pointer;font-size:13px;font-family:inherit;transition:all .2s">&#9881; System</button>
+            </div>
+        </div>
 
         <div class="config-section">
             <h3>🔗 Jira Site URL</h3>
@@ -2296,19 +2302,28 @@ function aobGateCheck(){
         }
 
         function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('planinsite_theme', theme);
-            const dk = document.getElementById('darkBtn');
-            const lt = document.getElementById('lightBtn');
-            if (dk && lt) {
-                if (theme === 'dark') {
-                    dk.style.background = 'var(--ac)'; dk.style.color = '#fff'; dk.style.boxShadow = '0 1px 4px rgba(14,165,233,.4)';
-                    lt.style.background = 'transparent'; lt.style.color = 'var(--t3)'; lt.style.boxShadow = 'none';
-                } else {
-                    lt.style.background = 'var(--ac)'; lt.style.color = '#fff'; lt.style.boxShadow = '0 1px 4px rgba(14,165,233,.4)';
-                    dk.style.background = 'transparent'; dk.style.color = 'var(--t3)'; dk.style.boxShadow = 'none';
-                }
+            let resolved = theme;
+            if (theme === 'system') {
+                resolved = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
             }
+            document.documentElement.setAttribute('data-theme', resolved);
+            localStorage.setItem('planinsite_theme', theme);
+            // Update config drawer theme buttons
+            ['Light','Dark','System'].forEach(t => {
+                const btn = document.getElementById('cfgTheme' + t);
+                if (!btn) return;
+                const active = theme === t.toLowerCase();
+                btn.style.background = active ? 'var(--ac)' : 'transparent';
+                btn.style.color = active ? '#fff' : 'var(--t2)';
+                btn.style.borderColor = active ? 'var(--ac)' : 'var(--bdr)';
+            });
+        }
+
+        function plnResetData() {
+            if (!confirm('You will delete all your working data. This cannot be undone.\n\nAre you sure?')) return;
+            localStorage.removeItem('planinsite_data_v3');
+            MEM_ITEMS = [];
+            location.reload();
         }
 
         // ============ DATA MANAGEMENT ============
