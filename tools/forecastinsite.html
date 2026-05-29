@@ -11552,16 +11552,31 @@ function rHelp() {
 
       <h3 style="font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;">Jira CSV Export — Recommended JQL</h3>
       <p style="font-size:13px;color:var(--t2);margin-bottom:14px;">In Jira, go to <strong>Issues → Search for Issues</strong>, switch to Advanced search, paste the relevant query below (replace <code style="font-size:12px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px;">&lt;project name&gt;</code> with your project key), then export via <strong>Export → CSV (all fields)</strong>.</p>
+
       <div style="margin-bottom:6px;font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:.04em;text-transform:uppercase;">① Portfolio / Program level — Epics, Features &amp; SAFe Epics</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Use this for financial modelling. Returns high-level items that carry cost and value data — does not require sprint assignment.</p>
-      ${code('project = &lt;project name&gt; AND issuetype in ("SAFe Epic", Epic, Feature, Initiative) AND updated &gt;= -16w ORDER BY created DESC')}
+      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Returns high-level items regardless of sprint assignment. No time limit — Epics and Features are long-lived and a 16-week window will exclude valid work.</p>
+      ${code('project = &lt;project name&gt; AND issuetype in ("SAFe Epic", Epic, Feature, Initiative) ORDER BY created DESC')}
+
       <div style="margin:14px 0 6px;font-size:12px;font-weight:700;color:#06b6d4;letter-spacing:.04em;text-transform:uppercase;">② All delivery items — broadest export</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Returns everything updated in the last 16 weeks across all issue types. Best for a complete portfolio picture.</p>
-      ${code('project = &lt;project name&gt; AND updated &gt;= -16w ORDER BY created DESC')}
+      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Returns everything across all issue types. No time limit by default — add a filter below if your project is very large.</p>
+      ${code('project = &lt;project name&gt; ORDER BY created DESC')}
+
       <div style="margin:14px 0 6px;font-size:12px;font-weight:700;color:#10b981;letter-spacing:.04em;text-transform:uppercase;">③ Sprint items only — Stories, Tasks &amp; Bugs</div>
-      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Returns only items assigned to a sprint. Use when you specifically need sprint-level delivery data.</p>
-      ${code('project = &lt;project name&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) AND updated &gt;= -16w ORDER BY created DESC')}
-      <p style="font-size:12px;color:var(--t3);margin-top:6px;">The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits results to items updated in the last 16 weeks. Adjust to control export size.</p>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:4px;">Returns only items assigned to a sprint. Sprint membership already constrains the result set — no additional time filter needed.</p>
+      ${code('project = &lt;project name&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) ORDER BY created DESC')}
+
+      <div style="margin:18px 0 8px;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;padding:13px 16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;">⏱ Optional time filter — add before ORDER BY on large projects</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;">
+          ${[
+            ['Last 4 weeks',  'AND updated >= -4w'],
+            ['Last 8 weeks',  'AND updated >= -8w'],
+            ['Last 16 weeks', 'AND updated >= -16w'],
+            ['Last 6 months', 'AND updated >= -26w'],
+            ['Last 12 months','AND updated >= -52w'],
+          ].map(([lbl,qry])=>`<div style="background:var(--bg1);border-radius:6px;padding:8px 10px;"><div style="font-size:11px;color:var(--t3);margin-bottom:3px;">${lbl}</div><code style="font-size:11px;color:#e2e8f0;font-family:'JetBrains Mono',monospace;">${qry}</code></div>`).join('')}
+        </div>
+      </div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:24px;">
         ${tip('💡','Start with Load Sample Data','Use Import → Load Sample Data to explore all tabs before connecting your own Jira data. No data is stored server-side.')}
