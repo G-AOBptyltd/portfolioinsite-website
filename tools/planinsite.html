@@ -1135,15 +1135,11 @@ function aobGateCheck(){
 </span>
             <button onclick="openConfig()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:6px 10px;cursor:pointer;color:var(--t2);font-size:14px;display:flex;align-items:center;gap:4px" title="Configuration">&#9881;</button>
             <div style="display:flex;align-items:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:20px;padding:2px;height:30px">
-                <button id="darkBtn" onclick="setTheme('dark')" style="width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;background:var(--ac);color:#fff;box-shadow:0 1px 4px rgba(14,165,233,.4)" title="Dark">&#9790;</button>
-                <button id="lightBtn" onclick="setTheme('light')" style="width:26px;height:26px;border-radius:50%;border:none;background:transparent;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s" title="Light">&#9788;</button>
+                <button id="darkBtn" onclick="setTheme('dark')" style="width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;background:transparent;color:var(--t3)" title="Dark">&#9790;</button>
+                <button id="lightBtn" onclick="setTheme('light')" style="width:26px;height:26px;border-radius:50%;border:none;background:var(--ac);color:#fff;box-shadow:0 1px 4px rgba(14,165,233,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s" title="Light">&#9788;</button>
             </div>
-            <button class="btn btn-secondary btn-icon" onclick="exportData()" title="Export JSON backup" style="padding:6px 10px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            </button>
-            <button class="btn btn-secondary btn-icon" onclick="importJSON()" title="Import JSON backup" style="padding:6px 10px">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            </button>
+            <button class="btn btn-secondary" onclick="exportData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px">⬇ Export</button>
+            <button class="btn btn-primary" onclick="openPlnImport()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px">📥 Import</button>
         </div>
     </header>
 
@@ -1158,28 +1154,73 @@ function aobGateCheck(){
         <button class="tab-btn" onclick="switchTab(5)">❓ Help</button>
     </div>
 
+    <!-- IMPORT MODAL -->
+    <div id="plnImpMod" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;overflow-y:auto;padding:24px 16px" onclick="if(event.target===this)closePlnImport()">
+      <div style="background:var(--bg1);border-radius:12px;max-width:600px;margin:40px auto;padding:28px;box-shadow:var(--sh);position:relative">
+        <button onclick="closePlnImport()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--t2);line-height:1">×</button>
+        <h2 style="margin:0 0 4px;font-size:18px;color:var(--t1)">Import Data</h2>
+        <p style="font-size:13px;color:var(--t2);margin:0 0 20px">Bring your backlog into PlanInSite from a Jira or Advanced Roadmaps CSV.</p>
+
+        <!-- Portfolio Suite Data card -->
+        <div style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="font-size:15px;">📂</span>
+            <span style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#06b6d4;">Portfolio Suite Data</span>
+          </div>
+          <div id="suiteNoData" style="font-size:12px;color:var(--t2,#64748b);line-height:1.7;">Import a Jira CSV in <strong>any</strong> portfolio tool — ForecastInSite, PlanInSite, or PortfolioInSite Web — and it becomes available here automatically. No re-upload needed.</div>
+          <div id="suiteHasData" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;"><div id="suiteDetectMsg" style="font-size:13px;font-weight:600;margin-bottom:3px;"></div><div style="font-size:11px;color:var(--t2,#64748b);">Ready to load — no re-upload needed</div></div>
+            <button onclick="useDetectedData()" style="padding:8px 18px;background:#06b6d4;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use this dataset →</button>
+          </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div class="drop-zone" id="dropZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">Drop CSV files here or click to browse</div>
+          <div class="drop-zone-hint">Supports Jira and Advanced Roadmaps formats</div>
+        </div>
+        <input type="file" id="fileInput" accept=".csv" style="display:none;" onchange="handleFileSelect(event)">
+
+        <!-- Import settings -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+          <div class="form-group">
+            <label class="form-label">Import Mode</label>
+            <select id="importMode">
+              <option value="accumulate">Accumulate (add to existing)</option>
+              <option value="replace">Replace all data</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CSV Format</label>
+            <select id="csvFormat">
+              <option value="auto">Auto-detect</option>
+              <option value="jira">Jira CSV</option>
+              <option value="roadmap">Advanced Roadmaps</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="importData();closePlnImport()" style="width:100%;margin-top:14px">📥 Import Items</button>
+
+        <!-- Demo data -->
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)">
+          <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px">⚡ Demo Data</div>
+          <p style="font-size:12px;color:var(--t2);margin:0 0 10px">Load a 10-team PI plan — no import needed. Runs in replace mode.</p>
+          <button class="btn btn-secondary" onclick="loadSampleData()" style="width:100%">⚡ Load Sample Data</button>
+        </div>
+      </div>
+    </div>
+
+
     <div class="container">
         <!-- Tab 1: Import Data -->
         <div class="tab-content active" id="tab-0">
-            <div style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-    <span style="font-size:15px;">📂</span>
-    <span style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#06b6d4;">Portfolio Suite Data</span>
-  </div>
-  <div id="suiteNoData" style="font-size:12px;color:var(--t2,#64748b);line-height:1.7;">Import a Jira CSV in <strong>any</strong> portfolio tool — ForecastInSite, PlanInSite, or PortfolioInSite Web — and it becomes available here automatically. No re-upload needed.</div>
-  <div id="suiteHasData" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
-    <div style="flex:1;min-width:180px;"><div id="suiteDetectMsg" style="font-size:13px;font-weight:600;margin-bottom:3px;"></div><div style="font-size:11px;color:var(--t2,#64748b);">Ready to load — no re-upload needed</div></div>
-    <button onclick="useDetectedData()" style="padding:8px 18px;background:#06b6d4;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use this dataset →</button>
-  </div>
-</div>
-            <div class="card">
-                <div class="card-title">📥 Import Data</div>
-                <div class="drop-zone" id="dropZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
-                    <div class="drop-zone-icon">📄</div>
-                    <div class="drop-zone-text">Drop CSV files here or click to browse</div>
-                    <div class="drop-zone-hint">Supports Jira and Advanced Roadmaps formats</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:var(--t1)">Imported Data</div>
+                    <div style="font-size:12px;color:var(--t2);margin-top:2px">Review what's loaded, then use the tools in the other tabs.</div>
                 </div>
-                <input type="file" id="fileInput" accept=".csv" style="display:none;" onchange="handleFileSelect(event)">
+                <button class="btn btn-primary" onclick="openPlnImport()" style="display:flex;align-items:center;gap:6px;white-space:nowrap">📥 Import CSV</button>
             </div>
 
             <div class="card">
@@ -1192,43 +1233,15 @@ function aobGateCheck(){
                         <tbody id="previewBody"></tbody>
                     </table>
                     <div id="previewEmpty" style="padding: 40px; text-align: center; color: var(--t2);">
-                        No data imported yet. Upload a CSV file to get started.
+                        No data imported yet. Click <strong>Import CSV</strong> above to get started.
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-title">⚙️ Import Settings</div>
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="form-label">Import Mode</label>
-                        <select id="importMode">
-                            <option value="accumulate">Accumulate (add to existing)</option>
-                            <option value="replace">Replace all data</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">CSV Format</label>
-                        <select id="csvFormat">
-                            <option value="auto">Auto-detect</option>
-                            <option value="jira">Jira CSV</option>
-                            <option value="roadmap">Advanced Roadmaps</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="importData()" style="width: 100%;">Import Items</button>
-                <div style="display:flex;gap:8px;margin-top:12px">
-                    <button class="btn btn-secondary" onclick="exportData()" style="flex:1">💾 Export JSON Backup</button>
-                    <button class="btn btn-secondary" onclick="importJSON()" style="flex:1">📂 Restore JSON Backup</button>
-                    <button class="btn" onclick="if(confirm('Clear ALL data? This removes teams, items, and PI commitments.')){localStorage.removeItem('planinsite_data_v3');MEM_ITEMS=[];location.reload()}" style="flex:1;color:var(--red);border-color:var(--red)">🗑 Reset All Data</button>
-                </div>
-            </div>
-
-            <div class="card" style="border-left:3px solid var(--ac,#0EA5E9);border-radius:0 8px 8px 0">
-                <div class="card-title">⚡ Demo Data</div>
-                <p style="font-size:12px;color:var(--t2);margin:8px 0 12px">Load a 10-team PI plan — no import needed. Runs in replace mode.</p>
-                <button class="btn btn-primary" onclick="loadSampleData()" style="width:100%">⚡ Load Sample Data</button>
-                <div id="sampleStatus" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+                <button class="btn btn-secondary" onclick="exportData()" style="flex:1;min-width:160px">💾 Export JSON Backup</button>
+                <button class="btn btn-secondary" onclick="importJSON()" style="flex:1;min-width:160px">📂 Restore JSON Backup</button>
+                <button class="btn" onclick="if(confirm('Clear ALL data? This removes teams, items, and PI commitments.')){localStorage.removeItem('planinsite_data_v3');MEM_ITEMS=[];location.reload()}" style="flex:1;min-width:160px;color:var(--red);border-color:var(--red)">🗑 Reset All Data</button>
             </div>
 
             <!-- Session reminder -->
@@ -2267,8 +2280,18 @@ function aobGateCheck(){
         // PlanInSite uses historical velocity data to calculate team capacity only.
 
         // ============ THEME ============
-        function initTheme() {
-            const theme = localStorage.getItem('planinsite_theme') || 'dark';
+        function openPlnImport() {
+            document.getElementById('plnImpMod').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            setTimeout(checkSuiteDetect, 50);
+        }
+        function closePlnImport() {
+            document.getElementById('plnImpMod').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+                function initTheme() {
+            const theme = localStorage.getItem('planinsite_theme') || 'light';
             setTheme(theme);
         }
 

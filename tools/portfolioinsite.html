@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -322,8 +322,8 @@ function aobGateCheck(){
 Playbook
 </a>
 <div class="theme-toggle">
-<button class="theme-btn" data-theme="light" onclick="setTheme('light')" title="Light">&#9788;</button>
-<button class="theme-btn active" data-theme="dark" onclick="setTheme('dark')" title="Dark">&#9790;</button>
+<button class="theme-btn active" data-theme="light" onclick="setTheme('light')" title="Light">&#9788;</button>
+<button class="theme-btn" data-theme="dark" onclick="setTheme('dark')" title="Dark">&#9790;</button>
 <button class="theme-btn" data-theme="system" onclick="setTheme('system')" title="System">&#9881;</button>
 </div>
 <span class="lic-badge trial" id="licBadge" onclick="openLicModal()" title="Click to manage licence">
@@ -1049,7 +1049,7 @@ function setTheme(mode) {
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem('ge_v13_theme') || 'dark';
+  const saved = localStorage.getItem('ge_v13_theme') || 'light';
   setTheme(saved);
 }
 
