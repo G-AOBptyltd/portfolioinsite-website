@@ -1334,9 +1334,9 @@ function aobGateCheck(){
 
   <!-- IMPORT MODAL -->
   <div class="mo" id="impMod">
-    <div class="md">
-      <h2>Import Data</h2>
-      <p class="sub" style="color:var(--t2);font-size:13px;margin-bottom:24px">Bring your financial data into ForecastInSite from CSV, JSON, or PortfolioInSite</p>
+    <div class="md" style="padding:24px 28px">
+      <h2 style="margin:0 0 4px;font-size:18px">Import Data</h2>
+      <p class="sub" style="color:var(--t2);font-size:13px;margin:0 0 20px">Bring your financial data into ForecastInSite from CSV, JSON, or PortfolioInSite</p>
       <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
           <span style="font-size:15px;">📂</span>
@@ -1348,19 +1348,10 @@ function aobGateCheck(){
           <button onclick="useDetectedData()" style="padding:8px 18px;background:#06b6d4;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use this dataset →</button>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
-        <div class="iop sel" data-m="json" onclick="selImpMode('json')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
-          <div style="font-weight:600;font-size:14px">JSON Backup</div>
-          <div style="font-size:11px;color:var(--t2);margin-top:4px">Restore ForecastInSite export</div>
-        </div>
-        <div class="iop" data-m="csv" onclick="selImpMode('csv')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
-          <div style="font-weight:600;font-size:14px">CSV Features</div>
-          <div style="font-size:11px;color:var(--t2);margin-top:4px">Import feature list</div>
-        </div>
-        <div class="iop" data-m="portfolioinsite" onclick="selImpMode('portfolioinsite')" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);cursor:pointer;text-align:center;transition:var(--tr)">
-          <div style="font-weight:600;font-size:14px">PortfolioInSite</div>
-          <div style="font-size:11px;color:var(--t2);margin-top:4px">Import from browser storage</div>
-        </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+        <button class="iop sel" data-m="json" onclick="selImpMode('json')" style="padding:8px 18px;border:1px solid var(--ac);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:rgba(14,165,233,.1);color:var(--t1);transition:var(--tr)">JSON Backup</button>
+        <button class="iop" data-m="csv" onclick="selImpMode('csv')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">CSV Features</button>
+        <button class="iop" data-m="portfolioinsite" onclick="selImpMode('portfolioinsite')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">PortfolioInSite</button>
       </div>
 
 
