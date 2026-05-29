@@ -1313,6 +1313,9 @@ function aobGateCheck(){
     <section class="tp" id="p-config">
       <div id="configC"></div>
     </section>
+    <section class="tp" id="p-help">
+      <div id="helpC"></div>
+    </section>
   </main>
 
   <div class="mo" id="formMod">
@@ -2079,7 +2082,8 @@ const ROLE_TABS = {
     { id: 'p-ai',        label: 'AI Workforce' },
     { id: 'p-teams',     label: 'Teams & Capacity' },
     { id: 'p-reporting', label: 'Reporting' },
-    { id: 'p-config',    label: 'Configuration' }
+    { id: 'p-config',    label: 'Configuration' },
+    { id: 'p-help',     label: '❓ Help' }
   ],
   pm: [
     { id: 'p-command',   label: 'Command Centre' },
@@ -2090,7 +2094,8 @@ const ROLE_TABS = {
     { id: 'p-sizing',    label: 'Relative Sizing' },
     { id: 'p-teams',     label: 'Teams & Capacity' },
     { id: 'p-reporting', label: 'Reporting' },
-    { id: 'p-config',    label: 'Configuration' }
+    { id: 'p-config',    label: 'Configuration' },
+    { id: 'p-help',     label: '❓ Help' }
   ],
   dm: [
     { id: 'p-command',   label: 'Command Centre' },
@@ -2100,7 +2105,8 @@ const ROLE_TABS = {
     { id: 'p-capacity',  label: 'Capacity Planner' },
     { id: 'p-features',  label: 'Feature Progress' },
     { id: 'p-reporting', label: 'Reporting' },
-    { id: 'p-config',    label: 'Configuration' }
+    { id: 'p-config',    label: 'Configuration' },
+    { id: 'p-help',     label: '❓ Help' }
   ]
 };
 
@@ -10428,6 +10434,7 @@ function renderAll() {
   else if (tab === 'raid') rRaid();
   else if (tab === 'scenarios') rScenarios();
   else if (tab === 'config') rConfig();
+  else if (tab === 'help')   rHelp();
 }
 
 
@@ -11515,6 +11522,48 @@ function exportFinanceCSV() {
   URL.revokeObjectURL(a.href);
   toast('Finance controls CSV exported', 'ok');
 }
+// ══ HELP TAB ══════════════════════════════════════════════
+function rHelp() {
+  const el = document.getElementById('helpC');
+  if (!el) return;
+  const s = (c,b='') => `<span style="${c}">${b}</span>`;
+  const code = (txt) => `<code style="display:block;background:#0d1424;color:#e2e8f0;border-radius:8px;padding:14px 18px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:10px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre;">${txt}</code>`;
+  const tip = (icon,title,body) => `<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;"><div style="font-weight:700;font-size:13px;margin-bottom:6px;">${icon} ${title}</div><div style="font-size:13px;color:var(--t2);line-height:1.6;">${body}</div></div>`;
+  el.innerHTML = `
+    <div style="max-width:900px;padding:24px 0;">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:6px;">❓ ForecastInSite Help</h2>
+      <p style="color:var(--t2);font-size:14px;margin-bottom:28px;">Lean Agile Financial Modelling for delivery teams. Model the true cost of value — cost per story point, feature ROI, waste economics, and AI workforce impact.</p>
+
+      <h3 style="font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;">Tab Overview</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:28px;">
+        ${[
+          ['💰','Command Centre','Role-specific KPI dashboard — Financial Controller, Portfolio Manager, or Project Manager view.'],
+          ['📊','Budget & Actuals','Team budgets vs actuals with variance tracking and over-budget alerts.'],
+          ['🔮','Scenarios','Capex/Opex modelling and what-if scenario comparison.'],
+          ['📋','Licences & Overhead','Tool licence costs, overhead tracking, and cost-per-point calculations.'],
+          ['💡','Feature Economics','Feature ROI, delivery cost, and value-per-point analysis.'],
+          ['🤖','AI Workforce','AI vs human cost modelling and automation opportunity scoring.'],
+          ['👥','Teams & Capacity','Team velocity, sprint capacity, and allocation planning.'],
+          ['🗺️','Roadmap','Milestone tracking with dependency mapping and RAID log.'],
+          ['📈','Reporting','Executive summaries and exportable financial reports.'],
+          ['⚙️','Configuration','Set team data, cost rates, sprint parameters, and thresholds.'],
+        ].map(([ic,nm,ds]) => `<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">${ic} ${nm}</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">${ds}</div></div>`).join('')}
+      </div>
+
+      <h3 style="font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;">Jira CSV Export — Recommended JQL</h3>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:6px;">In Jira, go to <strong>Issues → Search for Issues</strong>, switch to Advanced search, paste the query below (replace <code style="font-size:12px;background:rgba(255,255,255,.07);padding:1px 5px;border-radius:4px;">&lt;project name&gt;</code> with your project key), then export via <strong>Export → CSV (all fields)</strong>:</p>
+      ${code('project = &lt;project name&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) AND updated &gt;= -16w ORDER BY created DESC')}
+      <p style="font-size:12px;color:var(--t3);margin-top:6px;">The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits results to items updated in the last 16 weeks. Adjust to control export size.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:24px;">
+        ${tip('💡','Start with Load Sample Data','Use Import → Load Sample Data to explore all tabs before connecting your own Jira data. No data is stored server-side.')}
+        ${tip('🎭','Switch roles to change tabs','Use the role buttons (Financial Controller / Portfolio Manager / Project Manager) to switch between tab sets suited to your context.')}
+        ${tip('💾','Export often','Use Export → JSON Backup regularly. All data is browser-only — clearing site data will reset the tool.')}
+        ${tip('📧','Support','Questions? Contact <a href="mailto:support@portfolioinsite.com.au" style="color:var(--ac);">support@portfolioinsite.com.au</a> or visit <a href="https://portfolioinsite.com.au" target="_blank" style="color:var(--ac);">portfolioinsite.com.au</a>.')}
+      </div>
+    </div>`;
+}
+
 </script>
 </body>
 </html>

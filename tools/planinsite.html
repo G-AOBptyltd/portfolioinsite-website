@@ -1353,17 +1353,40 @@ function aobGateCheck(){
 
         <!-- Tab 6: Help -->
         <div class="tab-content" id="tab-5">
-            <div class="card">
-                <div class="card-title">❓ Help</div>
-                <p>PlanInSite is a PI Planning & Capacity Management tool for Agile teams.</p>
-                <ul style="margin-top:16px;margin-left:20px;line-height:1.8;">
-                    <li><strong>Import Data:</strong> Upload CSV files from Jira or Advanced Roadmaps</li>
-                    <li><strong>Teams & Capacity:</strong> Configure team velocity and sprints per PI</li>
-                    <li><strong>Backlog Refinement:</strong> Rich table with MoSCoW filtering and inline editing</li>
-                    <li><strong>PI Board:</strong> Visual board for sprint planning</li>
-                    <li><strong>Dashboard:</strong> Analytics and insights</li>
-                </ul>
+          <div style="max-width:900px;">
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title">❓ PlanInSite Help</div>
+              <p style="color:var(--t2);font-size:14px;margin-top:6px;">PI Planning &amp; Capacity Management for SAFe delivery teams. Import your Jira backlog, configure team velocity, load your board, and track PI execution — all in the browser, no install required.</p>
             </div>
+
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:14px;">📋 Tab Overview</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">📥 Import Data</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Upload CSV from Jira or Advanced Roadmaps. Auto-maps standard column names.</div></div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">👥 Teams &amp; Capacity</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Configure team velocity, sprint count, and capacity per PI iteration.</div></div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">🔍 Backlog Refinement</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Rich table with MoSCoW scoring, inline editing, filtering, and bulk operations.</div></div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">🎯 PI Loading</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Visual PI board — drag items into sprints, track team load vs capacity.</div></div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">📊 Dashboard</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">PI analytics — velocity trends, MoSCoW distribution, and team utilisation charts.</div></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">🟠 Jira CSV Export — Recommended JQL</div>
+              <p style="font-size:13px;color:var(--t2);margin-bottom:8px;">In Jira, go to <strong>Issues → Search for Issues</strong>, switch to Advanced search, paste the query below (replace <code style="font-size:12px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">&lt;project name&gt;</code> with your project key), then export via <strong>Export → CSV (all fields)</strong>:</p>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:14px 18px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:10px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;project name&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) AND updated &gt;= -16w ORDER BY created DESC</pre>
+              <p style="font-size:12px;color:var(--t3);margin-top:4px;">The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits results to items updated in the last 16 weeks. Adjust to control export size.</p>
+            </div>
+
+            <div class="card">
+              <div class="card-title" style="margin-bottom:14px;">💡 Tips &amp; Support</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">💾 Export often.</strong> All data is browser-only — clearing site data resets the tool. Use Download → JSON to save your PI plan.</div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔃 Import flow.</strong> Import first → configure Teams &amp; Capacity → load PI Board. The board uses your velocity config to calculate capacity lines.</div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">📧 Support.</strong> Contact <a href="mailto:support@portfolioinsite.com.au" style="color:var(--ac);">support@portfolioinsite.com.au</a> or visit <a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" style="color:var(--ac);">portfolioinsite.com.au</a>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
     </div>
 
