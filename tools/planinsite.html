@@ -1161,11 +1161,17 @@ function aobGateCheck(){
     <div class="container">
         <!-- Tab 1: Import Data -->
         <div class="tab-content active" id="tab-0">
-            <div id="suiteDetectBanner" style="display:none;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.3);border-radius:8px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:12px;flex-wrap:wrap;">
-              <span style="font-size:13px;">📂 <strong>Suite data detected</strong> — <span id="suiteDetectMsg" style="color:var(--t2)"></span></span>
-              <button onclick="useDetectedData()" style="padding:6px 14px;background:var(--cyan,#06b6d4);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Use this dataset →</button>
-              <button onclick="dismissSuiteDetect()" style="padding:6px 10px;background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--t2);font-size:12px;cursor:pointer;line-height:1;">✕</button>
-            </div>
+            <div style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <span style="font-size:15px;">📂</span>
+    <span style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#06b6d4;">Portfolio Suite Data</span>
+  </div>
+  <div id="suiteNoData" style="font-size:12px;color:var(--t2,#64748b);line-height:1.7;">Import a Jira CSV in <strong>any</strong> portfolio tool — ForecastInSite, PlanInSite, or PortfolioInSite Web — and it becomes available here automatically. No re-upload needed.</div>
+  <div id="suiteHasData" style="display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:180px;"><div id="suiteDetectMsg" style="font-size:13px;font-weight:600;margin-bottom:3px;"></div><div style="font-size:11px;color:var(--t2,#64748b);">Ready to load — no re-upload needed</div></div>
+    <button onclick="useDetectedData()" style="padding:8px 18px;background:#06b6d4;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use this dataset →</button>
+  </div>
+</div>
             <div class="card">
                 <div class="card-title">📥 Import Data</div>
                 <div class="drop-zone" id="dropZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
@@ -3890,13 +3896,16 @@ AIAOB-1030,Anomaly detection and automated alerting,Kofi Mensah,Story,13,PI FY26
         function suiteShareAge(ts){const ms=Date.now()-ts;if(ms<60000)return 'just now';if(ms<3600000)return Math.round(ms/60000)+' min ago';if(ms<86400000)return Math.round(ms/3600000)+'h ago';return Math.round(ms/86400000)+'d ago';}
         function checkSuiteDetect(){
           const sh=readSuiteShare();
-          const banner=document.getElementById('suiteDetectBanner');
-          if(!banner)return;
-          if(!sh||sh.toolId===SUITE_TOOL_ID||(Date.now()-sh.timestamp)>7*86400000){banner.style.display='none';return;}
+          const noData=document.getElementById('suiteNoData');
+          const hasData=document.getElementById('suiteHasData');
+          if(!noData||!hasData)return;
+          if(!sh||sh.toolId==='PLN'||(Date.now()-sh.timestamp)>7*86400000){
+            noData.style.display='block';hasData.style.display='none';return;
+          }
           document.getElementById('suiteDetectMsg').textContent=sh.rowCount+' items from '+sh.source+' · '+suiteShareAge(sh.timestamp);
-          banner.style.display='flex';
+          noData.style.display='none';hasData.style.display='flex';
         }
-        function dismissSuiteDetect(){const b=document.getElementById('suiteDetectBanner');if(b)b.style.display='none';}
+        function dismissSuiteDetect(){}
         function useDetectedData(){
           const sh=readSuiteShare();
           if(!sh||!sh.raw){showToast('No suite data found','error');return;}
