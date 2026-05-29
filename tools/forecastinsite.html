@@ -9580,6 +9580,7 @@ let impPendingData = null;
 function openImportModal() {
   document.getElementById('impMod').style.display = 'flex';
   selImpMode('json');
+  setTimeout(checkSuiteDetect,50);
 }
 
 function closeImportModal() {
@@ -11587,6 +11588,53 @@ function rHelp() {
     </div>`;
 }
 
+
+// ── Suite Data Share (Portfolio Group: FCT ↔ POI ↔ PLN) ────────
+const SUITE_SHARE_KEY='aob_suite_raw_csv';
+const SUITE_TOOL_ID='FCT';
+const SUITE_TOOL_NAME='ForecastInSite';
+
+function writeSuiteShare(raw,filename,rowCount){
+  if(!raw||raw.length>2*1024*1024)return;
+  try{localStorage.setItem(SUITE_SHARE_KEY,JSON.stringify({source:SUITE_TOOL_NAME,toolId:SUITE_TOOL_ID,timestamp:Date.now(),filename:filename||'jira-export.csv',rowCount:rowCount||0,raw:raw}));}catch(e){}
+}
+function readSuiteShare(){try{const s=localStorage.getItem(SUITE_SHARE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function suiteShareAge(ts){const ms=Date.now()-ts;if(ms<60000)return 'just now';if(ms<3600000)return Math.round(ms/60000)+' min ago';if(ms<86400000)return Math.round(ms/3600000)+'h ago';return Math.round(ms/86400000)+'d ago';}
+function checkSuiteDetect(){
+  const sh=readSuiteShare();
+  const banner=document.getElementById('suiteDetectBanner');
+  if(!banner)return;
+  if(!sh||sh.toolId===SUITE_TOOL_ID||(Date.now()-sh.timestamp)>7*86400000){banner.style.display='none';return;}
+  document.getElementById('suiteDetectMsg').textContent=sh.rowCount+' items from '+sh.source+' · '+suiteShareAge(sh.timestamp);
+  banner.style.display='flex';
+}
+function dismissSuiteDetect(){const b=document.getElementById('suiteDetectBanner');if(b)b.style.display='none';}
+function useDetectedData(){
+  const sh=readSuiteShare();
+  if(!sh||!sh.raw){toast('No suite data found','err');return;}
+  try{
+    const text=sh.raw;
+    const lines=text.split('\n').filter(l=>l.trim());
+    const headers=lines[0].split(',').map(h=>h.replace(/"/g,'').trim().toLowerCase());
+    const rows=lines.slice(1).map(line=>{
+      const vals=[];let current='',inQuotes=false;
+      for(let i=0;i<line.length;i++){if(line[i]==='"'){inQuotes=!inQuotes;}else if(line[i]===','&&!inQuotes){vals.push(current.trim());current='';}else{current+=line[i];}}
+      vals.push(current.trim());return vals;
+    });
+    const features=rows.map(row=>{
+      const obj={};headers.forEach((h,i)=>{obj[h]=row[i]||'';});
+      return{id:gid('feat'),name:obj['name']||obj['summary']||obj['title']||'',type:obj['type']||obj['issue type']||'Feature',teamId:'',storyPoints:parseInt(obj['story points']||obj['points']||obj['effort'])||0,status:obj['status']||'To Do',piAssignment:obj['pi']||obj['pi assignment']||'',businessValue:parseInt(obj['business value']||obj['bv'])||0,wsjfScore:parseFloat(obj['wsjf'])||0,projectedRevenue:0,actualRevenue:0,okrTarget:'',okrActual:'',fromImport:true};
+    }).filter(f=>f.name);
+    if(!features.length){toast('No features found in suite data','err');return;}
+    STATE.features=[...STATE.features,...features];
+    save();renderAll();
+    toast(features.length+' features loaded from '+sh.source,'ok');
+    writeSuiteShare(sh.raw,sh.filename,features.length);
+    dismissSuiteDetect();
+    closeImportModal();
+  }catch(e){toast('Error loading suite data: '+e.message,'err');}
+}
+// ────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>

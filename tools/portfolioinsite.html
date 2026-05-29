@@ -405,6 +405,11 @@ Playbook
 <div class="md">
 <h2>Import Data</h2>
 <p class="sub">Bring your backlog from Jira, CSV, or Advanced Roadmaps</p>
+<div id="suiteDetectBanner" style="display:none;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.3);border-radius:8px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:12px;flex-wrap:wrap;">
+  <span style="font-size:13px;">📂 <strong>Suite data detected</strong> — <span id="suiteDetectMsg" style="color:var(--t2)"></span></span>
+  <button onclick="useDetectedData()" style="padding:6px 14px;background:var(--ac);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Use this dataset →</button>
+  <button onclick="dismissSuiteDetect()" style="padding:6px 10px;background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--t2);font-size:12px;cursor:pointer;line-height:1;">✕</button>
+</div>
 <div class="accum-info" id="accumBar" style="display:none"><span><strong id="accumCnt">0</strong> items already loaded &mdash; new imports accumulate</span></div>
 <div class="io">
 <div class="iop sel" data-m="json" onclick="selMode('json')"><div class="lb">Jira JSON</div><div class="ds">Paste API response</div></div>
@@ -3177,7 +3182,7 @@ function poCollapseAll(collapse) {
 }
 
 // IMPORT MODAL CONTROL
-function openMod(){document.getElementById('impMod').classList.add('show');selMode('json');if(D.length){document.getElementById('accumBar').style.display='flex';document.getElementById('accumCnt').textContent=D.length}else{document.getElementById('accumBar').style.display='none'}}
+function openMod(){document.getElementById('impMod').classList.add('show');setTimeout(checkSuiteDetect,50);selMode('json');if(D.length){document.getElementById('accumBar').style.display='flex';document.getElementById('accumCnt').textContent=D.length}else{document.getElementById('accumBar').style.display='none'}}
 function closeMod(){document.getElementById('impMod').classList.remove('show');csvParsed=null;csvHeaders=null;csvMapping={};arCsvParsed=null;arCsvHeaders=null;arCsvMapping={};document.getElementById('urlRes').style.display='none';document.getElementById('btnGen').style.display='block';if(typeof mpReset==='function')mpReset()}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){const m=document.getElementById('impMod');if(m.classList.contains('show'))closeMod()}})
 
@@ -3308,6 +3313,7 @@ function readFile(file){
   document.getElementById('csvFileName').textContent='✓ Loaded: '+file.name+' ('+(file.size/1024).toFixed(1)+' KB)';
   const reader=new FileReader();
   reader.onload=function(e){
+    window._suiteRawCsv=e.target.result;window._suiteRawCsvName=file.name;
     csvParsed=parseCSV(e.target.result);
     if(csvParsed.length<2){toast('No data rows','err');return}
     csvHeaders=csvParsed[0];
@@ -3443,6 +3449,7 @@ function importCsvFile(){
 function importCsvPaste(){
   const raw=document.getElementById('iCsv').value.trim();
   if(!raw){toast('Paste CSV','err');return}
+  window._suiteRawCsv=raw;window._suiteRawCsvName='pasted-csv.csv';
   const parsed=parseCSV(raw);
   if(parsed.length<2){toast('Need header + data','err');return}
   importFromParsedCsv(parsed, autoMap(parsed[0]));
@@ -3493,6 +3500,7 @@ function importFromParsedCsv(parsed, mapping){
   }
   save();render();closeMod();
   toast('Imported '+added+' items'+(dupes?', '+dupes+' dupes':''),'ok');
+  if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',added);
 }
 
 // EXPORT FUNCTIONS
@@ -3807,5 +3815,38 @@ function loadSampleData() {
   loadSample();
   closeMod();
 }
+
+// ── Suite Data Share (Portfolio Group: POI ↔ FCT ↔ PLN) ────────
+const SUITE_SHARE_KEY='aob_suite_raw_csv';
+const SUITE_TOOL_ID='POI';
+const SUITE_TOOL_NAME='PortfolioInSite Web';
+
+function writeSuiteShare(raw,filename,rowCount){
+  if(!raw||raw.length>2*1024*1024)return;
+  try{localStorage.setItem(SUITE_SHARE_KEY,JSON.stringify({source:SUITE_TOOL_NAME,toolId:SUITE_TOOL_ID,timestamp:Date.now(),filename:filename||'jira-export.csv',rowCount:rowCount||0,raw:raw}));}catch(e){}
+}
+function readSuiteShare(){try{const s=localStorage.getItem(SUITE_SHARE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function suiteShareAge(ts){const ms=Date.now()-ts;if(ms<60000)return 'just now';if(ms<3600000)return Math.round(ms/60000)+' min ago';if(ms<86400000)return Math.round(ms/3600000)+'h ago';return Math.round(ms/86400000)+'d ago';}
+function checkSuiteDetect(){
+  const sh=readSuiteShare();
+  const banner=document.getElementById('suiteDetectBanner');
+  if(!banner)return;
+  if(!sh||sh.toolId===SUITE_TOOL_ID||(Date.now()-sh.timestamp)>7*86400000){banner.style.display='none';return;}
+  document.getElementById('suiteDetectMsg').textContent=sh.rowCount+' items from '+sh.source+' · '+suiteShareAge(sh.timestamp);
+  banner.style.display='flex';
+}
+function dismissSuiteDetect(){const b=document.getElementById('suiteDetectBanner');if(b)b.style.display='none';}
+function useDetectedData(){
+  const sh=readSuiteShare();
+  if(!sh||!sh.raw){toast('No suite data found','err');return;}
+  window._suiteRawCsv=sh.raw;window._suiteRawCsvName=sh.filename||'suite-data.csv';
+  const parsed=parseCSV(sh.raw);
+  if(parsed.length<2){toast('Detected data appears empty','err');return;}
+  const mapping=autoMap(parsed[0]);
+  importFromParsedCsv(parsed,mapping);
+  dismissSuiteDetect();
+  toast('Loaded '+sh.rowCount+' items from '+sh.source,'ok');
+}
+// ────────────────────────────────────────────────────────────────
 </script>
 </body></html>

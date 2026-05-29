@@ -1161,6 +1161,11 @@ function aobGateCheck(){
     <div class="container">
         <!-- Tab 1: Import Data -->
         <div class="tab-content active" id="tab-0">
+            <div id="suiteDetectBanner" style="display:none;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.3);border-radius:8px;padding:10px 14px;margin-bottom:14px;align-items:center;gap:12px;flex-wrap:wrap;">
+              <span style="font-size:13px;">📂 <strong>Suite data detected</strong> — <span id="suiteDetectMsg" style="color:var(--t2)"></span></span>
+              <button onclick="useDetectedData()" style="padding:6px 14px;background:var(--cyan,#06b6d4);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">Use this dataset →</button>
+              <button onclick="dismissSuiteDetect()" style="padding:6px 10px;background:none;border:1px solid var(--bdr);border-radius:6px;color:var(--t2);font-size:12px;cursor:pointer;line-height:1;">✕</button>
+            </div>
             <div class="card">
                 <div class="card-title">📥 Import Data</div>
                 <div class="drop-zone" id="dropZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
@@ -1554,6 +1559,7 @@ function aobGateCheck(){
 
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkSuiteDetect,300);
             // Clean up any old bloated localStorage (items used to be stored there)
             try {
                 const old = localStorage.getItem(STORAGE_KEY);
@@ -2496,6 +2502,7 @@ function aobGateCheck(){
             const reader = new FileReader();
             reader.onload = (event) => {
                 const csv = event.target.result;
+                window._suiteRawCsv=csv;window._suiteRawCsvName=file.name;
                 // Parse using FlowInSite-proven CSV engine
                 const parsed = parseCSVContent(csv);
 
@@ -2805,6 +2812,7 @@ function aobGateCheck(){
                     document.getElementById('teamDetectModal')?.remove();
                     console.log('IMPORT: ' + newItems.length + ' items, teams: ' + selected.join(', '), 'Sample keys:', newItems.slice(0,5).map(i=>i.key), 'MEM_ITEMS:', MEM_ITEMS.length);
                     showToast('Imported ' + newItems.length + ' items + ' + selected.length + ' teams', 'success');
+                    if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',newItems.length);
                     updateUI();
                     renderBacklog();
                     renderCapacity();
@@ -3868,6 +3876,41 @@ AIAOB-1030,Anomaly detection and automated alerting,Kofi Mensah,Story,13,PI FY26
     el.style.color = 'var(--green, #10B981)';
   }
 }
+
+        // ── Suite Data Share (Portfolio Group: PLN ↔ POI ↔ FCT) ────────
+        const SUITE_SHARE_KEY='aob_suite_raw_csv';
+        const SUITE_TOOL_ID='PLN';
+        const SUITE_TOOL_NAME='PlanInSite';
+
+        function writeSuiteShare(raw,filename,rowCount){
+          if(!raw||raw.length>2*1024*1024)return;
+          try{localStorage.setItem(SUITE_SHARE_KEY,JSON.stringify({source:SUITE_TOOL_NAME,toolId:SUITE_TOOL_ID,timestamp:Date.now(),filename:filename||'jira-export.csv',rowCount:rowCount||0,raw:raw}));}catch(e){}
+        }
+        function readSuiteShare(){try{const s=localStorage.getItem(SUITE_SHARE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+        function suiteShareAge(ts){const ms=Date.now()-ts;if(ms<60000)return 'just now';if(ms<3600000)return Math.round(ms/60000)+' min ago';if(ms<86400000)return Math.round(ms/3600000)+'h ago';return Math.round(ms/86400000)+'d ago';}
+        function checkSuiteDetect(){
+          const sh=readSuiteShare();
+          const banner=document.getElementById('suiteDetectBanner');
+          if(!banner)return;
+          if(!sh||sh.toolId===SUITE_TOOL_ID||(Date.now()-sh.timestamp)>7*86400000){banner.style.display='none';return;}
+          document.getElementById('suiteDetectMsg').textContent=sh.rowCount+' items from '+sh.source+' · '+suiteShareAge(sh.timestamp);
+          banner.style.display='flex';
+        }
+        function dismissSuiteDetect(){const b=document.getElementById('suiteDetectBanner');if(b)b.style.display='none';}
+        function useDetectedData(){
+          const sh=readSuiteShare();
+          if(!sh||!sh.raw){showToast('No suite data found','error');return;}
+          // Feed through PLN's own CSV parser
+          window._suiteRawCsv=sh.raw;window._suiteRawCsvName=sh.filename||'suite-data.csv';
+          const parsed=parseCSVContent(sh.raw);
+          if(!parsed.items||!parsed.items.length){showToast('Detected data appears empty','error');return;}
+          window._pendingParsedItems=parsed.items;
+          displayPreview(parsed.headers,parsed.items.slice(0,10));
+          dismissSuiteDetect();
+          showToast(parsed.items.length+' items ready from '+sh.source+' — click Import Items to load','success');
+          writeSuiteShare(sh.raw,sh.filename,parsed.items.length);
+        }
+        // ────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
