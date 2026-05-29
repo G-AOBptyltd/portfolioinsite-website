@@ -1,28 +1,22 @@
 # PortfolioInSite Website — Claude Code Project Intelligence
 
+> **Shared rules apply.** See `../.claude/rules/` for brand voice, git workflow, deployment, legal compliance, and API integration rules that govern all AOB repos. See `../CLAUDE.md` for the full AOB context, repo map, and Notion IDs.
+
 ## Project Identity
 
-Marketing website for PortfolioInSite, an AI-native portfolio governance platform for Jira Cloud. This site handles the product landing page, features showcase, documentation, and purchase conversion. **Product is live — no waitlist.** Stripe licensing active since 29 April 2026. Legal pages (Privacy Policy, Terms of Service) are hosted on the parent company site at agilityops.com.au.
+Marketing website for PortfolioInSite — an AI-native portfolio governance platform for Jira Cloud. **Product is live — no waitlist.** Stripe licensing active since 29 April 2026.
 
-**Owner:** Agility Ops Business Pty Ltd (AOB)
 **Domain:** https://portfolioinsite.com.au
-**GitHub:** https://github.com/G-AOBptyltd/portfolioinsite-website
-**Visibility:** Public repo
-**Hosting:** Netlify (auto-deploys from main branch)
+**GitHub:** https://github.com/G-AOBptyltd/portfolioinsite-website (public)
+**Hosting:** Netlify (auto-deploys from main)
 **Analytics:** Google Analytics G-EFMMW3Q8LK
-**Parent brand:** https://agilityops.com.au
+**Brand colour:** Teal/cyan (#06b6d4)
 
-## Product Context
-
-PortfolioInSite is a 19-module portfolio governance platform built on Atlassian Forge. The website describes the full product vision — not just what's built today.
-
-**Live website exists** — NEVER mark as "Coming Soon" on any AOB property.
-
-**Module Architecture (19 modules, 5 build phases):**
+## Product Context — 19 Modules
 
 | Module | Name | Status | Tier |
 |--------|------|--------|------|
-| M01 | MoSCoW Scoring Engine | ✅ Built | FREE |
+| M01 | MoSCoW Scoring Engine | Built | FREE |
 | M03 | Steering Committee Reports | Planned | PAID |
 | M04 | Demand Intake Pipeline | Planned | PAID |
 | M05 | Auto-Scoring Engine | Planned | PAID |
@@ -37,206 +31,102 @@ PortfolioInSite is a 19-module portfolio governance platform built on Atlassian 
 | M15 | Notifications & Alerts | Planned | PAID |
 | M16 | Data Import/Export | Planned | PAID |
 
-**AI Differentiators (lead positioning):**
-- M05 (Auto-Scoring) + M14 (Claude API) are the competitive moat
-- These must be prominently featured, not buried
-- Positioning: "AI-native portfolio governance"
+**AI Differentiators:** M05 (Auto-Scoring) + M14 (Claude API) are the competitive moat — must be prominently featured.
 
 ## Tech Stack
 
-- **Framework:** Static HTML/CSS/JS (no build tools)
-- **CMS:** Notion via AOB Central API (`https://api.agilityops.com.au/api/cms`)
-- **CMS Client:** `js/notion-cms.js` v2 (fetches from central API, SITE_SLUG = 'portfolioinsite')
-- **Fonts:** Inter + Plus Jakarta Sans (Google Fonts)
-- **Styling:** Custom CSS with CSS variables, responsive grid
-- **Hosting:** Netlify (auto-deploy from GitHub main branch)
-- **SEO:** OG tags, Twitter cards, canonical URLs, structured data
+- Static HTML/CSS/JS (no build tools)
+- Fonts: Inter + Plus Jakarta Sans
+- CMS: `js/notion-cms.js` (SITE_SLUG = 'portfolioinsite')
+- Hosting: Netlify, CMS via Central API
+- SEO: OG tags, Twitter cards, canonical URLs, structured data
 
 ## Tools (Standalone Web Apps)
 
-tools/ contains standalone HTML tool pages served at /tools/{slug}:
-- `tools/portfolioinsite.html` → PortfolioInSite (web) — executive portfolio dashboard
-- `tools/forecastinsite.html` → ForecastInSite — dependency mapping and critical path
-- `tools/planinsite.html` → PlanInSite — PI planning and capacity management
+| Path | Tool | Code |
+|------|------|------|
+| `/tools/portfolioinsite` | PortfolioInSite Web — executive portfolio dashboard | POI |
+| `/tools/forecastinsite` | ForecastInSite — dependency mapping and critical path | FCT |
+| `/tools/planinsite` | PlanInSite — PI planning and capacity management | PLN |
 
-These are served via Netlify redirects (already configured in netlify.toml):
-- /tools/portfolioinsite → /tools/portfolioinsite.html
-- /tools/forecastinsite → /tools/forecastinsite.html
-- /tools/planinsite → /tools/planinsite.html
+**Note:** SprintINSite and FlowInSite are hosted on sprintinsite.com, not here.
 
-**Licensing & Checkout (Live — deployed 29 April 2026):**
-- All InSite tools have a **14-day free trial** — Stripe card required upfront (no bypass)
-- Trial badge shows `TRIAL · XXd` (amber) → `LICENSED` (green) → `EXPIRED` (red)
-- **"Start Free Trial"** nav button links to `/pricing` → redirects to `https://agilityops.com.au/pages/pricing` to start trial via Stripe
-- Users must go through central pricing page first — **never link directly to `/tools/forecastinsite` as a trial CTA**
-- After trial/purchase, users access the tool at `/tools/forecastinsite` (already licensed)
-- **Stripe checkout flow:** `/pricing` page → calls `/api/checkout` (central API) with Stripe Price ID → Stripe hosted checkout → `checkout.session.completed` webhook → `stripe-webhook.js` auto-generates licence key → Resend emails key to customer from `support@agilityops.com.au`
-- **Licence key format:** `FCT-{CUSTOMERID}-{YYYYMMDD}-{HASH}` (djb2 checksum)
-- ForecastInSite product code: `FCT` | PortfolioInSite (Jira app): `POI`
-- Stripe webhook destination ID: `we_1TRXId1yWUXkg4kiwkmSy3EE` (on agilityops-hub Netlify site)
+## Licensing & Checkout (Live)
+
+- All InSite tools: **14-day free trial** (Stripe card required upfront)
+- Trial badge: `TRIAL · XXd` (amber) → `LICENSED` (green) → `EXPIRED` (red)
+- **"Start Free Trial"** → `/pricing` → redirects to `agilityops.com.au/pages/pricing`
+- Stripe checkout → `checkout.session.completed` webhook → `stripe-webhook.js` auto-generates licence key → Resend emails key
+- Licence key format: `TOOLCODE-CUSTOMERID-YYYYMMDD-HASH` (djb2)
+- Stripe webhook destination: `we_1TRXId1yWUXkg4kiwkmSy3EE` (on agilityops-hub)
 - Full technical reference: `ClaudeStripeResend.md` in AgilityOpsBizAI workspace
-- **`/pricing` page** — must exist on portfolioinsite.com.au; all "View Pricing" and purchase CTAs link here
 
-## Central API Integration (April 2026)
+## CMS Integration
 
-This site is connected to the AOB Centralised Payment Platform via the shared central API. Products and content are managed in Notion and served via brand-scoped API calls.
-
-**Key files:**
-- `js/notion-cms.js` — CMS client (SITE_SLUG = 'portfolioinsite')
-- `pages/product.html` — Dynamic product detail page (brand-scoped: `?type=products&brand=portfolioinsite`)
-- `pages/content.html` — Dynamic content detail page (site-scoped: `?type=content&site=portfolioinsite`)
-- `netlify.toml` — SPA redirects (`/product/*`, `/content/*`) + API proxy (`/api/cms`)
-
-**How brand-scoped filtering works:**
-- Products API: `?type=products&brand=portfolioinsite` returns only products whose Brand relation in Notion points to the PortfolioInSite site
-- Content API: `?type=content&site=portfolioinsite` returns only content assigned to PortfolioInSite
-- Each site only shows its own branded content — centralise, reuse, simplify
-
-**API proxy in netlify.toml:**
-- `/api/cms` → `https://api.agilityops.com.au/api/cms` (status 200, force)
-- Central API also has dynamic CORS from Sites DB (Domain must include `https://` prefix)
-
-## Deployment (CRITICAL)
-
-- **GitHub connector NOT available** in Claude AI — all deployments via manual paste
-- **Always provide .txt files** for HTML content to prevent browser auto-rendering during copy/paste
-- **Naming convention:** `<page>-PASTE-THIS.txt`
-- **Process:** Open raw .txt in text editor → Select all → Paste into GitHub web editor → Commit to main → Netlify auto-deploys
-- **Git conflicts:** If push rejected, run `git pull --rebase origin main` then `git push origin main`
-
-## R&D Language Rules (MANDATORY)
-
-- **NEVER use:** "R&D-backed" (implies funding secured)
-- **ALWAYS use:** "Methodology under active R&D development" or "Developed within our R&D program"
-- R&D Tax Incentive application is in progress — not approved
+- **Site slug:** `portfolioinsite`
+- **Product page:** `pages/product.html` — `?type=products&brand=portfolioinsite`
+- **Content page:** `pages/content.html` — `?type=content&site=portfolioinsite`
 
 ## File Structure
 
 ```
 portfolioinsite-website/
 ├── index.html              — Homepage (AI-native governance positioning)
-├── css/
-│   └── styles.css          — Main stylesheet
-├── js/
-│   └── main.js             — Interactions, animations
-├── img/                    — All images (moved from root March 2026)
-│   ├── PortfolioInSite1.png    — Product hero shot
-│   ├── PiSSettings1.png        — 19-module settings view
-│   ├── PiSscoring1.png         — MoSCoW scoring interface
-│   ├── PiSAutoScoreAI1.png     — AI-assisted scoring (Claude API)
-│   ├── PiSPPipeline1.png       — Demand intake pipeline
-│   ├── PiSHealthScore1.png     — Health scores dashboard
-│   ├── PiSScenrioModel1.png    — Scenario modelling (note: typo in filename, keep as-is)
-│   ├── PiSInvestmentMix1.png   — Investment mix allocation
-│   ├── AOBLeaders.jpg          — Corporate team photo
-│   ├── AOBGallupColab.jpg      — Partnership photo
-│   ├── AOBEvents.jpg           — Events photo
-│   └── FACT/                   — FACT brand images
+├── css/styles.css
+├── js/main.js
+├── img/
+│   ├── PortfolioInSite1.png, PiSSettings1.png, PiSscoring1.png
+│   ├── PiSAutoScoreAI1.png, PiSPPipeline1.png, PiSHealthScore1.png
+│   ├── PiSScenrioModel1.png (typo in filename — keep as-is)
+│   ├── PiSInvestmentMix1.png
+│   └── AOBLeaders.jpg, AOBGallupColab.jpg, AOBEvents.jpg
 ├── tools/
-│   └── planinsite.html     — PlanInSite v3: PI Planning & Capacity Management (standalone tool)
+│   ├── portfolioinsite.html, forecastinsite.html, planinsite.html
 └── pages/
-    ├── product.html        — Dynamic product detail (central API)
-    ├── content.html        — Dynamic content detail (central API)
-    ├── features.html       — Module showcase with product screenshots
-    ├── how-it-works.html   — Installation and setup guide
-    ├── docs.html           — Documentation
-    ├── module.html         — Dynamic Jira module teaser (self-contained, inline JS required)
-    ├── forecastinsite-module.html   — ForecastInSite module teaser (blue #0284c7 brand)
-    ├── forecastinsite-playbook.html — ForecastInSite playbook (fully self-contained, hpp-* CSS prefix)
-    ├── planinsite-module.html       — PlanInSite module teaser (amber #d97706 brand)
-    ├── portfolioinsite-web-module.html — PortfolioInSite Web module teaser (purple #7c3aed brand)
-    ├── privacy.html        — Local privacy policy (DEPRECATED — footer now links to agilityops.com.au)
-    ├── terms.html          — Local terms (DEPRECATED — footer now links to agilityops.com.au)
-    └── sla.html            — Service level agreement (still local)
+    ├── product.html, content.html
+    ├── features.html       — Module showcase with screenshots
+    ├── how-it-works.html   — Installation/setup guide
+    ├── docs.html
+    ├── module.html          — Dynamic Jira module teaser (self-contained, inline JS)
+    ├── forecastinsite-module.html    — ForecastInSite teaser (blue #0284c7)
+    ├── forecastinsite-playbook.html  — ForecastInSite playbook (hpp-* CSS prefix)
+    ├── planinsite-module.html        — PlanInSite teaser (amber #d97706)
+    ├── portfolioinsite-web-module.html — PortfolioInSite Web teaser (purple #7c3aed)
+    └── sla.html             — Service level agreement (local)
 ```
 
-## InSite Suite Tools (Updated April 2026)
+## InSite Suite Tools Detail
 
-InSite Suite tools are hosted as standalone HTML apps under `/tools/`. This site (portfolioinsite.app) hosts ForecastInSite, PlanInSite, and PortfolioInSite web tools.
-
-- **PlanInSite v3** (`/tools/planinsite`) — PI Planning & Capacity Management
-  - Import Jira/Advanced Roadmaps CSV data
-  - Team velocity and capacity configuration
-  - Backlog refinement with MoSCoW filtering
-  - PI loading board with sprint allocation
-  - Dashboard with analytics and charts
-  - Dark/light theme, fully client-side (no backend)
-
+- **PlanInSite v3** (`/tools/planinsite`) — Jira CSV import, team velocity config, backlog refinement, PI loading board, dashboard. Dark/light theme, fully client-side.
 - **ForecastInSite v4** (`/tools/forecastinsite`) — Lean Agile Financial Modelling (flagship)
-- **PortfolioInSite web** (`/tools/portfolioinsite`) — Portfolio Prioritisation & Health (web standalone)
+- **PortfolioInSite Web** (`/tools/portfolioinsite`) — Portfolio Prioritisation & Health
 
-**Note:** SprintInSite and FlowInSite are hosted on sprintinsite.com, not here.
+## Netlify Forms
+
+- Waitlist form: `waitlist` on `index.html`
 
 ## Image Guidelines
 
-- **Product screenshots:** PNG, `PiS<ModuleName>.png` naming convention
-- **Screenshot requirements:** Full browser width, no OS chrome, no bookmarks bar, realistic data
-- **CSS for screenshots:** `object-fit: contain` (NOT `cover`) — prevents cropping UI content. Add `padding: 16px; background: #f8fafc;` for clean presentation
-- **Corporate photos:** JPG format
-- **From subpages:** Reference as `../img/filename`
-
-## Brand Alignment
-
-- Visual design must match agilityops.com.au corporate style
-- Colour: Teal/cyan (#06b6d4) for PortfolioInSite brand
-- Link back to parent brand: agilityops.com.au
-- Cross-link to sibling products: SprintINSite, FACT
+- Product screenshots: PNG, `PiS<ModuleName>.png` convention
+- `object-fit: contain` (NOT `cover`), with `padding: 16px; background: #f8fafc;`
+- Corporate photos: JPG
+- Subpages: `../img/filename`
 
 ## Deployment History
 
-- **April 17, 2026:** Central API integration — added `js/notion-cms.js`, `pages/product.html`, `pages/content.html`, created `netlify.toml` with SPA redirects and API proxy. Part of AOB Centralised Payment Platform Phase 1.
-- **May 19, 2026:** Suite homepage redesign — standardised Products dropdown nav across all pages, added module teaser pages for PlanInSite and PortfolioInSite Web, fixed CTA routing, fixed licence modal contact details across all tools.
-- **May 20, 2026:** GA4 dedicated property — replaced shared agilityops G-LLJ1KPTDMK tag with dedicated portfolioinsite.com.au property G-EFMMW3Q8LK. og:image added at img/og-image.png (1200×630px branded social share image).
-- **May 25, 2026:** Seat enforcement live — ForecastInSite (`FCT`), PlanInSite (`PLN`), and PortfolioInSite web (`POI`) tools now call `/api/licence-validate` server-side on activation. Added `LIC_VALIDATE_URL`, `getDeviceFingerprint()` (SHA-256 + localStorage fallback), and upgraded `activateLicence()` to async in all three tools. Fail-open on network errors. Verified with 3-browser test on production: seats 1/2 ✅, 2/2 ✅, 3rd browser blocked with seat_limit message ✅. Branch: `feature/seat-enforcement`, merged to main.
-
-## Related Repositories
-
-| Repo | Purpose |
-|------|---------|
-| `PortfolioInSite` | The actual Forge app (private, JavaScript) |
-| `aob-api` | Central API serving all AOB sites (Netlify Functions) |
-| `aob-corporate-hub` | AOB corporate website |
-| `fastact-website` | FACT Training website (first site on central API) |
-| `sprintinsite-website` | Sibling product website |
-| `Jira-Capacity-Point_TeamTracker` | Sibling product Forge app |
-
-## Legal Pages (Updated 6 March 2026)
-
-- **Privacy Policy and Terms of Service** are now served from the parent company site: `https://agilityops.com.au/pages/privacy.html` and `https://agilityops.com.au/pages/terms.html`
-- Footer links use `target="_blank"` to open in new tab
-- Local `pages/privacy.html` and `pages/terms.html` still exist in the repo but are deprecated — footer no longer links to them
-- **SLA** (`pages/sla.html`) remains local to this site
-
-## Netlify Forms (Updated 6 March 2026)
-
-- Waitlist form on `index.html` uses **Netlify Forms** with `data-netlify="true"` attribute
-- Form name: `waitlist`
-- **Setup requirement:** Form detection must be enabled in Netlify dashboard and a redeploy triggered after enabling
-- Form handler in `js/main.js` uses `fetch()` POST with `x-www-form-urlencoded` encoding
+- **May 25, 2026:** Seat enforcement live — FCT/PLN/POI tools now call `/api/licence-validate`. Added fingerprinting, async activation, fail-open. Verified 3-browser test on production.
+- **May 20, 2026:** GA4 dedicated property G-EFMMW3Q8LK. og:image added.
+- **May 19, 2026:** Suite homepage redesign — Products dropdown nav, module teasers, CTA routing fix, licence modal contact fix.
+- **April 17, 2026:** Central API integration — notion-cms.js, product/content pages, netlify.toml.
 
 ## Key Learnings
 
-- CORS: Central API Sites DB Domain field must include `https://` prefix for dynamic CORS to work
-- Central API has 5-minute in-memory cache TTL
-- Brand-scoped filtering: products use `brand=` param, content uses `site=` param (interchangeable in API)
-- Images were originally at repo root — moved to `/img/` directory March 2026
-- `PiSScenrioModel1.png` has a typo ("Scenrio") — keep filename as-is to avoid broken references
-- Features page uses alternating left/right layout for screenshot sections
-- Module badge colours: cyan (#06b6d4) for available, amber (#f59e0b) for "In UAT", green (#10b981) for platform
-- Dependency Mapping (M10) is in UAT — mark with amber badge, not "available"
-- Strategic Quadrant Map is a future standalone module — not currently screenshotted
-- **Legal page consolidation (6 Mar 2026):** Local privacy/terms pages had placeholder content (e.g. `[ABN Placeholder]`). Simplified by pointing footer links to the canonical pages on agilityops.com.au
-- **`pages/module.html` is self-contained** — has no `<script src="../js/main.js">` reference. Any nav JS (dropdown toggles, hamburger) must be inlined at the bottom of the existing `<script>` block.
-- **`pages/forecastinsite-playbook.html` is self-contained** — no shared CSS/JS. Uses `hpp-*` CSS class prefix (not `ndp-*`) for its nav dropdown to avoid future conflicts. Dropdown JS also inlined.
-- **CTA routing rule (CRITICAL):** NEVER link directly to `/tools/*` as a trial or purchase CTA. ALL purchase/trial CTAs must go to `/pricing`. The only acceptable direct `/tools/*` link is "Already licensed? Open Tool →" at the bottom of module teaser pages.
-- **Licence modal contact details:** All three web tools (portfolioinsite.html, forecastinsite.html, planinsite.html) show `support@agilityops.com.au` and link to `portfolioinsite.com.au/pricing` in their licence activation modals.
-- **Notion Pricing DB is empty** — pricing data for agilityops.com.au/pages/pricing is hardcoded in `aob-corporate-hub/pages/pricing.html` STRIPE_LINKS object, not from Notion.
-- **Bundle Stripe prices must match the pricing page calculation** — bundle = 30% off sum of all 5 tools per tier. The pricing page calculates dynamically; Stripe prices must match exactly. Always verify with the TOOLS data in pricing.html before creating Stripe prices.
-- **Bundle tierKey mapping:** The pricing page uses short codes (`s/t/b/mb`) internally for tier selection. These map to Stripe key names via `tierLabelMap = {s:'starter', t:'team', b:'business', mb:'med-business'}`. The full key format is `bundle_{tier}_{billing}` e.g. `bundle_team_monthly`.
-- **Stripe prices are immutable** — once a price has been used in a transaction, the amount cannot be edited. Create a new price and archive the old one. Lookup keys can be reused only after removing from the old price first.
-
-## Workflow Preferences
-
-- **GitHub uploads:** If bulk file uploads or image uploads to GitHub are needed, ask the user to do it directly — provide the file list and instructions rather than attempting complex browser-based uploads
-- **Test branches:** ALWAYS create a test branch for every website before making changes to `main`. Never commit directly to `main` — use a branch, verify, then merge. This prevents accidental breakage on live sites
-- **Deployment .txt files:** When GitHub connector isn't available, provide `<page>-PASTE-THIS.txt` files for manual paste into GitHub web editor
+- `PiSScenrioModel1.png` has a typo — keep filename to avoid broken references
+- Module badge colours: cyan (#06b6d4) available, amber (#f59e0b) "In UAT", green (#10b981) platform
+- Dependency Mapping M10 is in UAT — amber badge, not "available"
+- **`pages/module.html` is self-contained** — nav JS must be inlined
+- **`pages/forecastinsite-playbook.html`** — uses `hpp-*` CSS prefix, dropdown JS inlined
+- **Licence modal contact:** All 3 tools show `support@agilityops.com.au` and link to `portfolioinsite.com.au/pricing`
+- **Notion Pricing DB is empty** — pricing data is hardcoded in `aob-corporate-hub/pages/pricing.html` STRIPE_LINKS object
+- **Bundle Stripe prices:** Must match pricing page calculation (30% off sum of 5 tools per tier). `tierLabelMap = {s:'starter', t:'team', b:'business', mb:'med-business'}`. Key format: `bundle_{tier}_{billing}`.
+- **Stripe prices are immutable** — create new, archive old. Lookup keys reusable only after removing from old price first.
