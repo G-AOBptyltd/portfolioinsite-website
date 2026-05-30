@@ -631,15 +631,15 @@
 
     <div class="sb-label">Core Modules</div>
     <a class="sb-link" href="#command-centre" onclick="setActive(this)"><span class="sb-icon">🎛️</span> Command Centre</a>
-    <a class="sb-link" href="#teams-capacity" onclick="setActive(this)"><span class="sb-icon">👥</span> Teams &amp; Capacity</a>
     <a class="sb-link" href="#budget-actuals" onclick="setActive(this)"><span class="sb-icon">💰</span> Budget &amp; Actuals</a>
+    <a class="sb-link" href="#licences-overhead" onclick="setActive(this)"><span class="sb-icon">📋</span> Licences &amp; Overhead <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#feature-economics" onclick="setActive(this)"><span class="sb-icon">⚡</span> Feature Economics</a>
+    <a class="sb-link" href="#ai-workforce" onclick="setActive(this)"><span class="sb-icon">🤖</span> AI Workforce <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#teams-capacity" onclick="setActive(this)"><span class="sb-icon">👥</span> Teams &amp; Capacity</a>
     <a class="sb-link" href="#value-stream" onclick="setActive(this)"><span class="sb-icon">🌊</span> Value Stream</a>
     <a class="sb-link" href="#productivity" onclick="setActive(this)"><span class="sb-icon">📈</span> Productivity</a>
 
     <div class="sb-label">Advanced</div>
-    <a class="sb-link" href="#ai-workforce" onclick="setActive(this)"><span class="sb-icon">🤖</span> AI Workforce <span class="sb-lock">🔒</span></a>
-    <a class="sb-link" href="#licences-overhead" onclick="setActive(this)"><span class="sb-icon">📋</span> Licences &amp; Overhead <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#relative-sizing" onclick="setActive(this)"><span class="sb-icon">📐</span> Relative Sizing <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#reporting" onclick="setActive(this)"><span class="sb-icon">📊</span> Reporting <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#capacity-planner" onclick="setActive(this)"><span class="sb-icon">🗓️</span> Capacity Planner <span class="sb-lock">🔒</span></a>
@@ -860,66 +860,6 @@
       </div>
     </section>
 
-    <!-- ════════ TEAMS & CAPACITY ════════ -->
-    <section class="module-section" id="teams-capacity">
-      <div class="mod-header">
-        <div class="mod-icon purple">👥</div>
-        <div class="mod-meta">
-          <h2 class="mod-title">Teams &amp; Capacity</h2>
-          <div class="mod-badges">
-            <span class="badge badge-fc">Financial Controller</span>
-            <span class="badge badge-pm">Portfolio Manager</span>
-            <span class="badge badge-dm">Project Manager</span>
-          </div>
-        </div>
-      </div>
-
-      <p class="pub-overview">Teams &amp; Capacity is where you build the financial DNA of your delivery organisation. Every team member, contractor, AI agent, and their associated cost rate is defined here. The module calculates monthly cost, PI-level cost, and FTE allocation automatically — feeding every other financial view in the tool.</p>
-
-      <div class="pub-caps">
-        <h4>Key capabilities</h4>
-        <ul>
-          <li>Create unlimited delivery teams, each with a name, Agile Release Train, and primary role</li>
-          <li>Add FTE members and contractors with daily or monthly cost rates — the tool converts to consistent monthly figures automatically</li>
-          <li>Model AI agents as first-class team members with licence cost, compute cost, and productivity multiplier</li>
-          <li>See real-time monthly team cost totals and PI-level projections as you configure each team</li>
-          <li>Employment type badges (FTE / Contractor / AI Agent) give instant visibility of team composition</li>
-        </ul>
-      </div>
-
-      <div class="video-wrap">
-        <!-- DROP MP4: img/forecastinsite/videos/teams-capacity.mp4 -->
-        <div class="video-placeholder">
-          <div class="play-ring">▶</div>
-          <p>Teams &amp; Capacity walkthrough<br><em>Video coming soon</em></p>
-        </div>
-      </div>
-      <p class="video-label">⏱ ~90 seconds · Adding teams, members, cost rates, AI agents</p>
-
-      <div class="gate-wrap">
-        <div class="gate-inner">
-          <div class="gated-steps">
-            <h4>Building your team cost model</h4>
-            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Create your teams</h5><p>Click Add Team. Give it a name that matches your Jira project or ART structure. Consistent naming matters — it flows through to all charts and reports.</p></div></div>
-            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Add members with cost rates</h5><p>For each member, enter their name, role, employment type (FTE or Contractor), and cost rate. Choose Daily or Monthly rate — the tool normalises to monthly using a 20-working-day multiplier.</p></div></div>
-            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set FTE percentage</h5><p>If a member is only 50% allocated to this team, set FTE% to 0.5. Monthly cost and PI projections respect the FTE weighting.</p></div></div>
-            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Add AI agents</h5><p>Click Add AI Agent. Enter the tool name, monthly licence cost, estimated compute cost, and productivity multiplier (e.g. 1.3 = 30% productivity boost). The tool models ROI automatically.</p></div></div>
-          </div>
-          <div class="tips-grid">
-            <div class="tip-card"><h5>💡 Use blended rates for contractors</h5><p>If you don't know individual contractor rates, use a blended market rate for the role. This is more defensible in governance reviews than guessing.</p></div>
-            <div class="tip-card"><h5>💡 AI agent ROI model</h5><p>The productivity multiplier converts AI cost to human-equivalent value. A 1.5x multiplier on a $500/month tool means you're getting $750 worth of human capacity — model this before every AI tool renewal.</p></div>
-          </div>
-        </div>
-        <div class="gate-fade"></div>
-        <div class="gate-card">
-          <div class="gate-lock">🔒</div>
-          <h3>Full Teams &amp; Capacity Playbook</h3>
-          <p>Includes cost rate benchmarks by role, FTE allocation frameworks, contractor cost modelling guide, and the AI workforce ROI calculator methodology.</p>
-          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
-        </div>
-      </div>
-    </section>
-
     <!-- ════════ BUDGET & ACTUALS ════════ -->
     <section class="module-section" id="budget-actuals">
       <div class="mod-header">
@@ -970,6 +910,60 @@
           <div class="gate-lock">🔒</div>
           <h3>Full Budget &amp; Actuals Playbook</h3>
           <p>Includes PI budget template, actuals entry workflow, variance narrative guide, and finance governance calendar.</p>
+          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ LICENCES & OVERHEAD ════════ -->
+    <section class="module-section" id="licences-overhead">
+      <div class="mod-header">
+        <div class="mod-icon slate">📋</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Licences &amp; Overhead</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Licences &amp; Overhead captures the non-headcount cost of delivery — software licences, platform costs, tooling subscriptions, and overhead allocations. In most agile organisations, this category is 15–25% of total delivery cost and is almost never modelled accurately.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Track all software and platform licences with seat counts, unit costs, and renewal dates</li>
+          <li>Allocate overhead costs (office, hardware, tooling) across teams by headcount or percentage</li>
+          <li>See total true cost of delivery (headcount + licences + overhead) per team and PI</li>
+          <li>Licence renewal calendar to prevent unbudgeted surprises</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/licences-overhead.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Licences &amp; Overhead walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Building your true cost model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Gather all non-headcount costs</h5><p>Pull your last invoice from every software vendor. Include Jira, Confluence, GitHub, CI/CD tools, monitoring, security tooling, and cloud infrastructure. You'll likely find 20–30% more spend than your budget spreadsheet shows.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Allocate to teams</h5><p>Most licences are enterprise or per-seat. Per-seat licences allocate to the team that uses them. Enterprise licences can be split by headcount proportion or usage percentage.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 True cost = headcount + licences + overhead</h5><p>Most "agile cost" conversations only count salaries. Add licences and overhead and the number typically increases by 30–40%. Know your real number.</p></div>
+            <div class="tip-card"><h5>💡 Renewal calendar</h5><p>Enter every licence renewal date. ForecastInSite flags upcoming renewals so you can budget for them in the next PI — not scramble for emergency approval.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Licences &amp; Overhead Playbook</h3>
+          <p>Software licence audit checklist, overhead allocation methodologies, and the true cost model explained with worked examples.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
@@ -1026,6 +1020,123 @@
           <div class="gate-lock">🔒</div>
           <h3>Full Feature Economics Playbook</h3>
           <p>Includes feature scoring framework, ROI calculation methodology, cost-per-point benchmarks by team type, and the incomplete feature governance model.</p>
+          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ AI WORKFORCE ════════ -->
+    <section class="module-section" id="ai-workforce">
+      <div class="mod-header">
+        <div class="mod-icon">🤖</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">AI Workforce</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-dm">Project Manager</span>
+            <span class="badge badge-new">v5 Feature</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">AI Workforce is ForecastInSite's dedicated module for modelling the financial and productivity impact of AI agents within your delivery teams. As AI tooling becomes a line item on every technology budget, AI Workforce gives you the governance framework to justify, track, and optimise that spend.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Model AI agents as team members with licence cost, compute cost, and productivity multiplier</li>
+          <li>Calculate the human-equivalent cost of each AI tool — making ROI tangible</li>
+          <li>See the blended human + AI cost per team against output delivered</li>
+          <li>Track AI tool proliferation across teams and surface duplication of tools</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/ai-workforce.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>AI Workforce walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Governing your AI tooling spend</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Audit all AI tools in use</h5><p>Before modelling, list every AI tool each team uses — GitHub Copilot, Claude, Notion AI, Jira AI, etc. Many organisations discover 3–5x more AI spend than finance is tracking.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Set the productivity multiplier honestly</h5><p>Don't use vendor claims. Use your team's actual experience. A conservative 1.2x (20% productivity boost) is more defensible than 2x and just as valuable in an ROI argument.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Compare human-equivalent cost</h5><p>If a $500/month AI tool with a 1.3x multiplier replaces the equivalent of 1.3 humans at $8,000/month, the ROI is self-evident. ForecastInSite surfaces this comparison automatically.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Compute cost matters</h5><p>For internally deployed models, compute cost can dwarf licence cost. Always include both in your AI cost model — licence + compute = true AI spend.</p></div>
+            <div class="tip-card"><h5>💡 Tool consolidation opportunity</h5><p>When multiple teams use different AI tools for the same purpose, AI Workforce surfaces the duplication. A single enterprise licence is almost always cheaper.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full AI Workforce Playbook</h3>
+          <p>AI tool audit template, productivity multiplier benchmarks by tool category, and the complete ROI governance framework for AI investment decisions.</p>
+          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ TEAMS & CAPACITY ════════ -->
+    <section class="module-section" id="teams-capacity">
+      <div class="mod-header">
+        <div class="mod-icon purple">👥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Teams &amp; Capacity</h2>
+          <div class="mod-badges">
+            <span class="badge badge-fc">Financial Controller</span>
+            <span class="badge badge-pm">Portfolio Manager</span>
+            <span class="badge badge-dm">Project Manager</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Teams &amp; Capacity is where you build the financial DNA of your delivery organisation. Every team member, contractor, AI agent, and their associated cost rate is defined here. The module calculates monthly cost, PI-level cost, and FTE allocation automatically — feeding every other financial view in the tool.</p>
+
+      <div class="pub-caps">
+        <h4>Key capabilities</h4>
+        <ul>
+          <li>Create unlimited delivery teams, each with a name, Agile Release Train, and primary role</li>
+          <li>Add FTE members and contractors with daily or monthly cost rates — the tool converts to consistent monthly figures automatically</li>
+          <li>Model AI agents as first-class team members with licence cost, compute cost, and productivity multiplier</li>
+          <li>See real-time monthly team cost totals and PI-level projections as you configure each team</li>
+          <li>Employment type badges (FTE / Contractor / AI Agent) give instant visibility of team composition</li>
+        </ul>
+      </div>
+
+      <div class="video-wrap">
+        <!-- DROP MP4: img/forecastinsite/videos/teams-capacity.mp4 -->
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Teams &amp; Capacity walkthrough<br><em>Video coming soon</em></p>
+        </div>
+      </div>
+      <p class="video-label">⏱ ~90 seconds · Adding teams, members, cost rates, AI agents</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Building your team cost model</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Create your teams</h5><p>Click Add Team. Give it a name that matches your Jira project or ART structure. Consistent naming matters — it flows through to all charts and reports.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Add members with cost rates</h5><p>For each member, enter their name, role, employment type (FTE or Contractor), and cost rate. Choose Daily or Monthly rate — the tool normalises to monthly using a 20-working-day multiplier.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set FTE percentage</h5><p>If a member is only 50% allocated to this team, set FTE% to 0.5. Monthly cost and PI projections respect the FTE weighting.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Add AI agents</h5><p>Click Add AI Agent. Enter the tool name, monthly licence cost, estimated compute cost, and productivity multiplier (e.g. 1.3 = 30% productivity boost). The tool models ROI automatically.</p></div></div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card"><h5>💡 Use blended rates for contractors</h5><p>If you don't know individual contractor rates, use a blended market rate for the role. This is more defensible in governance reviews than guessing.</p></div>
+            <div class="tip-card"><h5>💡 AI agent ROI model</h5><p>The productivity multiplier converts AI cost to human-equivalent value. A 1.5x multiplier on a $500/month tool means you're getting $750 worth of human capacity — model this before every AI tool renewal.</p></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Full Teams &amp; Capacity Playbook</h3>
+          <p>Includes cost rate benchmarks by role, FTE allocation frameworks, contractor cost modelling guide, and the AI workforce ROI calculator methodology.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
@@ -1135,117 +1246,6 @@
           <div class="gate-lock">🔒</div>
           <h3>Full Productivity Playbook</h3>
           <p>Velocity benchmarks by team size, capacity utilisation guidance, and the AI productivity ROI model explained step by step.</p>
-          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════ AI WORKFORCE ════════ -->
-    <section class="module-section" id="ai-workforce">
-      <div class="mod-header">
-        <div class="mod-icon">🤖</div>
-        <div class="mod-meta">
-          <h2 class="mod-title">AI Workforce</h2>
-          <div class="mod-badges">
-            <span class="badge badge-fc">Financial Controller</span>
-            <span class="badge badge-dm">Project Manager</span>
-            <span class="badge badge-new">v5 Feature</span>
-          </div>
-        </div>
-      </div>
-
-      <p class="pub-overview">AI Workforce is ForecastInSite's dedicated module for modelling the financial and productivity impact of AI agents within your delivery teams. As AI tooling becomes a line item on every technology budget, AI Workforce gives you the governance framework to justify, track, and optimise that spend.</p>
-
-      <div class="pub-caps">
-        <h4>Key capabilities</h4>
-        <ul>
-          <li>Model AI agents as team members with licence cost, compute cost, and productivity multiplier</li>
-          <li>Calculate the human-equivalent cost of each AI tool — making ROI tangible</li>
-          <li>See the blended human + AI cost per team against output delivered</li>
-          <li>Track AI tool proliferation across teams and surface duplication of tools</li>
-        </ul>
-      </div>
-
-      <div class="video-wrap">
-        <!-- DROP MP4: img/forecastinsite/videos/ai-workforce.mp4 -->
-        <div class="video-placeholder">
-          <div class="play-ring">▶</div>
-          <p>AI Workforce walkthrough<br><em>Video coming soon</em></p>
-        </div>
-      </div>
-
-      <div class="gate-wrap">
-        <div class="gate-inner">
-          <div class="gated-steps">
-            <h4>Governing your AI tooling spend</h4>
-            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Audit all AI tools in use</h5><p>Before modelling, list every AI tool each team uses — GitHub Copilot, Claude, Notion AI, Jira AI, etc. Many organisations discover 3–5x more AI spend than finance is tracking.</p></div></div>
-            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Set the productivity multiplier honestly</h5><p>Don't use vendor claims. Use your team's actual experience. A conservative 1.2x (20% productivity boost) is more defensible than 2x and just as valuable in an ROI argument.</p></div></div>
-            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Compare human-equivalent cost</h5><p>If a $500/month AI tool with a 1.3x multiplier replaces the equivalent of 1.3 humans at $8,000/month, the ROI is self-evident. ForecastInSite surfaces this comparison automatically.</p></div></div>
-          </div>
-          <div class="tips-grid">
-            <div class="tip-card"><h5>💡 Compute cost matters</h5><p>For internally deployed models, compute cost can dwarf licence cost. Always include both in your AI cost model — licence + compute = true AI spend.</p></div>
-            <div class="tip-card"><h5>💡 Tool consolidation opportunity</h5><p>When multiple teams use different AI tools for the same purpose, AI Workforce surfaces the duplication. A single enterprise licence is almost always cheaper.</p></div>
-          </div>
-        </div>
-        <div class="gate-fade"></div>
-        <div class="gate-card">
-          <div class="gate-lock">🔒</div>
-          <h3>Full AI Workforce Playbook</h3>
-          <p>AI tool audit template, productivity multiplier benchmarks by tool category, and the complete ROI governance framework for AI investment decisions.</p>
-          <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════ LICENCES & OVERHEAD ════════ -->
-    <section class="module-section" id="licences-overhead">
-      <div class="mod-header">
-        <div class="mod-icon slate">📋</div>
-        <div class="mod-meta">
-          <h2 class="mod-title">Licences &amp; Overhead</h2>
-          <div class="mod-badges">
-            <span class="badge badge-fc">Financial Controller</span>
-          </div>
-        </div>
-      </div>
-
-      <p class="pub-overview">Licences &amp; Overhead captures the non-headcount cost of delivery — software licences, platform costs, tooling subscriptions, and overhead allocations. In most agile organisations, this category is 15–25% of total delivery cost and is almost never modelled accurately.</p>
-
-      <div class="pub-caps">
-        <h4>Key capabilities</h4>
-        <ul>
-          <li>Track all software and platform licences with seat counts, unit costs, and renewal dates</li>
-          <li>Allocate overhead costs (office, hardware, tooling) across teams by headcount or percentage</li>
-          <li>See total true cost of delivery (headcount + licences + overhead) per team and PI</li>
-          <li>Licence renewal calendar to prevent unbudgeted surprises</li>
-        </ul>
-      </div>
-
-      <div class="video-wrap">
-        <!-- DROP MP4: img/forecastinsite/videos/licences-overhead.mp4 -->
-        <div class="video-placeholder">
-          <div class="play-ring">▶</div>
-          <p>Licences &amp; Overhead walkthrough<br><em>Video coming soon</em></p>
-        </div>
-      </div>
-
-      <div class="gate-wrap">
-        <div class="gate-inner">
-          <div class="gated-steps">
-            <h4>Building your true cost model</h4>
-            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Gather all non-headcount costs</h5><p>Pull your last invoice from every software vendor. Include Jira, Confluence, GitHub, CI/CD tools, monitoring, security tooling, and cloud infrastructure. You'll likely find 20–30% more spend than your budget spreadsheet shows.</p></div></div>
-            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Allocate to teams</h5><p>Most licences are enterprise or per-seat. Per-seat licences allocate to the team that uses them. Enterprise licences can be split by headcount proportion or usage percentage.</p></div></div>
-          </div>
-          <div class="tips-grid">
-            <div class="tip-card"><h5>💡 True cost = headcount + licences + overhead</h5><p>Most "agile cost" conversations only count salaries. Add licences and overhead and the number typically increases by 30–40%. Know your real number.</p></div>
-            <div class="tip-card"><h5>💡 Renewal calendar</h5><p>Enter every licence renewal date. ForecastInSite flags upcoming renewals so you can budget for them in the next PI — not scramble for emergency approval.</p></div>
-          </div>
-        </div>
-        <div class="gate-fade"></div>
-        <div class="gate-card">
-          <div class="gate-lock">🔒</div>
-          <h3>Full Licences &amp; Overhead Playbook</h3>
-          <p>Software licence audit checklist, overhead allocation methodologies, and the true cost model explained with worked examples.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
