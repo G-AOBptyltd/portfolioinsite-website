@@ -1234,7 +1234,7 @@ function aobGateCheck(){
         <button class="btn" onclick="toggleExpMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
         <div class="exp-drop" id="expDrop">
           <button onclick="doExportJSON()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Export JSON (Full Backup)</button>
-          <button onclick="doExportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Export CSV (Features)</button>
+          <button onclick="doExportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Export CSV (Features — Theme to Feature level)</button>
         </div>
       </div>
 
@@ -1371,7 +1371,7 @@ function aobGateCheck(){
       </div>
       <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
         <button class="iop sel" data-m="json" onclick="selImpMode('json')" style="padding:8px 18px;border:1px solid var(--ac);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:rgba(14,165,233,.1);color:var(--t1);transition:var(--tr)">JSON Backup</button>
-        <button class="iop" data-m="csv" onclick="selImpMode('csv')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">CSV Features</button>
+        <button class="iop" data-m="csv" onclick="selImpMode('csv')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">Jira CSV</button>
         <button class="iop" data-m="portfolioinsite" onclick="selImpMode('portfolioinsite')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">PortfolioInSite</button>
       </div>
 
@@ -1392,7 +1392,7 @@ function aobGateCheck(){
         <div class="drop-zone" onclick="document.getElementById('impCsvInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleImpCsvDrop(event)" style="border:2px dashed var(--bdr);border-radius:var(--r);padding:32px 20px;text-align:center;cursor:pointer;transition:var(--tr);color:var(--t2)">
           <div style="font-size:32px;margin-bottom:8px">&#128196;</div>
           <div style="font-weight:600">Drop CSV file here or click to browse</div>
-          <div style="font-size:11px;color:var(--t3);margin-top:4px">CSV with columns: Name, Type, Team, Story Points, Status, Business Value, PI</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:4px">Jira CSV export — ForecastInSite imports Theme → Feature level items. Stories, Tasks, and Bugs are automatically skipped.</div>
           <input type="file" id="impCsvInput" accept=".csv,.tsv" onchange="handleImpCsvFile(this)" style="display:none">
         </div>
         <div id="impCsvPreview" style="display:none;margin-top:12px;padding:12px;background:var(--bgi);border-radius:var(--r);font-size:12px;color:var(--t2)"></div>
@@ -9744,13 +9744,18 @@ function processImpCsvFile(file) {
         return vals;
       });
 
-      const features = rows.map(row => {
+      // Issue types ForecastInSite cares about: Theme → Feature (portfolio and program level)
+      const PORTFOLIO_TYPES = ['theme', 'initiative', 'epic', 'safe epic', 'portfolio epic', 'feature', 'enabler feature', 'enabler', 'capability', 'solution epic', 'business epic'];
+      // Issue types ForecastInSite ignores: Story and below (team execution level)
+      const IGNORED_TYPES = ['story', 'user story', 'sub-story', 'substory', 'task', 'sub-task', 'subtask', 'bug', 'defect', 'spike', 'chore', 'improvement', 'test', 'support'];
+
+      const allParsed = rows.map(row => {
         const obj = {};
         headers.forEach((h, i) => { obj[h] = row[i] || ''; });
         return {
           id: gid('feat'),
           name: obj['name'] || obj['summary'] || obj['title'] || '',
-          type: obj['type'] || obj['issue type'] || 'Feature',
+          type: obj['type'] || obj['issue type'] || '',
           teamId: '', // Will need manual assignment
           storyPoints: parseInt(obj['story points'] || obj['points'] || obj['effort']) || 0,
           status: obj['status'] || 'To Do',
@@ -9769,10 +9774,23 @@ function processImpCsvFile(file) {
         };
       }).filter(f => f.name);
 
+      // Filter to portfolio-level items only (Theme → Feature). Unknown types are included.
+      const features = allParsed.filter(f => {
+        const t = (f.type || '').toLowerCase().trim();
+        if (!t) return true; // no type column — include
+        if (IGNORED_TYPES.some(it => t === it || t.startsWith(it))) return false;
+        return true; // known portfolio type OR unrecognised type → include
+      });
+      const ignoredCount = allParsed.length - features.length;
+
       impPendingData = { features };
       const preview = document.getElementById('impCsvPreview');
-      preview.innerHTML = `<strong style="color:var(--hi)">✓ ${features.length} features parsed from CSV</strong><br>
-        Teams will need to be assigned after import.`;
+      let msg = `<strong style="color:var(--hi)">✓ ${features.length} portfolio item${features.length !== 1 ? 's' : ''} imported</strong><br>`;
+      if (ignoredCount > 0) {
+        msg += `<span style="color:var(--t2)">${ignoredCount} item${ignoredCount !== 1 ? 's' : ''} skipped — Story / Task / Bug level (ForecastInSite works at Feature level and above)</span><br>`;
+      }
+      msg += `<span style="color:var(--t3)">Teams will need to be assigned after import.</span>`;
+      preview.innerHTML = msg;
       preview.style.display = 'block';
     } catch (err) {
       const preview = document.getElementById('impCsvPreview');
@@ -9809,7 +9827,7 @@ function detectPortfolioInSiteData() {
 
     // Convert PortfolioInSite items to ForecastInSite features
     const features = found.items
-      .filter(item => ['Epic', 'Feature', 'SAFe Epic'].includes(item.type))
+      .filter(item => ['Theme', 'Initiative', 'Epic', 'SAFe Epic', 'Portfolio Epic', 'Feature', 'Enabler Feature', 'Capability'].includes(item.type))
       .map(item => {
         const scores = item.scores || {};
         const total = [scores.q1, scores.q2, scores.q3, scores.q4, scores.q5]

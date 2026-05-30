@@ -541,6 +541,60 @@
 
     /* ── ACTIVE NAV HIGHLIGHT ── */
     .module-section { transition: none; }
+
+    /* ── SETUP PATH SIDEBAR ── */
+    .sb-step { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; color: var(--t2); font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .sb-step:hover { background: var(--bg2); color: var(--t1); }
+    .sb-step.active { background: rgba(6,182,212,.1); color: var(--ac); font-weight: 600; }
+    .sb-step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--bdr); color: var(--t2); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sb-step.active .sb-step-num { background: var(--ac); color: #fff; }
+
+    /* ── SETUP NAV STRIP (prev/next inside sections) ── */
+    .setup-nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: rgba(6,182,212,.06); border: 1px solid rgba(6,182,212,.2); border-radius: 10px; margin: 32px 0 0; flex-wrap: wrap; gap: 10px; }
+    .setup-nav-label { font-size: 12px; font-weight: 700; color: var(--ac); text-transform: uppercase; letter-spacing: .05em; }
+    .setup-nav-btns { display: flex; gap: 8px; }
+    .setup-nav-btn { padding: 7px 16px; border-radius: 7px; border: 1px solid var(--bdr); background: var(--bg); color: var(--t2); font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .setup-nav-btn:hover { border-color: var(--ac); color: var(--ac); background: rgba(6,182,212,.05); }
+    .setup-nav-btn.primary { background: var(--ac); color: #fff; border-color: var(--ac); }
+    .setup-nav-btn.primary:hover { background: var(--ac-dark); border-color: var(--ac-dark); color: #fff; }
+    .setup-nav-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+    /* ── WHAT IT SOLVES / QUICK SETUP — overview cards ── */
+    .solve-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+    .solve-card { background: var(--bg1); border: 1px solid var(--bdr); border-radius: 12px; padding: 20px; }
+    .solve-card-icon { font-size: 24px; margin-bottom: 10px; }
+    .solve-card h4 { font-size: 13px; font-weight: 700; color: var(--t1); margin-bottom: 6px; }
+    .solve-card p { font-size: 12px; color: var(--t2); line-height: 1.6; }
+    .output-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+    .output-item { display: flex; align-items: flex-start; gap: 10px; padding: 14px; background: var(--bg1); border: 1px solid var(--bdr); border-radius: 10px; }
+    .output-item-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ac); margin-top: 4px; flex-shrink: 0; }
+    .output-item p { font-size: 12px; color: var(--t1); line-height: 1.5; margin: 0; }
+
+    /* ── QUICK SETUP STEPS ── */
+    .qs-steps { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+    .qs-step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 20px; background: var(--bg1); border: 1px solid var(--bdr); border-radius: 12px; }
+    .qs-step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--ac); color: #fff; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .qs-step-body h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin: 0 0 4px; }
+    .qs-step-body p { font-size: 12px; color: var(--t2); line-height: 1.6; margin: 0; }
+    .qs-step-dep { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 600; color: var(--amber); background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 2px 8px; }
+    .qs-checklist { list-style: none; padding: 0; margin: 20px 0; display: flex; flex-direction: column; gap: 8px; }
+    .qs-checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--t1); }
+    .qs-checklist li::before { content: '✓'; font-weight: 700; color: var(--green); flex-shrink: 0; }
+
+    /* ── IMPORT GUIDE ── */
+    .hier-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 8px; margin-bottom: 6px; }
+    .hier-row.yes { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); }
+    .hier-row.no  { background: rgba(148,163,184,.06); border: 1px solid var(--bdr); opacity: .7; }
+    .hier-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: .04em; }
+    .hier-badge.yes { background: rgba(16,185,129,.15); color: #059669; }
+    .hier-badge.no  { background: rgba(148,163,184,.15); color: var(--t3); }
+    .hier-name { font-size: 13px; font-weight: 600; color: var(--t1); }
+    .hier-desc { font-size: 11px; color: var(--t2); flex: 1; }
+
+    @media (max-width: 900px) {
+      .solve-grid { grid-template-columns: 1fr; }
+      .output-grid { grid-template-columns: 1fr; }
+    }
   </style>
 
   <!-- TWITTER CARD -->
@@ -628,6 +682,17 @@
     <div class="sb-label">Getting Started</div>
     <a class="sb-link active" href="#getting-started" onclick="setActive(this)"><span class="sb-icon">🚀</span> Getting Started</a>
     <a class="sb-link" href="#roles" onclick="setActive(this)"><span class="sb-icon">🎭</span> Roles Guide</a>
+    <a class="sb-link" href="#what-it-solves" onclick="setActive(this)"><span class="sb-icon">💡</span> What ForecastInSite Solves</a>
+    <a class="sb-link" href="#import-guide" onclick="setActive(this)"><span class="sb-icon">📥</span> Import Guide</a>
+
+    <div class="sb-label">Setup Path</div>
+    <a class="sb-step" href="#quick-setup" onclick="setActive(this)" id="sp-0"><span class="sb-step-num">0</span> Quick Setup Guide</a>
+    <a class="sb-step" href="#teams-capacity" onclick="setActive(this)" id="sp-1"><span class="sb-step-num">1</span> Teams &amp; Capacity</a>
+    <a class="sb-step" href="#budget-actuals" onclick="setActive(this)" id="sp-2"><span class="sb-step-num">2</span> Budget &amp; Actuals</a>
+    <a class="sb-step" href="#licences-overhead" onclick="setActive(this)" id="sp-3"><span class="sb-step-num">3</span> Licences &amp; Overhead</a>
+    <a class="sb-step" href="#feature-economics" onclick="setActive(this)" id="sp-4"><span class="sb-step-num">4</span> Feature Economics</a>
+    <a class="sb-step" href="#ai-workforce" onclick="setActive(this)" id="sp-5"><span class="sb-step-num">5</span> AI Workforce</a>
+    <a class="sb-step" href="#command-centre" onclick="setActive(this)" id="sp-6"><span class="sb-step-num">6</span> Command Centre</a>
 
     <div class="sb-label">Core Modules</div>
     <a class="sb-link" href="#command-centre" onclick="setActive(this)"><span class="sb-icon">🎛️</span> Command Centre</a>
@@ -791,6 +856,251 @@
       </div>
     </section>
 
+    <!-- ════════ WHAT FORECASTINSITE SOLVES ════════ -->
+    <section class="module-section" id="what-it-solves">
+      <div class="mod-header">
+        <div class="mod-icon">💡</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">What ForecastInSite Solves</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+            <span class="badge badge-v5">v5</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">Most delivery organisations track headcount in HR, software licences in IT, and project spend in a spreadsheet — but nobody has a single, honest view of the true cost of delivery per team, per PI, or per feature. ForecastInSite is a browser-based financial modelling platform that brings those numbers together and makes the conversation concrete.</p>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">The problem it solves</h4>
+      <div class="solve-grid">
+        <div class="solve-card">
+          <div class="solve-card-icon">🔍</div>
+          <h4>Hidden delivery cost</h4>
+          <p>Headcount is visible. Licences, overhead, and AI tooling are scattered. ForecastInSite builds one fully-loaded cost model — salaries + licences + overhead — per team and per PI.</p>
+        </div>
+        <div class="solve-card">
+          <div class="solve-card-icon">📊</div>
+          <h4>No feature-level ROI</h4>
+          <p>Executives invest in features, not sprints. ForecastInSite maps every feature to a cost, a business value score, and a revenue figure — answering "what did we get for the $1.6M we spent this PI?"</p>
+        </div>
+        <div class="solve-card">
+          <div class="solve-card-icon">🤖</div>
+          <h4>AI spend without governance</h4>
+          <p>AI tooling is now a line item on every technology budget. ForecastInSite models AI agents as first-class team members, making their cost and productivity multiplier visible and defensible.</p>
+        </div>
+      </div>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Who uses it and what they see</h4>
+      <div class="solve-grid">
+        <div class="solve-card" style="border-top:3px solid #f59e0b;">
+          <div class="solve-card-icon">💼</div>
+          <h4>Financial Controller</h4>
+          <p>Budget vs actuals by team, variance RAG status, forecast to PI-end, licence renewal calendar, and the fully-loaded cost of delivery. Built for the finance governance conversation.</p>
+        </div>
+        <div class="solve-card" style="border-top:3px solid #06b6d4;">
+          <div class="solve-card-icon">🗂️</div>
+          <h4>Portfolio Manager</h4>
+          <p>Feature ROI, investment mix by value stream, cost-per-point trends across PIs, and which features are generating revenue versus consuming capital with nothing to show.</p>
+        </div>
+        <div class="solve-card" style="border-top:3px solid #8b5cf6;">
+          <div class="solve-card-icon">🚀</div>
+          <h4>Project / Delivery Manager</h4>
+          <p>Team capacity utilisation, velocity trends, AI agent productivity contribution, RAID log, and milestone tracking — connecting financial performance to delivery health.</p>
+        </div>
+      </div>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Key outputs</h4>
+      <div class="output-grid">
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>True cost per PI</strong> — headcount + licences + overhead, per team</p></div>
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>Cost per story point</strong> — your unit economics, tracked across PIs</p></div>
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>Feature ROI</strong> — cost invested vs business value and revenue realised</p></div>
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>Budget variance</strong> — RAG-rated actuals against approved PI budget</p></div>
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>AI workforce ROI</strong> — licence + compute cost vs human-equivalent productivity</p></div>
+        <div class="output-item"><div class="output-item-dot"></div><p><strong>Governance artefacts</strong> — RAID log, milestone tracker, capacity planner</p></div>
+      </div>
+
+      <div class="setup-nav">
+        <span class="setup-nav-label">Up Next</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn primary" href="#quick-setup">Start Setup Guide →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ QUICK SETUP GUIDE ════════ -->
+    <section class="module-section" id="quick-setup">
+      <div class="mod-header">
+        <div class="mod-icon">⚡</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Quick Setup Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">ForecastInSite is ready to use in minutes — but the quality of what it produces depends on the quality of the data you put in. This guide covers what to gather before you open the tool, and the correct sequence for building your model so that each module has what it needs.</p>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Before you open the tool — gather this first</h4>
+      <ul class="qs-checklist">
+        <li>Your team list — team names, Agile Release Train (ART) structure if applicable</li>
+        <li>Headcount per team — names, roles, employment type (FTE or Contractor)</li>
+        <li>Cost rates — daily or monthly rate per person (use blended rates if individual rates are sensitive)</li>
+        <li>Your approved PI budget per team (or the previous PI actuals if a new PI hasn't been approved yet)</li>
+        <li>Your software licence list — vendor, cost model (per-seat or flat), renewal dates</li>
+        <li>A Jira export at Feature level — Themes, Initiatives, Epics, and Features only (not Stories or Tasks)</li>
+      </ul>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Setup sequence — follow this order</h4>
+      <div class="qs-steps">
+        <div class="qs-step">
+          <div class="qs-step-num">1</div>
+          <div class="qs-step-body">
+            <h4>Teams &amp; Capacity</h4>
+            <p>Create your delivery teams and add members with cost rates. This is the foundation — every other module depends on teams existing. Include AI agents here too if you want them costed.</p>
+            <span class="qs-step-dep">⚠ Must be completed before Budget &amp; Actuals, Feature Economics, and AI Workforce</span>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-num">2</div>
+          <div class="qs-step-body">
+            <h4>Budget &amp; Actuals</h4>
+            <p>Set the approved budget per team for the current PI. The tool will compare this against actuals as the PI progresses and surface RAG-rated variance automatically.</p>
+            <span class="qs-step-dep">⚠ Requires teams to be set up first</span>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-num">3</div>
+          <div class="qs-step-body">
+            <h4>Licences &amp; Overhead</h4>
+            <p>Add all non-headcount costs — software licences, platform subscriptions, overhead allocations. This can be done independently of teams, but is most useful once team structure is defined so costs can be allocated correctly.</p>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-num">4</div>
+          <div class="qs-step-body">
+            <h4>Feature Economics</h4>
+            <p>Import your Jira export (Feature level and above) or enter features manually. Assign each feature to a team — cost-per-feature and ROI calculations are immediate once teams have cost rates.</p>
+            <span class="qs-step-dep">⚠ Requires teams to be set up first. Richer with Budget &amp; Actuals already entered.</span>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-num">5</div>
+          <div class="qs-step-body">
+            <h4>AI Workforce</h4>
+            <p>If you have AI agents added to your teams (Step 1), review the AI Workforce module to see their cost vs productivity contribution, and identify any AI tool duplication across teams.</p>
+            <span class="qs-step-dep">⚠ Requires AI agents to be added in Teams &amp; Capacity first</span>
+          </div>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-num">6</div>
+          <div class="qs-step-body">
+            <h4>Command Centre</h4>
+            <p>Once steps 1–4 are complete, the Command Centre dashboard is fully populated. This is the view to use in steering committee meetings — total budget, total spend, variance, and forecast accuracy at a glance.</p>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">You're ready to present when…</h4>
+      <ul class="qs-checklist">
+        <li>Command Centre shows non-zero Total Budget and Total Spend</li>
+        <li>At least one team has a RAG status (green, amber, or red variance)</li>
+        <li>Feature Economics shows at least one feature with a cost attached</li>
+        <li>You can answer: "What is our cost per story point this PI?"</li>
+      </ul>
+
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 0 of 6</span>
+        <div class="setup-nav-btns">
+          <span class="setup-nav-btn disabled">← Previous</span>
+          <a class="setup-nav-btn primary" href="#teams-capacity">Next: Teams &amp; Capacity →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ IMPORT GUIDE ════════ -->
+    <section class="module-section" id="import-guide">
+      <div class="mod-header">
+        <div class="mod-icon">📥</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Import Guide</h2>
+          <div class="mod-badges">
+            <span class="badge badge-all">All Roles</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">ForecastInSite works at the <strong>portfolio and program planning level</strong> — not the team execution level. This means it cares about Themes, Initiatives, Epics, and Features, and ignores everything below. Understanding this before your first import will save significant time and confusion.</p>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">The Jira hierarchy — where ForecastInSite draws the line</h4>
+
+      <div class="hier-row yes">
+        <span class="hier-badge yes">✓ IMPORT</span>
+        <span class="hier-name">Theme</span>
+        <span class="hier-desc">Strategic investment theme — the top of the portfolio hierarchy</span>
+      </div>
+      <div class="hier-row yes">
+        <span class="hier-badge yes">✓ IMPORT</span>
+        <span class="hier-name">Initiative</span>
+        <span class="hier-desc">Cross-PI strategic initiative or programme of work</span>
+      </div>
+      <div class="hier-row yes">
+        <span class="hier-badge yes">✓ IMPORT</span>
+        <span class="hier-name">Epic / Portfolio Epic / SAFe Epic</span>
+        <span class="hier-desc">Significant chunks of work, often spanning multiple PIs</span>
+      </div>
+      <div class="hier-row yes">
+        <span class="hier-badge yes">✓ IMPORT</span>
+        <span class="hier-name">Feature / Enabler Feature / Capability</span>
+        <span class="hier-desc">PI-level deliverable — the primary financial modelling unit in ForecastInSite</span>
+      </div>
+      <div style="border-left:3px solid var(--bdr);margin:8px 0 8px 16px;padding-left:12px;font-size:11px;color:var(--t3);font-style:italic;">ForecastInSite draws the line here</div>
+      <div class="hier-row no">
+        <span class="hier-badge no">✗ SKIP</span>
+        <span class="hier-name">Story / User Story</span>
+        <span class="hier-desc">Team execution unit — too granular for financial modelling</span>
+      </div>
+      <div class="hier-row no">
+        <span class="hier-badge no">✗ SKIP</span>
+        <span class="hier-name">Task / Sub-task</span>
+        <span class="hier-desc">Sprint-level work item — not relevant to PI-level cost tracking</span>
+      </div>
+      <div class="hier-row no">
+        <span class="hier-badge no">✗ SKIP</span>
+        <span class="hier-name">Bug / Defect / Spike / Chore</span>
+        <span class="hier-desc">Operational noise — automatically skipped on import</span>
+      </div>
+
+      <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.25);border-radius:10px;padding:16px 20px;margin:24px 0;">
+        <p style="font-size:13px;color:var(--t1);margin:0;"><strong>A typical PI backlog in ForecastInSite:</strong> 30–80 Features across 4–8 teams. If your Jira export has thousands of rows, you are exporting at the wrong level — filter to Epic and Feature issue types before exporting.</p>
+      </div>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">What happens if you import the wrong level</h4>
+      <p class="pub-overview" style="margin-bottom:0;">ForecastInSite automatically skips Stories, Tasks, and Bugs. When you drop in a Jira CSV, the import preview will tell you exactly how many items were imported and how many were silently ignored — so you always know what landed. You do not need to clean your export before importing.</p>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Recommended Jira export columns</h4>
+      <div style="background:var(--bg1);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t2);line-height:2;">
+        Issue Type, Summary, Status, Story Points, Assignee, Epic Link, Sprint, Fix Version, Priority, Business Value, Labels
+      </div>
+      <p style="font-size:12px;color:var(--t3);margin-top:8px;">The <strong>Issue Type</strong> and <strong>Summary</strong> columns are required. All others enrich the import but are optional. ForecastInSite will map <em>Story Points</em>, <em>Status</em>, and <em>Business Value</em> automatically if present.</p>
+
+      <h4 style="font-size:14px;font-weight:700;color:var(--t1);margin:24px 0 12px;">Import modes</h4>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <h5>📄 Jira CSV</h5>
+          <p>Drop in a Jira export CSV. ForecastInSite reads Issue Type, Summary, Story Points, Status, and Business Value. Stories, Tasks, and Bugs are automatically skipped and counted in the import summary.</p>
+        </div>
+        <div class="tip-card">
+          <h5>🔗 JSON Backup</h5>
+          <p>A full ForecastInSite session export — restores your complete model including teams, budgets, licences, and features. Use this to share your model with a colleague or move between browsers.</p>
+        </div>
+        <div class="tip-card">
+          <h5>🌐 PortfolioInSite</h5>
+          <p>If you use PortfolioInSite Web in the same browser, ForecastInSite can read your backlog directly — no file export needed. Epics, Features, and SAFe Epics are imported with story points and business value preserved.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- ════════ COMMAND CENTRE ════════ -->
     <section class="module-section" id="command-centre">
       <div class="mod-header">
@@ -858,6 +1168,13 @@
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 6 of 6 · Setup Complete</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#ai-workforce">← AI Workforce</a>
+          <a class="setup-nav-btn primary" href="#quick-setup">↑ Back to Setup Guide</a>
+        </div>
+      </div>
     </section>
 
     <!-- ════════ BUDGET & ACTUALS ════════ -->
@@ -913,6 +1230,13 @@
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 2 of 6</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#teams-capacity">← Teams &amp; Capacity</a>
+          <a class="setup-nav-btn primary" href="#licences-overhead">Next: Licences &amp; Overhead →</a>
+        </div>
+      </div>
     </section>
 
     <!-- ════════ LICENCES & OVERHEAD ════════ -->
@@ -965,6 +1289,13 @@
           <h3>Full Licences &amp; Overhead Playbook</h3>
           <p>Software licence audit checklist, overhead allocation methodologies, and the true cost model explained with worked examples.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 3 of 6</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#budget-actuals">← Budget &amp; Actuals</a>
+          <a class="setup-nav-btn primary" href="#feature-economics">Next: Feature Economics →</a>
         </div>
       </div>
     </section>
@@ -1023,6 +1354,13 @@
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
         </div>
       </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 4 of 6</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#licences-overhead">← Licences &amp; Overhead</a>
+          <a class="setup-nav-btn primary" href="#ai-workforce">Next: AI Workforce →</a>
+        </div>
+      </div>
     </section>
 
     <!-- ════════ AI WORKFORCE ════════ -->
@@ -1078,6 +1416,13 @@
           <h3>Full AI Workforce Playbook</h3>
           <p>AI tool audit template, productivity multiplier benchmarks by tool category, and the complete ROI governance framework for AI investment decisions.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 5 of 6</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#feature-economics">← Feature Economics</a>
+          <a class="setup-nav-btn primary" href="#command-centre">Next: Command Centre →</a>
         </div>
       </div>
     </section>
@@ -1138,6 +1483,13 @@
           <h3>Full Teams &amp; Capacity Playbook</h3>
           <p>Includes cost rate benchmarks by role, FTE allocation frameworks, contractor cost modelling guide, and the AI workforce ROI calculator methodology.</p>
           <a href="/pricing" class="btn-unlock">Unlock Full Playbook</a>
+        </div>
+      </div>
+      <div class="setup-nav">
+        <span class="setup-nav-label">Setup Path — Step 1 of 6</span>
+        <div class="setup-nav-btns">
+          <a class="setup-nav-btn" href="#quick-setup">← Quick Setup Guide</a>
+          <a class="setup-nav-btn primary" href="#budget-actuals">Next: Budget &amp; Actuals →</a>
         </div>
       </div>
     </section>
