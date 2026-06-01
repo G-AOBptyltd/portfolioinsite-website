@@ -2332,6 +2332,16 @@ function aobGateCheck(){
         // Items are session-only — re-import or use JSON backup to restore.
         let MEM_ITEMS = []; // in-memory item store
 
+        // Velocity standard: only Done/Resolved/Closed items count as delivered
+        // Defined at outer scope so finalizeImport and all team functions can access it
+        function isCompleted(status) {
+            if (!status) return false;
+            const s = status.toUpperCase().trim();
+            return s === 'DONE' || s === 'RESOLVED' || s === 'CLOSED' || s === 'COMPLETE' || s === 'COMPLETED'
+                || s === 'RELEASED' || s === 'VERIFIED' || s === 'ACCEPTED' || s === 'DEPLOYED'
+                || s.includes('DONE') || s.includes('CLOSED') || s.includes('RESOLVED') || s.includes('COMPLETE');
+        }
+
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
             const config = stored ? JSON.parse(stored) : getDefaultConfig();
