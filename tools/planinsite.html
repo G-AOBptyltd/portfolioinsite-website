@@ -1261,7 +1261,7 @@ function aobGateCheck(){
                             <tr>
                                 <th>Team Name</th>
                                 <th>Members</th>
-                                <th>Velocity (pts)</th>
+                                <th>Avg Velocity</th>
                                 <th>Sprints</th>
                                 <th>Actions</th>
                             </tr>
@@ -2670,8 +2670,9 @@ function aobGateCheck(){
                     sprints: teamMap[team].sort(),
                     members: [...members].sort(),
                     itemCount, totalPoints, deliveredPoints,
-                    // Velocity = total points / number of sprints (what team works on per sprint)
-                    avgVelocity: Math.round(totalPoints / numSprints)
+                    // Velocity = delivered (Done/Resolved/Closed) points only ÷ number of sprints
+                    // Matches FlowInSite standard: only completed items count toward velocity
+                    avgVelocity: Math.round(deliveredPoints / numSprints)
                 };
             });
 
@@ -2681,13 +2682,14 @@ function aobGateCheck(){
             parsedItems.forEach(item => { if (item.team) explicitTeams.add(item.team); });
             explicitTeams.forEach(team => {
                 const members = new Set();
-                let itemCount = 0, totalPoints = 0;
+                let itemCount = 0, totalPoints = 0, deliveredPoints = 0;
                 // Simple exact match on assigned team
                 parsedItems.forEach(item => {
                     if (item.team === team) {
                         if (item.assignee) members.add(item.assignee);
                         itemCount++;
                         totalPoints += item.points || 0;
+                        if (isCompleted(item.status)) deliveredPoints += item.points || 0;
                     }
                 });
                 // Get sprints for this team from sprint names that start with the team name
@@ -2695,11 +2697,12 @@ function aobGateCheck(){
                 const numSprints = teamSprints.length || 1;
 
                 // Always overwrite — explicit team data is more accurate than sprint-prefix guessing
+                // Velocity = delivered (Done/Resolved/Closed) points only ÷ sprints (matches suite standard)
                 teamDetails[team] = {
                     sprints: teamSprints,
                     members: [...members].sort(),
-                    itemCount, totalPoints, deliveredPoints: 0,
-                    avgVelocity: numSprints > 0 ? Math.round(totalPoints / numSprints) : 0
+                    itemCount, totalPoints, deliveredPoints,
+                    avgVelocity: numSprints > 0 ? Math.round(deliveredPoints / numSprints) : 0
                 };
             });
 
@@ -2783,18 +2786,27 @@ function aobGateCheck(){
                     selected.forEach(team => {
                         if (!existingNames.includes(team)) {
                             const td = teamDetails[team];
-                            // Velocity from DELIVERED points only (completed items)
-                            const historicalVelocity = td.avgVelocity || 0;
                             const numSprints = td.sprints.length || 1;
+                            // Build per-member delivered points for recalculation when members are removed
+                            const memberDelivered = {};
+                            parsedItems.forEach(item => {
+                                if (!isCompleted(item.status)) return;
+                                const inTeam = item.team === team || item.sprints.some(s => td.sprints.includes(s));
+                                if (inTeam && item.assignee) {
+                                    memberDelivered[item.assignee] = (memberDelivered[item.assignee] || 0) + (item.points || 0);
+                                }
+                            });
                             data.teams.push({
                                 name: team,
                                 members: td.members || [],
-                                velocity: historicalVelocity || 10,
+                                // Velocity = delivered pts / sprints (suite standard — no manual override)
+                                velocity: td.avgVelocity || 0,
                                 sprints: 5, // default PI sprints (configurable)
                                 leaveAbsence: 0,
                                 detectedSprints: td.sprints,
                                 historicalSprints: numSprints,
-                                totalHistoricalPts: td.deliveredPoints || 0
+                                totalHistoricalPts: td.deliveredPoints || 0,
+                                memberDelivered // pts per member for velocity recalc on remove
                             });
                         }
                     });
@@ -2936,6 +2948,32 @@ function aobGateCheck(){
             updateUI();
         }
 
+        function toggleMembers(teamName) {
+            const id = 'members-' + teamName.replace(/\s+/g, '_');
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function removeMember(teamName, memberName) {
+            const data = loadData();
+            const team = data.teams.find(t => t.name === teamName);
+            if (!team) return;
+            // Remove from members list
+            team.members = (team.members || []).filter(m => m !== memberName);
+            // Subtract this member's delivered points and recalculate velocity
+            const memberPts = (team.memberDelivered || {})[memberName] || 0;
+            if (memberPts > 0) {
+                team.totalHistoricalPts = Math.max(0, (team.totalHistoricalPts || 0) - memberPts);
+                const numSprints = team.historicalSprints || 1;
+                team.velocity = Math.round(team.totalHistoricalPts / numSprints);
+            }
+            if (team.memberDelivered) delete team.memberDelivered[memberName];
+            saveData(data);
+            updateUI();
+            showToast(`${memberName} removed from ${teamName}`, 'success');
+        }
+
         function deleteTeam(name) {
             if (!confirm(`Delete team "${name}"? Items assigned to this team will become unassigned.`)) return;
             const data = loadData();
@@ -2984,34 +3022,53 @@ function aobGateCheck(){
 
             // Teams table
             const teamsBody = document.getElementById('teamsBody');
-            teamsBody.innerHTML = data.teams.map(t => `
-                <tr>
-                    <td>${t.name}</td>
-                    <td>${(t.members || []).length}</td>
-                    <td>${t.velocity || 10}</td>
+            teamsBody.innerHTML = data.teams.map(t => {
+                const memberCount = (t.members || []).length;
+                const vel = t.velocity || 0;
+                const sprintCount = t.historicalSprints || (Array.isArray(t.detectedSprints) ? t.detectedSprints.length : 0);
+                const velLabel = vel > 0 ? `${vel} pts` : '—';
+                const velSub = sprintCount > 0 ? `<span style="font-size:10px;color:var(--t3);display:block">${sprintCount} sprint${sprintCount!==1?'s':''} · done items only</span>` : '';
+                return `<tr id="team-row-${t.name.replace(/\s+/g,'_')}">
+                    <td style="font-weight:600">${t.name}</td>
+                    <td>
+                        <button onclick="toggleMembers('${t.name}')" style="background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--t1)">
+                            👤 ${memberCount}
+                        </button>
+                        <div id="members-${t.name.replace(/\s+/g,'_')}" style="display:none;margin-top:8px;display:none">
+                            <div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px;max-width:320px">
+                                ${(t.members||[]).map(m => `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;padding:2px 6px;font-size:11px;color:var(--t1)">${m}<button onclick="removeMember('${t.name}','${m.replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;line-height:1;padding:0 2px" title="Remove ${m}">×</button></span>`).join('')}
+                                ${memberCount===0?'<span style="font-size:11px;color:var(--t3)">No members detected</span>':''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${velLabel}${velSub}</td>
                     <td>${typeof t.sprints === 'number' ? t.sprints : (Array.isArray(t.sprints) ? t.sprints.length : 3)}</td>
                     <td>
                         <button class="btn btn-secondary" onclick="editTeam('${t.name}')" style="padding:4px 8px;font-size:11px;">Edit</button>
                         <button class="btn btn-secondary" onclick="deleteTeam('${t.name}')" style="padding:4px 8px;font-size:11px;">Delete</button>
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
 
             // Capacity config (null-safe — element may be in drawer now)
             const capacityConfig = document.getElementById('capacityConfig');
             if (capacityConfig) {
-                capacityConfig.innerHTML = data.teams.map(t => `
-                    <div class="grid grid-2" style="margin-bottom:16px;padding:12px;background:var(--bg1);border-radius:6px;">
+                capacityConfig.innerHTML = data.teams.map(t => {
+                    const vel = t.velocity || 0;
+                    const sprintCount = t.historicalSprints || 0;
+                    const velDisplay = vel > 0 ? `${vel} pts/sprint` : '—';
+                    const velNote = sprintCount > 0 ? ` (${sprintCount} sprint${sprintCount!==1?'s':''}, done items only)` : ' (no history)';
+                    return `<div class="grid grid-2" style="margin-bottom:16px;padding:12px;background:var(--bg1);border-radius:6px;">
                         <div class="form-group" style="margin:0;">
-                            <label class="form-label">${t.name} - Velocity</label>
-                            <input type="number" value="${t.velocity || 10}" onchange="updateTeamConfig('${t.name}', 'velocity', this.value)">
+                            <label class="form-label">${t.name} — Avg Velocity</label>
+                            <div style="padding:8px 10px;background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;font-size:13px;font-weight:600;color:var(--t1)">${velDisplay}<span style="font-size:11px;font-weight:400;color:var(--t3)">${velNote}</span></div>
                         </div>
                         <div class="form-group" style="margin:0;">
                             <label class="form-label">Sprints per PI</label>
                             <input type="number" value="${typeof t.sprints === 'number' ? t.sprints : (Array.isArray(t.sprints) ? t.sprints.length : 3)}" onchange="updateTeamConfig('${t.name}', 'sprints', this.value)">
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
             }
 
             // Dashboard stats (null-safe)
