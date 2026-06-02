@@ -2981,6 +2981,7 @@ function aobGateCheck(){
             if (team.memberDelivered) delete team.memberDelivered[memberName];
             saveData(data);
             updateUI();
+            toggleMembers(teamName); // re-open the dropdown after re-render
             showToast(`${memberName} removed from ${teamName}`, 'success');
         }
 
