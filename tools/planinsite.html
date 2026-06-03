@@ -2553,7 +2553,7 @@ function aobGateCheck(){
                     type: get('issueType') || 'Task',
                     points: points,
                     sprints: sprintList,
-                    sprintRaw: sprintRaw,
+                    sprintRaw: sprintList.join('; '),
                     status: get('status') || 'To Do',
                     priority: get('priority') || 'Medium',
                     epic: get('epic'),
