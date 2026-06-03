@@ -2332,6 +2332,38 @@ function aobGateCheck(){
         // Items are session-only — re-import or use JSON backup to restore.
         let MEM_ITEMS = []; // in-memory item store
 
+        // ── Sprint ordering helpers (matches FlowInSite standard) ──
+        // Returns a numeric sort key: lower = older sprint. Non-sprint buckets sort last.
+        function _sprintOrder(name) {
+            if (!name) return Number.MAX_SAFE_INTEGER;
+            const s = name.toUpperCase();
+            const NON_SPRINT = ['KANBAN','PRACTICE SPRINT','NO SPRINT','CARRY','PARKING LOT','BAU'];
+            if (NON_SPRINT.some(p => s.includes(p))) return Number.MAX_SAFE_INTEGER - 1;
+            let m = s.match(/FY(\d+)[-\s]+Q(\d+)[-\s]+(?:SPRINT\s*)?S?(\d+)/);
+            if (m) return parseInt(m[1]) * 10000 + parseInt(m[2]) * 100 + parseInt(m[3]);
+            m = s.match(/FY(\d+)[-\s]+Q(\d+)[-\s]+(?:IP|PI)\b/);
+            if (m) return parseInt(m[1]) * 10000 + parseInt(m[2]) * 100 + 99;
+            m = s.match(/(?:QUARTER\s*)?Q?(\d+)[\s\-_]*S(?:PRINT\s*)?(\d+)/);
+            if (m) return parseInt(m[1]) * 100 + parseInt(m[2]); // legacy Q3 labels sort before FY labels
+            m = s.match(/SPRINT\s*(\d+)/);
+            if (m) return 200 * 10000 + parseInt(m[1]);
+            return Number.MAX_SAFE_INTEGER - 2;
+        }
+        function _sortSprints(arr) {
+            return arr.slice().sort((a, b) => { const oa = _sprintOrder(a), ob = _sprintOrder(b); return oa !== ob ? oa - ob : a.localeCompare(b); });
+        }
+        // Normalise sprint key so format variants collapse to one bucket:
+        // "FY27 Q1 S5" / "FY27-Q1-S5" / "FY27-Q1-Sprint 5" → "FY27-Q1-S5"
+        function _normSprintKey(s) {
+            if (!s || s === 'No Sprint') return s;
+            let k = s.trim();
+            k = k.replace(/\bSprint\s+(\d+)/gi, 'S$1');
+            k = k.replace(/\bQuarter\s+(\d+)/gi, 'Q$1');
+            k = k.replace(/(\d)(S\d)/gi, '$1-$2');
+            k = k.replace(/[-\s]+/g, '-').replace(/^-|-$/g, '');
+            return k.toUpperCase();
+        }
+
         // Velocity standard: only Done/Resolved/Closed items count as delivered
         // Defined at outer scope so finalizeImport and all team functions can access it
         function isCompleted(status) {
@@ -2468,8 +2500,14 @@ function aobGateCheck(){
                 releases:   ['releases','fix version','fix version/s','release']
             };
 
+            // Add Jira native Team Name to team alias
+            aliases.team.push('team name');
+
             const colMap = {};
+            // Collect ALL sprint column indices (Jira exports up to 9 Sprint columns)
+            colMap.sprintCols = header.reduce((acc, h, i) => { if (h === 'sprint' || h === 'sprint name' || h === 'iteration') acc.push(i); return acc; }, []);
             for (const [field, names] of Object.entries(aliases)) {
+                if (field === 'sprint') continue; // handled via sprintCols above
                 // Exact match first
                 let idx = header.findIndex(h => names.includes(h));
                 // Targeted fuzzy fallback ONLY for storyPoints (handles "Custom field (Story Points)" etc)
@@ -2490,17 +2528,23 @@ function aobGateCheck(){
                 const key = get('key');
                 if (!key) continue; // skip rows without a key
 
-                // Split multi-sprint field (Jira uses semicolons, Advanced Roadmaps uses commas)
-                const sprintRaw = get('sprint');
-                const sprintList = sprintRaw ? sprintRaw.split(/[;,]/).map(s => s.trim()).filter(s => s && s.length > 2) : [];
+                // Collect ALL sprint columns (Jira exports up to 9 repeated Sprint columns)
+                const sprintList = [];
+                (colMap.sprintCols || []).forEach(ci => {
+                    const v = (cols[ci] || '').trim();
+                    if (v) v.split(/[;,]/).forEach(s => { s = s.trim(); if (s.length > 2 && !sprintList.includes(s)) sprintList.push(s); });
+                });
 
                 // Parse points (only filter truly absurd values)
                 let points = parseInt(get('storyPoints')) || 0;
                 if (points > 10000) points = 0;
 
-                // Team: from explicit Team column. Handle "DO - Nexus, DO - Atlas" → take first team, strip "DO - " prefix
+                // Team: from explicit Team column (supports Jira native "Team Name": "DO - Vanguard" → "Vanguard")
                 let teamRaw = get('team');
-                let team = teamRaw.split(',')[0].trim().replace(/^DO\s*-\s*/i, '').trim();
+                let team = teamRaw.split(',')[0].trim()
+                    .replace(/^[^A-Za-z0-9]+/, '')  // strip leading emoji/symbols
+                    .replace(/^[A-Za-z]{1,6}\s*-\s+/, '') // strip "DO - " / "IT - " org prefix
+                    .trim();
 
                 items.push({
                     key,
@@ -2627,7 +2671,7 @@ function aobGateCheck(){
             // Collect all unique sprints from parsed items
             const sprintSet = new Set();
             parsedItems.forEach(item => item.sprints.forEach(s => sprintSet.add(s)));
-            const allSprints = [...sprintSet].sort();
+            const allSprints = _sortSprints([...sprintSet]); // chronological order
 
             // Build teamMap: prefix → [sprint names]
             const teamMap = {};
@@ -2677,7 +2721,7 @@ function aobGateCheck(){
                 });
                 const numSprints = teamMap[team].length || 1;
                 teamDetails[team] = {
-                    sprints: teamMap[team].sort(),
+                    sprints: _sortSprints(teamMap[team]),
                     members: [...members].sort(),
                     itemCount, totalPoints, deliveredPoints,
                     // Velocity = delivered (Done/Resolved/Closed) points only ÷ number of sprints
@@ -2702,8 +2746,9 @@ function aobGateCheck(){
                         if (isCompleted(item.status)) deliveredPoints += item.points || 0;
                     }
                 });
-                // Get sprints for this team from sprint names that start with the team name
-                const teamSprints = [...new Set(parsedItems.filter(i => i.team === team).flatMap(i => i.sprints.filter(s => s.toLowerCase().startsWith(team.toLowerCase()))))].sort();
+                // Get sprints for this team — all sprints from items explicitly tagged to this team
+                const allTeamSprints = parsedItems.filter(i => i.team === team).flatMap(i => i.sprints);
+                const teamSprints = _sortSprints([...new Set(allTeamSprints)]);
                 const numSprints = teamSprints.length || 1;
 
                 // Always overwrite — explicit team data is more accurate than sprint-prefix guessing
@@ -2985,6 +3030,23 @@ function aobGateCheck(){
             showToast(`${memberName} removed from ${teamName}`, 'success');
         }
 
+        function addMember(teamName) {
+            const inputId = 'addMem-' + teamName.replace(/\s+/g, '_');
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const name = input.value.trim();
+            if (!name) return;
+            const data = loadData();
+            const team = data.teams.find(t => t.name === teamName);
+            if (!team) return;
+            if ((team.members || []).includes(name)) { showToast(`${name} already in ${teamName}`, 'error'); return; }
+            team.members = [...(team.members || []), name];
+            saveData(data);
+            updateUI();
+            toggleMembers(teamName); // re-open dropdown after re-render
+            showToast(`${name} added to ${teamName}`, 'success');
+        }
+
         function deleteTeam(name) {
             if (!confirm(`Delete team "${name}"? Items assigned to this team will become unassigned.`)) return;
             const data = loadData();
@@ -3049,6 +3111,10 @@ function aobGateCheck(){
                             <div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px;max-width:320px">
                                 ${(t.members||[]).map(m => `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;padding:2px 6px;font-size:11px;color:var(--t1)">${m}<button onclick="removeMember('${t.name}','${m.replace(/'/g,"\\'")}')" style="background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;line-height:1;padding:0 2px" title="Remove ${m}">×</button></span>`).join('')}
                                 ${memberCount===0?'<span style="font-size:11px;color:var(--t3)">No members detected</span>':''}
+                            </div>
+                            <div style="display:flex;gap:6px;margin-top:6px;max-width:320px">
+                                <input id="addMem-${t.name.replace(/\s+/g,'_')}" type="text" placeholder="Add member by name…" style="flex:1;padding:4px 8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:5px;font-size:11px;color:var(--t1);outline:none" onkeydown="if(event.key==='Enter')addMember('${t.name}')">
+                                <button onclick="addMember('${t.name}')" style="background:var(--ac);color:#fff;border:none;border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap">+ Add</button>
                             </div>
                         </div>
                     </td>

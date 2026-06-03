@@ -114,10 +114,25 @@ portfolioinsite-website/
 
 ## Deployment History
 
+- **May 30, 2026:** ForecastInSite playbook overhaul — 3 new sections (What ForecastInSite Solves, Quick Setup Guide, Import Guide), Setup Path sidebar nav with prev/next strips in 6 setup sections, sidebar reordered to tool-tab order. Jira CSV import now filters to Feature level and above, shows import/skip breakdown. PortfolioInSite import adds Theme/Initiative/Capability types. All-playbook licence unlock (hpp_lic_suite) added to forecastinsite, planinsite, portfolioinsite playbooks.
+- **May 30, 2026:** SprintINSite/FlowInSite playbook licence unlock added — any InSite Suite key unlocks all gated sections. Header standardisation (Reset Data + Config drawer) on SprintINSite and FlowInSite tools.
 - **May 25, 2026:** Seat enforcement live — FCT/PLN/POI tools now call `/api/licence-validate`. Added fingerprinting, async activation, fail-open. Verified 3-browser test on production.
 - **May 20, 2026:** GA4 dedicated property G-EFMMW3Q8LK. og:image added.
 - **May 19, 2026:** Suite homepage redesign — Products dropdown nav, module teasers, CTA routing fix, licence modal contact fix.
 - **April 17, 2026:** Central API integration — notion-cms.js, product/content pages, netlify.toml.
+
+## Git & Deployment Workflow
+
+All file changes land in the mounted workspace. Git is done via bash in Greg's terminal — NEVER generate .txt paste files. Always provide ready-to-run bash:
+
+```bash
+cd "/Users/gregcollocott/AOB Websites/<repo>"
+git add <files>
+git commit -m "feat: <description>"
+git push origin <branch>
+```
+
+If git lock: `rm -f .git/index.lock .git/HEAD.lock`
 
 ## Key Learnings
 
