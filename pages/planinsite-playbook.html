@@ -854,8 +854,24 @@
       </div>
 
       <div class="tips-grid">
-        <div class="tip-card"><h5>📊 Use SprintINSite Web for velocity</h5><p>SprintINSite Web calculates your trailing average velocity from Jira sprint data automatically. Export the team velocity report and use those numbers directly in PlanInSite's capacity configuration.</p></div>
+        <div class="tip-card"><h5>📊 Use SprintINSite Web or FlowInSite for velocity</h5><p>SprintINSite Web and FlowInSite both calculate trailing average velocity from Jira sprint data. Use PlanInSite velocity — team throughput — as the planning baseline. Cross-check with FlowInSite to confirm the current team composition can realistically support that number.</p></div>
         <div class="tip-card"><h5>⚡ Capacity factor matters</h5><p>A team with 40 pts/sprint × 5 sprints = 200pt theoretical PI capacity. At 80% capacity factor, their real PI commitment ceiling is 160 pts. Over-committing the remaining 40 pts creates sprint 4–5 burnout.</p></div>
+      </div>
+
+      <div class="pub-caps" style="margin-top:24px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-radius:10px;padding:20px">
+        <h4 style="color:var(--t1);margin-bottom:12px">📐 Setting a reliable planning velocity</h4>
+        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:12px">PlanInSite velocity is aggregate team throughput — the total completed story points the team delivered, divided by the number of relevant historical sprints. This answers the planning question: <em>"How many points does this team typically finish per sprint?"</em></p>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg2);border-radius:6px;padding:10px 14px;color:var(--ac);margin-bottom:12px">
+          Team planning velocity = total completed team SP ÷ number of relevant historical sprints
+        </div>
+        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">Before committing the baseline, validate the historical window:</p>
+        <ul style="font-size:13px;color:var(--t2);line-height:1.9;padding-left:20px">
+          <li>Use the most recent 4–6 normal delivery sprints where possible.</li>
+          <li>Exclude practice sprints, Kanban board buckets, IP/planning sprints, and holiday-affected sprints.</li>
+          <li>Discount the baseline if the team has changed materially since the historical period — new joiners, departures, or significant role changes.</li>
+          <li>Compare against FlowInSite if the current named team differs from who was delivering in the historical window. If FlowInSite shows reduced participation or falling individual trends, reduce the PlanInSite baseline before making a PI commitment.</li>
+        </ul>
+        <p style="font-size:12px;color:var(--t3);margin-top:12px">The most defensible approach: start with PlanInSite throughput, remove abnormal sprints, validate with FlowInSite, then commit against the adjusted number — not the most optimistic one.</p>
       </div>
     </section>
 

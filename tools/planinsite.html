@@ -1398,6 +1398,21 @@ function aobGateCheck(){
               <p style="font-size:12px;color:var(--t3);margin-top:4px;">The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits results to items updated in the last 16 weeks. Adjust to control export size.</p>
             </div>
 
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">📐 How PlanInSite Velocity is Calculated</div>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:10px;">PlanInSite uses <strong>team throughput</strong> for PI and sprint planning because planning is a team commitment decision.</p>
+              <div style="background:var(--bg2);border-radius:6px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ac);margin-bottom:8px">
+                Team Velocity = total completed team SP ÷ number of relevant historical sprints<br>
+                PI Capacity = Team Velocity × PI sprint count
+              </div>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:8px;"><strong>Example:</strong> Vanguard velocity = 110 SP/sprint × 6 sprints = <strong>660 SP PI capacity</strong>. Only completed (Done/Resolved/Closed) work counts toward velocity.</p>
+              <div style="border-top:1px solid var(--bdr);margin-top:10px;padding-top:10px">
+                <p style="font-size:12px;font-weight:700;color:var(--fg);margin-bottom:5px;">⚖️ Why this may differ from FlowInSite</p>
+                <p style="color:var(--t2);font-size:12px;line-height:1.7;">FlowInSite sums each person's individual average delivered SP per participated sprint. That is useful for diagnosing team-member contribution and trends — but it is not the same as aggregate team throughput.<br><br>
+                Use PlanInSite velocity as the planning baseline. Cross-check with FlowInSite if the current named team differs materially from the historical team, or if FlowInSite shows new joiners, absences, or falling trends. Prefer the most recent 4–6 normal delivery sprints and exclude practice sprints, IP sprints, Kanban buckets, and holiday-affected periods.</p>
+              </div>
+            </div>
+
             <div class="card">
               <div class="card-title" style="margin-bottom:14px;">💡 Tips &amp; Support</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
