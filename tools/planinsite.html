@@ -2895,24 +2895,50 @@ function aobGateCheck(){
             };
         }
 
+        function buildSavedVelocityBaseline(data, cfg) {
+            const result = {
+                sprints: cfg.sprints || [],
+                sprintCount: parseInt(cfg.sprintCount, 10) || (cfg.sprints || []).length || 1,
+                teams: {},
+                ignored: { nonDelivery: 0, notDone: 0, noSprintMatch: 0, noTeam: 0 },
+                fromSavedBaseline: true
+            };
+            (data.teams || []).forEach(team => {
+                const bySprint = team.velocityBySprint || {};
+                const sprintVals = {};
+                let deliveredPoints = 0;
+                (cfg.sprints || []).forEach(sp => {
+                    const pts = parseFloat(bySprint[sp]) || 0;
+                    sprintVals[sp] = pts;
+                    deliveredPoints += pts;
+                });
+                if (deliveredPoints <= 0) return;
+                result.teams[team.name] = {
+                    sprints: sprintVals,
+                    members: team.members || [],
+                    itemCount: 0,
+                    deliveredPoints,
+                    avgVelocity: Math.round((deliveredPoints / result.sprintCount) * 10) / 10
+                };
+            });
+            return result;
+        }
+
         function renderVelocityPreview(items, cfg = getVelocityConfig(loadData())) {
             const el = document.getElementById('velocityPreview');
             if (!el) return;
-            if (!items || !items.length) {
-                el.innerHTML = 'Import data, choose velocity sprints, then apply the baseline to preview Team × Sprint velocity.';
-                return;
-            }
             if (!cfg.sprints || !cfg.sprints.length) {
                 el.innerHTML = '<div style="padding:12px;border:1px solid rgba(245,158,11,.35);border-radius:8px;background:rgba(245,158,11,.08);color:var(--mid)">Add explicit velocity sprints or use detected recent sprints. Velocity will fall back to legacy detection until a baseline is configured.</div>';
                 return;
             }
-            const baseline = calculateVelocityBaseline(items, cfg);
+            const data = loadData();
+            let baseline = (items && items.length) ? calculateVelocityBaseline(items, cfg) : buildSavedVelocityBaseline(data, cfg);
             const teamNames = Object.keys(baseline.teams).sort((a,b) => {
                 const da = baseline.teams[b].deliveredPoints - baseline.teams[a].deliveredPoints;
                 return da || a.localeCompare(b);
             });
             if (!teamNames.length) {
-                el.innerHTML = '<div style="padding:12px;border:1px solid rgba(229,57,53,.35);border-radius:8px;background:rgba(229,57,53,.08);color:var(--red)">No completed delivery items matched the current velocity sprint config.</div>';
+                el.innerHTML = '<div style="padding:12px;border:1px solid rgba(245,158,11,.35);border-radius:8px;background:rgba(245,158,11,.08);color:var(--mid)">No imported Jira rows are available in this browser session, and no saved sprint baseline matches this window. Re-import the CSV, then apply the baseline to calculate the preview.</div>';
                 return;
             }
             let html = '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:var(--bg1);border-bottom:1px solid var(--bdr)">';
@@ -2934,7 +2960,11 @@ function aobGateCheck(){
             html += '<td></td></tr><tr style="background:var(--bg1)"><td style="padding:8px 10px;font-weight:700">Average / sprint</td>';
             teamNames.forEach(t => html += '<td style="padding:8px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace;font-weight:700;color:var(--ac)">' + baseline.teams[t].avgVelocity + '</td>');
             html += '<td></td></tr></tbody></table>';
-            html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Teams shown here are not an allow-list; they are the teams with matched completed delivery items in the selected sprint window. Ignored: ' + baseline.ignored.nonDelivery + ' non-delivery, ' + baseline.ignored.notDone + ' not done, ' + baseline.ignored.noSprintMatch + ' outside selected sprints.</div>';
+            if (baseline.fromSavedBaseline) {
+                html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Preview is using the saved team velocity-by-sprint baseline because the imported CSV rows are not available in this browser session. Re-import the CSV to recalculate from raw Jira rows.</div>';
+            } else {
+                html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Teams shown here are not an allow-list; they are the teams with matched completed delivery items in the selected sprint window. Ignored: ' + baseline.ignored.nonDelivery + ' non-delivery, ' + baseline.ignored.notDone + ' not done, ' + baseline.ignored.noSprintMatch + ' outside selected sprints.</div>';
+            }
             el.innerHTML = html;
         }
 
