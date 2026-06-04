@@ -640,6 +640,7 @@
     <div class="sb-label">Core Modules</div>
     <a class="sb-link" href="#import-data" onclick="setActive(this)"><span class="sb-icon">📥</span> Import Data</a>
     <a class="sb-link" href="#teams-capacity" onclick="setActive(this)"><span class="sb-icon">👥</span> Teams &amp; Capacity</a>
+    <a class="sb-link" href="#teams-capacity" onclick="setActive(this)" style="padding-left:28px;font-size:12px"><span class="sb-icon">📊</span> Velocity Baseline</a>
     <a class="sb-link" href="#backlog-refinement" onclick="setActive(this)"><span class="sb-icon">🔍</span> Backlog Refinement</a>
 
     <div class="sb-label">Advanced</div>
@@ -829,7 +830,7 @@
         </div>
       </div>
 
-      <p class="pub-overview">Teams & Capacity is where you define each delivery team, their average velocity (story points per sprint), and your PI configuration. PlanInSite calculates the total PI capacity for each team automatically — this number drives the capacity bars in Backlog Refinement and the utilisation view in PI Loading.</p>
+      <p class="pub-overview">Teams & Capacity is where you define each delivery team and set the velocity baseline that drives PI capacity planning. Velocity is calculated directly from your imported Jira data using a configurable sprint window — not entered manually. PlanInSite calculates PI capacity per team automatically, driving capacity bars in Backlog Refinement and utilisation in PI Loading.</p>
 
       <div class="cap-formula">
         <div class="lbl">PI Capacity formula</div>
@@ -837,41 +838,43 @@
       </div>
 
       <div class="pub-caps">
-        <h4>Key fields in Teams & Capacity</h4>
+        <h4>Team table fields</h4>
         <ul>
-          <li><strong>Team name</strong> — must match exactly how the team appears in your CSV's Team or Component column for auto-assignment to work</li>
-          <li><strong>Average velocity</strong> — story points the team completes in a typical sprint. Use the last 3–6 sprint average from SprintINSite Web for accuracy.</li>
-          <li><strong>Sprints per PI</strong> — how many delivery sprints in this PI (not counting the IP sprint). Default: 5.</li>
-          <li><strong>Capacity factor (%)</strong> — how much of theoretical capacity the team can actually commit. Accounts for leave, ceremonies, and unplanned work. Typical range: 70–85%.</li>
+          <li><strong>Team name</strong> — auto-detected from your CSV's Team Name or sprint prefix. Must match the CSV exactly for items to be assigned correctly.</li>
+          <li><strong>Avg Velocity</strong> — calculated from the Velocity Baseline panel below. Read-only once applied. Shows sprint count and "done items only" note.</li>
+          <li><strong>Sprints per PI</strong> — number of delivery sprints in this PI (not counting IP sprint). Editable per team. Default: 5.</li>
+          <li><strong>Members</strong> — click the 👤 badge to expand the member chip list. Use × to remove cross-team noise. Use + Add to manually include missing members.</li>
         </ul>
       </div>
 
-      <div class="img-wrap">
-        <div class="img-placeholder">
-          <span>👥</span>
-          <p>Teams &amp; Capacity screenshot — coming soon</p>
-        </div>
+      <div class="gated-steps">
+        <h4>Setting the Velocity Baseline — Selected Sprint Window</h4>
+        <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Choose your sprint window</h5><p>In the <strong>Velocity Baseline</strong> panel, enter the sprint names you want to use as your velocity baseline — one per line. Use exact names as they appear in Jira (e.g. <code>FY27-Q1-S3</code>). Aim for 4–6 normal delivery sprints. Exclude practice sprints, Kanban buckets, and IP/planning sprints.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Choose a sprint assignment rule</h5><p>Select how multi-sprint items are attributed: <strong>Latest matching sprint</strong> (default — most recent sprint the item appeared in), <strong>Earliest matching sprint</strong>, or <strong>All matching sprints</strong> (counts the item in every sprint it was active). Latest is the most defensible for velocity planning.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set the sprint divisor</h5><p>The sprint divisor is the denominator for the velocity calculation. Default is 6. If you entered 4 sprints in the window but want to express velocity as a 6-sprint average (to be conservative), keep the divisor at 6. If you want raw average across only the sprints you entered, match the divisor to your sprint count.</p></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Click Apply Baseline</h5><p>The preview table updates immediately, showing completed story points per team per sprint and the calculated average velocity per team. Review the numbers before applying — the preview is your quality check. Once satisfied, Apply Baseline writes the velocity to each team and saves it.</p></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Baseline persists without the CSV</h5><p>Once applied, the velocity baseline is saved to browser storage. If you reload the tool without re-importing the CSV, the saved baseline is used for the preview — your team velocities are retained. To recalculate from fresh data, re-import the CSV and apply again.</p></div></div>
       </div>
 
       <div class="tips-grid">
-        <div class="tip-card"><h5>📊 Use SprintINSite Web or FlowInSite for velocity</h5><p>SprintINSite Web and FlowInSite both calculate trailing average velocity from Jira sprint data. Use PlanInSite velocity — team throughput — as the planning baseline. Cross-check with FlowInSite to confirm the current team composition can realistically support that number.</p></div>
-        <div class="tip-card"><h5>⚡ Capacity factor matters</h5><p>A team with 40 pts/sprint × 5 sprints = 200pt theoretical PI capacity. At 80% capacity factor, their real PI commitment ceiling is 160 pts. Over-committing the remaining 40 pts creates sprint 4–5 burnout.</p></div>
+        <div class="tip-card"><h5>⚡ Load QP Validation Window</h5><p>The <strong>Load QP Validation Window</strong> button preloads 6 specific sprints spanning the most recent quarter-plus period (FY26-Q4-S4 through FY27-Q1-S4) as a one-click starting point for quarterly planning reviews. Adjust for your specific organisation's sprint names after loading.</p></div>
+        <div class="tip-card"><h5>🔄 Use Recent Sprints</h5><p><strong>Use Recent Sprints</strong> auto-detects the last 6 sprints from your imported data and populates the sprint window for you. This is the fastest path if your sprint naming is consistent and you just want the most recent completed window without specifying names manually.</p></div>
+        <div class="tip-card"><h5>⚙️ Advanced velocity filters</h5><p>Expand <strong>Advanced velocity filters</strong> to control which issue types count toward velocity (delivery types), which are excluded as planning overhead (Epic, Feature, SAFe Epic by default), which team source to use (Team field, sprint prefix, or both), and an optional allow-list of teams to include in the baseline.</p></div>
+        <div class="tip-card"><h5>📊 Cross-check with FlowInSite</h5><p>PlanInSite velocity is aggregate team throughput — the right baseline for forward planning. Use FlowInSite to validate whether the current named team can support that number. If FlowInSite shows new joiners, absent contributors, or falling individual trends, discount the PlanInSite baseline before committing.</p></div>
       </div>
 
       <div class="pub-caps" style="margin-top:24px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-radius:10px;padding:20px">
         <h4 style="color:var(--t1);margin-bottom:12px">📐 Setting a reliable planning velocity</h4>
-        <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:12px">PlanInSite velocity is aggregate team throughput — the total completed story points the team delivered, divided by the number of relevant historical sprints. This answers the planning question: <em>"How many points does this team typically finish per sprint?"</em></p>
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg2);border-radius:6px;padding:10px 14px;color:var(--ac);margin-bottom:12px">
-          Team planning velocity = total completed team SP ÷ number of relevant historical sprints
+          Team planning velocity = total completed delivery SP in window ÷ sprint divisor
         </div>
-        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">Before committing the baseline, validate the historical window:</p>
+        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">Before committing the baseline:</p>
         <ul style="font-size:13px;color:var(--t2);line-height:1.9;padding-left:20px">
-          <li>Use the most recent 4–6 normal delivery sprints where possible.</li>
-          <li>Exclude practice sprints, Kanban board buckets, IP/planning sprints, and holiday-affected sprints.</li>
-          <li>Discount the baseline if the team has changed materially since the historical period — new joiners, departures, or significant role changes.</li>
-          <li>Compare against FlowInSite if the current named team differs from who was delivering in the historical window. If FlowInSite shows reduced participation or falling individual trends, reduce the PlanInSite baseline before making a PI commitment.</li>
+          <li>Use 4–6 normal delivery sprints. Avoid practice sprints, Kanban buckets, IP/planning sprints, and holiday-affected periods.</li>
+          <li>Check the preview table — if a team's sprint-by-sprint numbers look inconsistent, investigate before applying.</li>
+          <li>If the team composition has changed materially since the historical window, discount the baseline accordingly.</li>
+          <li>The most defensible approach: apply the baseline, validate with FlowInSite, adjust for current team reality, then commit.</li>
         </ul>
-        <p style="font-size:12px;color:var(--t3);margin-top:12px">The most defensible approach: start with PlanInSite throughput, remove abnormal sprints, validate with FlowInSite, then commit against the adjusted number — not the most optimistic one.</p>
       </div>
     </section>
 
@@ -931,7 +934,7 @@
         </div>
       </div>
 
-      <p class="pub-overview">PI Loading gives you the helicopter view of the entire PI — all teams on rows, all sprints in columns, with colour-coded capacity utilisation in each cell. This is the view you project in PI planning rooms and send to stakeholders as the committed PI plan.</p>
+      <p class="pub-overview">PI Loading gives you the helicopter view of the entire PI — all teams on rows, all sprints in columns, with colour-coded capacity utilisation in each cell. This is the view you project in PI planning rooms and send to stakeholders as the committed PI plan. Only planning-level issue types (Epic, Feature, SAFe Epic by default) are eligible for PI Loading — delivery items such as Stories, Tasks, and Bugs remain in the backlog for velocity tracking only.</p>
 
       <div class="gate-wrap">
         <div class="gate-inner">
