@@ -1292,6 +1292,60 @@ function aobGateCheck(){
                 </div>
             </div>
 
+            <div class="card">
+                <div class="card-title">📊 Velocity Baseline Preview</div>
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div>
+                        <label class="form-label">Velocity sprint names</label>
+                        <textarea id="velocitySprintInput" rows="4" placeholder="One sprint per line, e.g. FY26-Q4-S4" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-family:'JetBrains Mono',monospace;resize:vertical"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label">Sprint assignment</label>
+                        <select id="velocityAssignmentRule" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+                            <option value="latestMatchingSprint">Latest matching sprint</option>
+                            <option value="earliestMatchingSprint">Earliest matching sprint</option>
+                            <option value="allMatchingSprints">All matching sprints</option>
+                        </select>
+                        <label class="form-label" style="margin-top:10px">Sprint divisor</label>
+                        <input type="number" id="velocitySprintCount" min="1" max="20" value="6" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+                    </div>
+                    <div>
+                        <label class="form-label">Actions</label>
+                        <button class="btn btn-primary" onclick="applyVelocityConfig()" style="width:100%;margin-bottom:8px">Apply Baseline</button>
+                        <button class="btn btn-secondary" onclick="loadQPVelocityPreset()" style="width:100%;margin-bottom:8px">Load QP Test Sprints</button>
+                        <button class="btn btn-secondary" onclick="useDetectedRecentSprints()" style="width:100%">Use Recent Sprints</button>
+                    </div>
+                </div>
+                <details style="margin-bottom:12px">
+                    <summary style="cursor:pointer;color:var(--t2);font-size:12px;font-weight:600">Advanced velocity filters</summary>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+                        <div>
+                            <label class="form-label">Delivery issue types</label>
+                            <textarea id="velocityDeliveryTypes" rows="3" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-family:'JetBrains Mono',monospace;resize:vertical"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">Planning issue types excluded from velocity</label>
+                            <textarea id="velocityPlanningTypes" rows="3" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-family:'JetBrains Mono',monospace;resize:vertical"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">Team source</label>
+                            <select id="velocityTeamSource" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+                                <option value="teamFieldOrSprintPrefix">Team field, fallback to sprint prefix</option>
+                                <option value="sprintPrefix">Sprint-name squad prefix</option>
+                                <option value="teamField">Team field only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Included teams / squads</label>
+                            <textarea id="velocityIncludedTeams" rows="3" placeholder="Leave blank for all detected teams" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-family:'JetBrains Mono',monospace;resize:vertical"></textarea>
+                        </div>
+                    </div>
+                </details>
+                <div id="velocityPreview" style="overflow-x:auto;font-size:12px;color:var(--t2)">
+                    Import data, choose velocity sprints, then apply the baseline to preview Team × Sprint velocity.
+                </div>
+            </div>
+
 
         </div>
 
@@ -2141,6 +2195,7 @@ function aobGateCheck(){
             const data = loadData();
             const tbody = document.getElementById('capacityBody');
             const commitments = data.piCommitments || {};
+            const cfg = getVelocityConfig(data);
 
             tbody.innerHTML = data.teams.map(team => {
                 const velocity = team.velocity || 10;
@@ -2149,6 +2204,7 @@ function aobGateCheck(){
 
                 // Use piCommitments for committed items, not all items
                 const committed = (commitments[team.name] || [])
+                    .filter(c => isPIPlanningType(c.type, cfg))
                     .reduce((sum, c) => sum + (parseInt(c.points) || 0), 0);
 
                 const utilisation = piCapacity > 0 ? (committed / piCapacity) : 0;
@@ -2379,6 +2435,150 @@ function aobGateCheck(){
             return k.toUpperCase();
         }
 
+        function _parseListText(value) {
+            if (Array.isArray(value)) return value.map(v => String(v).trim()).filter(Boolean);
+            return String(value || '')
+                .split(/[\n,;]+/)
+                .map(v => v.trim())
+                .filter(Boolean);
+        }
+
+        function _normText(value) {
+            return String(value || '').trim().toUpperCase().replace(/\s+/g, ' ');
+        }
+
+        function _normaliseTeamName(teamRaw) {
+            return String(teamRaw || '')
+                .split(',')[0]
+                .trim()
+                .replace(/^[^A-Za-z0-9]+/, '')
+                .replace(/^[A-Za-z]{1,6}\s*-\s+/, '')
+                .trim();
+        }
+
+        function extractTeamPrefix(sprintName) {
+            return String(sprintName || '')
+                .replace(/\s*(FY\d+[-\s]*Q\d+[-\s]*(?:SPRINT\s*)?S?\d+|Quarter\s*\d+\s*Sprint\s*\d+|Q\d+[-\s]*S\d+|Q\d+S\d+|Sprint\s*\d+|PI\s*\d+[-\s]*Sprint\s*\d+|PI\s*\d+[-\s]*S\d+|PI[-\s]*\d+[-\s]*I\d+|Iteration\s*\d+|Kanban\s*(Board)?|Christmas\s*Sprint|Practice\s*Sprint)$/i, '')
+                .trim()
+                .replace(/^[^A-Za-z0-9]+/, '')
+                .replace(/^[A-Za-z]{1,6}\s*-\s+/, '')
+                .trim();
+        }
+
+        function getDefaultVelocityConfig() {
+            return {
+                sprintWindowMode: 'explicit',
+                sprints: [],
+                sprintCount: 6,
+                assignmentRule: 'latestMatchingSprint',
+                teamSource: 'teamFieldOrSprintPrefix',
+                includedTeams: [],
+                deliveryIssueTypes: ['Story','Task','Bug','Sub-task','Test','Test Set','Test Execution','Test Plan','Precondition'],
+                planningIssueTypes: ['Epic','Feature','SAFe Epic'],
+                doneValues: ['Done']
+            };
+        }
+
+        function getVelocityConfig(data) {
+            return { ...getDefaultVelocityConfig(), ...(data?.velocityConfig || {}) };
+        }
+
+        function isVelocityDeliveryType(type, cfg) {
+            const delivery = new Set((cfg.deliveryIssueTypes || []).map(_normText));
+            const planning = new Set((cfg.planningIssueTypes || []).map(_normText));
+            const t = _normText(type);
+            return delivery.has(t) && !planning.has(t);
+        }
+
+        function isPIPlanningType(type, cfg = getVelocityConfig(loadData())) {
+            const planning = new Set((cfg.planningIssueTypes || []).map(_normText));
+            return planning.has(_normText(type));
+        }
+
+        function getConfiguredSprintMatch(sprintName, cfg) {
+            const configured = cfg.sprints || [];
+            const raw = String(sprintName || '').trim();
+            if (!raw) return null;
+            const rawNorm = _normSprintKey(raw);
+            for (let i = 0; i < configured.length; i++) {
+                const label = String(configured[i] || '').trim();
+                if (!label) continue;
+                const labelNorm = _normSprintKey(label);
+                if (rawNorm === labelNorm || rawNorm.includes(labelNorm)) {
+                    return { label, index: i, raw };
+                }
+            }
+            return null;
+        }
+
+        function getVelocityMatches(item, cfg) {
+            const seen = new Set();
+            const matches = [];
+            const itemSprints = item.sprints || (item.sprint ? [item.sprint] : []);
+            itemSprints.forEach(s => {
+                const match = getConfiguredSprintMatch(s, cfg);
+                if (!match) return;
+                const sprintTeam = extractTeamPrefix(s);
+                const team = cfg.teamSource === 'sprintPrefix'
+                    ? sprintTeam
+                    : (cfg.teamSource === 'teamField' ? item.team : (item.team || sprintTeam));
+                const key = `${team}|${match.label}`;
+                if (seen.has(key)) return;
+                seen.add(key);
+                matches.push({ ...match, team });
+            });
+            return matches;
+        }
+
+        function chooseVelocityMatches(matches, cfg) {
+            if (!matches.length) return [];
+            if (cfg.assignmentRule === 'allMatchingSprints') return matches;
+            const sorted = matches.slice().sort((a,b) => a.index - b.index || a.raw.localeCompare(b.raw));
+            return [cfg.assignmentRule === 'earliestMatchingSprint' ? sorted[0] : sorted[sorted.length - 1]];
+        }
+
+        function calculateVelocityBaseline(items, cfg) {
+            const includedTeams = new Set((cfg.includedTeams || []).map(t => _normText(_normaliseTeamName(t))));
+            const result = {
+                sprints: cfg.sprints || [],
+                sprintCount: parseInt(cfg.sprintCount, 10) || (cfg.sprints || []).length || 1,
+                teams: {},
+                ignored: { nonDelivery: 0, notDone: 0, noSprintMatch: 0, noTeam: 0 }
+            };
+            (items || []).forEach(item => {
+                if (!isVelocityDeliveryType(item.type, cfg)) { result.ignored.nonDelivery++; return; }
+                if (!isCompleted(item.statusCategory || item.status)) { result.ignored.notDone++; return; }
+                const matches = chooseVelocityMatches(getVelocityMatches(item, cfg), cfg);
+                if (!matches.length) { result.ignored.noSprintMatch++; return; }
+                matches.forEach(match => {
+                    const team = _normaliseTeamName(match.team || item.team || extractTeamPrefix(match.raw));
+                    if (!team) { result.ignored.noTeam++; return; }
+                    if (includedTeams.size && !includedTeams.has(_normText(team))) return;
+                    if (!result.teams[team]) {
+                        result.teams[team] = {
+                            sprints: {},
+                            members: new Set(),
+                            itemKeys: new Set(),
+                            deliveredPoints: 0
+                        };
+                    }
+                    if (!result.teams[team].sprints[match.label]) result.teams[team].sprints[match.label] = 0;
+                    const pts = parseFloat(item.points) || 0;
+                    result.teams[team].sprints[match.label] += pts;
+                    result.teams[team].deliveredPoints += pts;
+                    result.teams[team].itemKeys.add(item.key);
+                    if (item.assignee) result.teams[team].members.add(item.assignee);
+                });
+            });
+            Object.values(result.teams).forEach(team => {
+                team.members = [...team.members].sort();
+                team.itemCount = team.itemKeys.size;
+                delete team.itemKeys;
+                team.avgVelocity = Math.round((team.deliveredPoints / result.sprintCount) * 10) / 10;
+            });
+            return result;
+        }
+
         // Velocity standard: only Done/Resolved/Closed items count as delivered
         // Defined at outer scope so finalizeImport and all team functions can access it
         function isCompleted(status) {
@@ -2421,6 +2621,7 @@ function aobGateCheck(){
                 piEnd: '',
                 sprintWeeks: 2,
                 capacityFactor: 80,
+                velocityConfig: getDefaultVelocityConfig(),
                 activationDate: new Date().getTime(),
                 licensed: false
             };
@@ -2502,6 +2703,7 @@ function aobGateCheck(){
                              'story points (number)','custom field (story points)','customfield_10028','customfield_10016'],
                 sprint:     ['sprint','sprint name','iteration'],
                 status:     ['status','issue status','state','status name','work item status'],
+                statusCategory: ['status category','statuscategory'],
                 priority:   ['priority','priority name'],
                 epic:       ['epic link','epic','epic name','parent','parent id','epic link summary'],
                 component:  ['component','components','component/s'],
@@ -2551,15 +2753,11 @@ function aobGateCheck(){
                 });
 
                 // Parse points (only filter truly absurd values)
-                let points = parseInt(get('storyPoints')) || 0;
+                let points = parseFloat(get('storyPoints')) || 0;
                 if (points > 10000) points = 0;
 
                 // Team: from explicit Team column (supports Jira native "Team Name": "DO - Vanguard" → "Vanguard")
-                let teamRaw = get('team');
-                let team = teamRaw.split(',')[0].trim()
-                    .replace(/^[^A-Za-z0-9]+/, '')  // strip leading emoji/symbols
-                    .replace(/^[A-Za-z]{1,6}\s*-\s+/, '') // strip "DO - " / "IT - " org prefix
-                    .trim();
+                let team = _normaliseTeamName(get('team'));
 
                 items.push({
                     key,
@@ -2570,6 +2768,7 @@ function aobGateCheck(){
                     sprints: sprintList,
                     sprintRaw: sprintList.join('; '),
                     status: get('status') || 'To Do',
+                    statusCategory: get('statusCategory'),
                     priority: get('priority') || 'Medium',
                     epic: get('epic'),
                     component: get('component'),
@@ -2629,6 +2828,7 @@ function aobGateCheck(){
 
                 // Show preview
                 displayPreview(parsed.headers, parsed.items.slice(0, 10));
+                renderVelocityPreview(parsed.items, getVelocityConfig(loadData()));
 
                 // Show detected columns + diagnostics
                 const detected = Object.keys(parsed.colMap);
@@ -2666,6 +2866,135 @@ function aobGateCheck(){
             document.getElementById('previewEmpty').style.display = 'none';
         }
 
+        function syncVelocityConfigControls(data = loadData()) {
+            const cfg = getVelocityConfig(data);
+            const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+            set('velocitySprintInput', (cfg.sprints || []).join('\n'));
+            set('velocityAssignmentRule', cfg.assignmentRule || 'latestMatchingSprint');
+            set('velocitySprintCount', cfg.sprintCount || (cfg.sprints || []).length || 6);
+            set('velocityDeliveryTypes', (cfg.deliveryIssueTypes || []).join('\n'));
+            set('velocityPlanningTypes', (cfg.planningIssueTypes || []).join('\n'));
+            set('velocityTeamSource', cfg.teamSource || 'teamFieldOrSprintPrefix');
+            set('velocityIncludedTeams', (cfg.includedTeams || []).join('\n'));
+            renderVelocityPreview(data.items || window._pendingParsedItems || [], cfg);
+        }
+
+        function readVelocityConfigControls() {
+            const data = loadData();
+            const current = getVelocityConfig(data);
+            const val = id => document.getElementById(id)?.value || '';
+            return {
+                ...current,
+                sprints: _parseListText(val('velocitySprintInput')),
+                assignmentRule: val('velocityAssignmentRule') || 'latestMatchingSprint',
+                sprintCount: parseInt(val('velocitySprintCount'), 10) || _parseListText(val('velocitySprintInput')).length || 1,
+                teamSource: val('velocityTeamSource') || 'teamFieldOrSprintPrefix',
+                includedTeams: _parseListText(val('velocityIncludedTeams')).map(_normaliseTeamName),
+                deliveryIssueTypes: _parseListText(val('velocityDeliveryTypes')),
+                planningIssueTypes: _parseListText(val('velocityPlanningTypes'))
+            };
+        }
+
+        function renderVelocityPreview(items, cfg = getVelocityConfig(loadData())) {
+            const el = document.getElementById('velocityPreview');
+            if (!el) return;
+            if (!items || !items.length) {
+                el.innerHTML = 'Import data, choose velocity sprints, then apply the baseline to preview Team × Sprint velocity.';
+                return;
+            }
+            if (!cfg.sprints || !cfg.sprints.length) {
+                el.innerHTML = '<div style="padding:12px;border:1px solid rgba(245,158,11,.35);border-radius:8px;background:rgba(245,158,11,.08);color:var(--mid)">Add explicit velocity sprints or use detected recent sprints. Velocity will fall back to legacy detection until a baseline is configured.</div>';
+                return;
+            }
+            const baseline = calculateVelocityBaseline(items, cfg);
+            const teamNames = Object.keys(baseline.teams).sort((a,b) => {
+                const da = baseline.teams[b].deliveredPoints - baseline.teams[a].deliveredPoints;
+                return da || a.localeCompare(b);
+            });
+            if (!teamNames.length) {
+                el.innerHTML = '<div style="padding:12px;border:1px solid rgba(229,57,53,.35);border-radius:8px;background:rgba(229,57,53,.08);color:var(--red)">No completed delivery items matched the current velocity sprint config.</div>';
+                return;
+            }
+            let html = '<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:var(--bg1);border-bottom:1px solid var(--bdr)">';
+            html += '<th style="padding:8px 10px;text-align:left;color:var(--t2)">Sprint</th>';
+            teamNames.forEach(t => html += '<th style="padding:8px 10px;text-align:right;color:var(--t2)">' + t + '</th>');
+            html += '<th style="padding:8px 10px;text-align:right;color:var(--t2)">Total</th></tr></thead><tbody>';
+            (cfg.sprints || []).forEach(sp => {
+                let rowTotal = 0;
+                html += '<tr style="border-bottom:1px solid rgba(42,54,84,.25)"><td style="padding:7px 10px;font-family:\'JetBrains Mono\',monospace;color:var(--t1)">' + sp + '</td>';
+                teamNames.forEach(t => {
+                    const pts = baseline.teams[t].sprints[sp] || 0;
+                    rowTotal += pts;
+                    html += '<td style="padding:7px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace">' + Math.round(pts * 10) / 10 + '</td>';
+                });
+                html += '<td style="padding:7px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace;font-weight:700">' + Math.round(rowTotal * 10) / 10 + '</td></tr>';
+            });
+            html += '<tr style="background:var(--bg1);border-top:1px solid var(--bdr)"><td style="padding:8px 10px;font-weight:700">Total</td>';
+            teamNames.forEach(t => html += '<td style="padding:8px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace;font-weight:700">' + Math.round(baseline.teams[t].deliveredPoints * 10) / 10 + '</td>');
+            html += '<td></td></tr><tr style="background:var(--bg1)"><td style="padding:8px 10px;font-weight:700">Average / sprint</td>';
+            teamNames.forEach(t => html += '<td style="padding:8px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace;font-weight:700;color:var(--ac)">' + baseline.teams[t].avgVelocity + '</td>');
+            html += '<td></td></tr></tbody></table>';
+            html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Matched completed delivery items only. Ignored: ' + baseline.ignored.nonDelivery + ' non-delivery, ' + baseline.ignored.notDone + ' not done, ' + baseline.ignored.noSprintMatch + ' outside selected sprints.</div>';
+            el.innerHTML = html;
+        }
+
+        function applyVelocityConfig() {
+            const data = loadData();
+            data.velocityConfig = readVelocityConfigControls();
+            if (data.velocityConfig.sprintCount) data.sprintsPerPI = data.velocityConfig.sprintCount;
+            recalculateTeamVelocitiesFromConfig(data);
+            saveData(data);
+            updateUI();
+            showToast('Velocity baseline applied', 'success');
+        }
+
+        function recalculateTeamVelocitiesFromConfig(data) {
+            const cfg = getVelocityConfig(data);
+            if (!cfg.sprints || !cfg.sprints.length) return;
+            const baseline = calculateVelocityBaseline(data.items || window._pendingParsedItems || [], cfg);
+            const includedTeams = new Set((cfg.includedTeams || []).map(t => _normText(_normaliseTeamName(t))));
+            if (includedTeams.size) {
+                data.teams = (data.teams || []).filter(team => includedTeams.has(_normText(team.name)));
+            }
+            (data.teams || []).forEach(team => {
+                team.sprints = data.sprintsPerPI || cfg.sprintCount || team.sprints || 5;
+                const match = baseline.teams[_normaliseTeamName(team.name)];
+                if (!match) return;
+                team.velocity = match.avgVelocity || 0;
+                team.historicalSprints = baseline.sprintCount;
+                team.totalHistoricalPts = match.deliveredPoints || 0;
+                team.velocityBySprint = match.sprints;
+                team.velocityAssignmentRule = cfg.assignmentRule;
+                team.members = team.members && team.members.length ? team.members : match.members;
+            });
+        }
+
+        function loadQPVelocityPreset() {
+            const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+            set('velocitySprintInput', ['FY26-Q4-S4','FY26-Q4-S5','FY27-Q1-S1','FY27-Q1-S2','FY27-Q1-S3','FY27-Q1-S4'].join('\n'));
+            set('velocitySprintCount', 6);
+            set('velocityAssignmentRule', 'latestMatchingSprint');
+            set('velocityTeamSource', 'sprintPrefix');
+            set('velocityIncludedTeams', '');
+            const pi = document.getElementById('cfgSprintsPerPI');
+            if (pi) pi.value = 6;
+            applyVelocityConfig();
+        }
+
+        function useDetectedRecentSprints() {
+            const items = loadData().items || window._pendingParsedItems || [];
+            const sprintSet = new Set();
+            items.forEach(item => (item.sprints || (item.sprint ? [item.sprint] : [])).forEach(s => {
+                if (_sprintOrder(s) < Number.MAX_SAFE_INTEGER - 10) sprintSet.add(_normSprintKey(s));
+            }));
+            const recent = _sortSprints([...sprintSet]).slice(-6);
+            const el = document.getElementById('velocitySprintInput');
+            if (el) el.value = recent.join('\n');
+            const count = document.getElementById('velocitySprintCount');
+            if (count) count.value = recent.length || 6;
+            applyVelocityConfig();
+        }
+
         function importData() {
             const parsedItems = window._pendingParsedItems;
             if (!parsedItems || parsedItems.length === 0) {
@@ -2675,13 +3004,10 @@ function aobGateCheck(){
 
             const mode = document.getElementById('importMode').value;
             const data = loadData();
+            const velocityConfig = getVelocityConfig(data);
+            const velocityBaseline = calculateVelocityBaseline(parsedItems, velocityConfig);
 
             // ── Extract team prefixes from sprint names (FlowInSite pattern) ──
-            function extractTeamPrefix(sprintName) {
-                return sprintName
-                    .replace(/\s*(FY\d+[-\s]*Q\d+[-\s]*S\d+|Quarter\s*\d+\s*Sprint\s*\d+|Q\d+[-\s]*S\d+|Q\d+S\d+|Sprint\s*\d+|PI\s*\d+[-\s]*Sprint\s*\d+|PI\s*\d+[-\s]*S\d+|PI[-\s]*\d+[-\s]*I\d+|Iteration\s*\d+|Kanban\s*(Board)?|Christmas\s*Sprint|Practice\s*Sprint)$/i, '')
-                    .trim();
-            }
 
             // Collect all unique sprints from parsed items
             const sprintSet = new Set();
@@ -2735,13 +3061,13 @@ function aobGateCheck(){
                     }
                 });
                 const numSprints = teamMap[team].length || 1;
+                const configuredVelocity = velocityBaseline.teams[_normaliseTeamName(team)];
                 teamDetails[team] = {
                     sprints: _sortSprints(teamMap[team]),
                     members: [...members].sort(),
                     itemCount, totalPoints, deliveredPoints,
-                    // Velocity = delivered (Done/Resolved/Closed) points only ÷ number of sprints
-                    // Matches FlowInSite standard: only completed items count toward velocity
-                    avgVelocity: Math.round(deliveredPoints / numSprints)
+                    avgVelocity: configuredVelocity ? configuredVelocity.avgVelocity : Math.round(deliveredPoints / numSprints),
+                    velocityBaseline: configuredVelocity || null
                 };
             });
 
@@ -2765,18 +3091,35 @@ function aobGateCheck(){
                 const allTeamSprints = parsedItems.filter(i => i.team === team).flatMap(i => i.sprints);
                 const teamSprints = _sortSprints([...new Set(allTeamSprints)]);
                 const numSprints = teamSprints.length || 1;
+                const configuredVelocity = velocityBaseline.teams[_normaliseTeamName(team)];
 
                 // Always overwrite — explicit team data is more accurate than sprint-prefix guessing
-                // Velocity = delivered (Done/Resolved/Closed) points only ÷ sprints (matches suite standard)
                 teamDetails[team] = {
                     sprints: teamSprints,
                     members: [...members].sort(),
                     itemCount, totalPoints, deliveredPoints,
-                    avgVelocity: numSprints > 0 ? Math.round(deliveredPoints / numSprints) : 0
+                    avgVelocity: configuredVelocity ? configuredVelocity.avgVelocity : (numSprints > 0 ? Math.round(deliveredPoints / numSprints) : 0),
+                    velocityBaseline: configuredVelocity || null
+                };
+            });
+            Object.keys(velocityBaseline.teams).forEach(team => {
+                if (teamDetails[team]) return;
+                const vb = velocityBaseline.teams[team];
+                teamDetails[team] = {
+                    sprints: velocityConfig.sprints || [],
+                    members: vb.members || [],
+                    itemCount: vb.itemCount || 0,
+                    totalPoints: vb.deliveredPoints || 0,
+                    deliveredPoints: vb.deliveredPoints || 0,
+                    avgVelocity: vb.avgVelocity || 0,
+                    velocityBaseline: vb
                 };
             });
 
-            const teamKeys = Object.keys(teamDetails).sort((a,b) => teamDetails[b].itemCount - teamDetails[a].itemCount);
+            const includedTeams = new Set((velocityConfig.includedTeams || []).map(t => _normText(_normaliseTeamName(t))));
+            const teamKeys = Object.keys(teamDetails)
+                .filter(team => !includedTeams.size || includedTeams.has(_normText(team)))
+                .sort((a,b) => teamDetails[b].itemCount - teamDetails[a].itemCount);
 
             if (teamKeys.length > 0) {
                 window._pendingTeamDetails = teamDetails;
@@ -2842,6 +3185,7 @@ function aobGateCheck(){
                 try {
                     const mode = document.getElementById('importMode').value;
                     const data = loadData();
+                    const velocityConfig = getVelocityConfig(data);
                     const selected = [...document.querySelectorAll('.team-detect-cb:checked')].map(cb => cb.value);
 
                     // Build sprint→team lookup
@@ -2856,11 +3200,12 @@ function aobGateCheck(){
                     selected.forEach(team => {
                         if (!existingNames.includes(team)) {
                             const td = teamDetails[team];
-                            const numSprints = td.sprints.length || 1;
+                            const baseline = td.velocityBaseline || null;
+                            const numSprints = baseline ? (velocityConfig.sprintCount || velocityConfig.sprints.length || 1) : (td.sprints.length || 1);
                             // Build per-member delivered points for recalculation when members are removed
                             const memberDelivered = {};
                             parsedItems.forEach(item => {
-                                if (!isCompleted(item.status)) return;
+                                if (!isCompleted(item.statusCategory || item.status)) return;
                                 const inTeam = item.team === team || item.sprints.some(s => td.sprints.includes(s));
                                 if (inTeam && item.assignee) {
                                     memberDelivered[item.assignee] = (memberDelivered[item.assignee] || 0) + (item.points || 0);
@@ -2869,13 +3214,14 @@ function aobGateCheck(){
                             data.teams.push({
                                 name: team,
                                 members: td.members || [],
-                                // Velocity = delivered pts / sprints (suite standard — no manual override)
                                 velocity: td.avgVelocity || 0,
-                                sprints: 5, // default PI sprints (configurable)
+                                sprints: data.sprintsPerPI || velocityConfig.sprintCount || 5,
                                 leaveAbsence: 0,
                                 detectedSprints: td.sprints,
                                 historicalSprints: numSprints,
-                                totalHistoricalPts: td.deliveredPoints || 0,
+                                totalHistoricalPts: baseline ? (baseline.deliveredPoints || 0) : (td.deliveredPoints || 0),
+                                velocityBySprint: baseline ? baseline.sprints : null,
+                                velocityAssignmentRule: velocityConfig.assignmentRule,
                                 memberDelivered // pts per member for velocity recalc on remove
                             });
                         }
@@ -2914,10 +3260,13 @@ function aobGateCheck(){
                             summary: item.summary,
                             type: item.type,
                             status: item.status,
+                            statusCategory: item.statusCategory,
                             assignee: item.assignee,
                             priority: item.priority,
                             points: item.points,
                             sprint: sprintLabel,
+                            sprints: item.sprints,
+                            sprintRaw: item.sprintRaw,
                             epic: item.epic,
                             component: item.component,
                             team: assignedTeam || item.team || '',
@@ -2966,10 +3315,13 @@ function aobGateCheck(){
                 summary: item.summary,
                 type: item.type,
                 status: item.status,
+                statusCategory: item.statusCategory,
                 assignee: item.assignee,
                 priority: item.priority,
                 points: item.points,
                 sprint: item.sprints[0] || 'Unassigned',
+                sprints: item.sprints,
+                sprintRaw: item.sprintRaw,
                 epic: item.epic,
                 component: item.component,
                 team: item.team || '',
@@ -3172,6 +3524,7 @@ function aobGateCheck(){
 
             // T-shirt sizing
             renderTshirtSizing();
+            syncVelocityConfigControls(data);
 
             // Capacity & MoSCoW
             renderCapacity();
@@ -3200,9 +3553,10 @@ function aobGateCheck(){
 
             // Build planned items from piCommitments (explicitly committed features)
             const commitments = data.piCommitments || {};
+            const cfg = getVelocityConfig(data);
             const planned = [];
             Object.entries(commitments).forEach(([team, items]) => {
-                items.forEach(c => planned.push({...c, team}));
+                items.filter(c => isPIPlanningType(c.type, cfg)).forEach(c => planned.push({...c, team}));
             });
             const plannedPts = planned.reduce((s,i) => s + (parseInt(i.points) || 0), 0);
             const backlog = data.items;
@@ -3451,6 +3805,9 @@ function aobGateCheck(){
             const teams = data.teams || [];
             const commitments = data.piCommitments || {};
             const sm = data.sizeMapping || { XS:1, S:2, M:3, L:5, XL:8, XXL:13 };
+            const cfg = getVelocityConfig(data);
+            const planningTypes = (cfg.planningIssueTypes || getDefaultVelocityConfig().planningIssueTypes);
+            const selectedTeam = window._piTeamFilter || '';
 
             if (!teams.length) {
                 container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--t3)">Configure teams first on the Teams & Capacity tab</p>';
@@ -3462,7 +3819,7 @@ function aobGateCheck(){
             teams.forEach(t => {
                 const sprintsPerPI = typeof t.sprints === 'number' ? t.sprints : 5;
                 totalCapacity += (t.velocity || 0) * sprintsPerPI;
-                const teamCommits = commitments[t.name] || [];
+                const teamCommits = (commitments[t.name] || []).filter(c => isPIPlanningType(c.type, cfg));
                 totalCommitted += teamCommits.reduce((s,c) => s + (parseInt(c.points) || 0), 0);
             });
 
@@ -3470,18 +3827,31 @@ function aobGateCheck(){
             if (summaryEl) summaryEl.innerHTML = '<strong>' + totalCommitted + '</strong> / ' + totalCapacity + ' pts committed (' + (totalCapacity > 0 ? Math.round(totalCommitted/totalCapacity*100) : 0) + '%)';
 
             let html = '';
+            html += '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px">';
+            html += '<label style="font-size:12px;color:var(--t2);font-weight:600">Jump to team</label>';
+            html += '<select id="piTeamFilter" onchange="jumpToPITeam(this.value)" style="min-width:220px;padding:7px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">';
+            html += '<option value="">Select team...</option>';
+            teams.forEach(t => {
+                html += '<option value="' + t.name.replace(/"/g, '&quot;') + '"' + (selectedTeam === t.name ? ' selected' : '') + '>' + t.name + '</option>';
+            });
+            html += '</select>';
+            html += '<span style="font-size:11px;color:var(--t3);margin-left:auto">PI loading accepts: ' + planningTypes.join(', ') + '</span>';
+            html += '</div>';
 
-            teams.forEach(team => {
+            const teamsToRender = teams;
+            teamsToRender.forEach(team => {
                 const sprintsPerPI = typeof team.sprints === 'number' ? team.sprints : 5;
                 const velocity = team.velocity || 0;
                 const capacity = velocity * sprintsPerPI;
-                const teamCommits = commitments[team.name] || [];
+                const teamCommits = (commitments[team.name] || [])
+                    .map((c, commitIdx) => ({ ...c, commitIdx }))
+                    .filter(c => isPIPlanningType(c.type, cfg));
                 const committed = teamCommits.reduce((s,c) => s + (parseInt(c.points) || 0), 0);
                 const remaining = capacity - committed;
                 const utilPct = capacity > 0 ? Math.round(committed / capacity * 100) : 0;
                 const barColor = utilPct > 100 ? 'var(--red)' : utilPct > 80 ? 'var(--mid)' : 'var(--hi)';
 
-                html += '<div class="card" style="margin-bottom:24px;border:1px solid var(--bdr)">';
+                html += '<div class="card" id="piTeamCard_' + team.name.replace(/[^A-Za-z0-9_-]/g,'_') + '" style="margin-bottom:24px;border:1px solid var(--bdr)">';
 
                 // Team header with capacity bar
                 html += '<div style="padding:16px;border-bottom:1px solid var(--bdr);background:var(--bg1);border-radius:8px 8px 0 0">';
@@ -3503,7 +3873,7 @@ function aobGateCheck(){
 
                 // Search bar to add features
                 html += '<div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:8px;align-items:center">';
-                html += '<input type="text" id="piSearch_' + team.name.replace(/\s/g,'_') + '" placeholder="Search by Key (e.g. DA-1234) or title..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px" onkeyup="if(event.key===\'Enter\')searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')">';
+                html += '<input type="text" id="piSearch_' + team.name.replace(/\s/g,'_') + '" placeholder="Search planning items only: Epic, Feature, SAFe Epic..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px" onkeyup="if(event.key===\'Enter\')searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')">';
                 html += '<button class="btn btn-primary" onclick="searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')" style="padding:8px 16px">Search & Add</button>';
                 html += '</div>';
 
@@ -3524,14 +3894,14 @@ function aobGateCheck(){
                     html += '<th style="padding:8px;text-align:center;font-weight:600;color:var(--t2);font-size:11px;text-transform:uppercase"></th>';
                     html += '</tr></thead><tbody>';
 
-                    teamCommits.forEach((c, idx) => {
+                    teamCommits.forEach((c) => {
                         const moscowClass = 'b-' + bkt(c);
                         html += '<tr style="border-bottom:1px solid rgba(42,54,84,.3)">';
                         html += '<td style="padding:8px">' + idLink(c.key) + '</td>';
                         html += '<td style="padding:8px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (c.summary || '') + '</td>';
                         html += '<td style="padding:8px"><span class="tyb ' + tyCl(c.type) + '">' + (c.type || '') + '</span></td>';
                         html += '<td style="padding:8px;text-align:center">';
-                        html += '<select onchange="updatePICommitSize(\'' + team.name.replace(/'/g,"\\'") + '\',' + idx + ',this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-weight:600">';
+                        html += '<select onchange="updatePICommitSize(\'' + team.name.replace(/'/g,"\\'") + '\',' + c.commitIdx + ',this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:12px;font-weight:600">';
                         html += '<option value="">—</option>';
                         ['XS','S','M','L','XL','XXL'].forEach(s => {
                             html += '<option value="' + s + '"' + (c.size === s ? ' selected' : '') + '>' + s + ' (' + (sm[s]||0) + 'pts)</option>';
@@ -3539,7 +3909,7 @@ function aobGateCheck(){
                         html += '</select></td>';
                         html += '<td style="padding:8px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-weight:700;color:' + (c.points ? 'var(--ac)' : 'var(--t3)') + '">' + (c.points || 0) + '</td>';
                         html += '<td style="padding:8px;text-align:center"><span class="bb ' + moscowClass + '" style="font-size:9px">' + bkt(c) + '</span></td>';
-                        html += '<td style="padding:8px;text-align:center"><button onclick="removePICommit(\'' + team.name.replace(/'/g,"\\'") + '\',' + idx + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px" title="Remove">✕</button></td>';
+                        html += '<td style="padding:8px;text-align:center"><button onclick="removePICommit(\'' + team.name.replace(/'/g,"\\'") + '\',' + c.commitIdx + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px" title="Remove">✕</button></td>';
                         html += '</tr>';
                     });
 
@@ -3554,6 +3924,16 @@ function aobGateCheck(){
             container.innerHTML = html;
         }
 
+        function jumpToPITeam(teamName) {
+            window._piTeamFilter = teamName || '';
+            if (window._piTeamFilter) {
+                setTimeout(() => {
+                    const el = document.getElementById('piTeamCard_' + window._piTeamFilter.replace(/[^A-Za-z0-9_-]/g,'_'));
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+            }
+        }
+
         function searchPIItem(teamName) {
             const safeTeam = teamName.replace(/\s/g, '_');
             const inputId = 'piSearch_' + safeTeam;
@@ -3564,19 +3944,25 @@ function aobGateCheck(){
             if (!query) { resultsDiv.innerHTML = ''; return; }
 
             const data = loadData();
+            const cfg = getVelocityConfig(data);
             const commitments = data.piCommitments || {};
             const alreadyCommitted = new Set((commitments[teamName] || []).map(c => c.key));
+            if (!data.items || data.items.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No imported backlog is available in this browser session. Re-import the CSV, then search will show selectable planning items.</div>';
+                return;
+            }
 
-            // Search items by key, title, or epic — exclude already committed to THIS team
+            // Search planning-level items by key, title, or epic — exclude already committed to THIS team.
             console.log('PI Search: query="' + query + '", team="' + teamName + '", totalItems=' + data.items.length + ', alreadyCommitted=' + alreadyCommitted.size);
             const matches = data.items.filter(i =>
+                isPIPlanningType(i.type, cfg) &&
                 (i.key.toLowerCase().includes(query) || (i.summary||'').toLowerCase().includes(query) || (i.epic||'').toLowerCase().includes(query)) &&
                 !alreadyCommitted.has(i.key)
             ).slice(0, 50);
             console.log('PI Search results:', matches.length, matches.slice(0,3).map(i => i.key + ': ' + (i.summary||'').substring(0,40)));
 
             if (matches.length === 0) {
-                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching items found for "' + query + '"</div>';
+                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching planning items found for "' + query + '". PI Loading only searches ' + (cfg.planningIssueTypes || []).join(', ') + '.</div>';
                 return;
             }
 
@@ -3639,6 +4025,7 @@ function aobGateCheck(){
                 if (data.piCommitments[teamName].find(c => c.key === key)) return; // skip dupes
                 const item = data.items.find(i => i.key === key);
                 if (!item) return;
+                if (!isPIPlanningType(item.type, getVelocityConfig(data))) return;
                 data.piCommitments[teamName].push({
                     key: item.key,
                     summary: item.summary,
@@ -3666,6 +4053,7 @@ function aobGateCheck(){
             // Find item in backlog
             const item = data.items.find(i => i.key === key);
             if (!item) { showToast('Item not found', 'error'); return; }
+            if (!isPIPlanningType(item.type, getVelocityConfig(data))) { showToast('Only planning items can be added to PI Loading', 'warning'); return; }
 
             // Check not already added
             if (data.piCommitments[teamName].find(c => c.key === key)) { showToast('Already committed', 'warning'); return; }
