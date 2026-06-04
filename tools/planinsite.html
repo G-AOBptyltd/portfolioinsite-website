@@ -1293,7 +1293,7 @@ function aobGateCheck(){
             </div>
 
             <div class="card">
-                <div class="card-title">📊 Velocity Baseline Preview</div>
+                <div class="card-title">📊 Velocity Baseline — Selected Sprint Window</div>
                 <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:12px">
                     <div>
                         <label class="form-label">Velocity sprint names</label>
@@ -2934,7 +2934,7 @@ function aobGateCheck(){
             html += '<td></td></tr><tr style="background:var(--bg1)"><td style="padding:8px 10px;font-weight:700">Average / sprint</td>';
             teamNames.forEach(t => html += '<td style="padding:8px 10px;text-align:right;font-family:\'JetBrains Mono\',monospace;font-weight:700;color:var(--ac)">' + baseline.teams[t].avgVelocity + '</td>');
             html += '<td></td></tr></tbody></table>';
-            html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Matched completed delivery items only. Ignored: ' + baseline.ignored.nonDelivery + ' non-delivery, ' + baseline.ignored.notDone + ' not done, ' + baseline.ignored.noSprintMatch + ' outside selected sprints.</div>';
+            html += '<div style="margin-top:8px;font-size:11px;color:var(--t3)">Teams shown here are not an allow-list; they are the teams with matched completed delivery items in the selected sprint window. Ignored: ' + baseline.ignored.nonDelivery + ' non-delivery, ' + baseline.ignored.notDone + ' not done, ' + baseline.ignored.noSprintMatch + ' outside selected sprints.</div>';
             el.innerHTML = html;
         }
 
