@@ -114,6 +114,7 @@ portfolioinsite-website/
 
 ## Deployment History
 
+- **June 4, 2026:** PlanInSite velocity baseline workflow added on `feature/pln-velocity`, then merged after branch preview. PlanInSite now has a configurable Velocity Baseline — Selected Sprint Window panel, supports explicit sprint windows, sprint assignment rules (latest/earliest/all matching), configurable team source, delivery/planning issue types, PI Loading planning-item filters, and a Jump to team shortcut. PI Loading candidates are restricted to configured planning types (default Epic, Feature, SAFe Epic); delivery items still support velocity/backlog only. Branch preview required short branch names because Netlify branch deploy URLs fail when project name + branch name exceeds 63 characters.
 - **May 30, 2026:** ForecastInSite playbook overhaul — 3 new sections (What ForecastInSite Solves, Quick Setup Guide, Import Guide), Setup Path sidebar nav with prev/next strips in 6 setup sections, sidebar reordered to tool-tab order. Jira CSV import now filters to Feature level and above, shows import/skip breakdown. PortfolioInSite import adds Theme/Initiative/Capability types. All-playbook licence unlock (hpp_lic_suite) added to forecastinsite, planinsite, portfolioinsite playbooks.
 - **May 30, 2026:** SprintINSite/FlowInSite playbook licence unlock added — any InSite Suite key unlocks all gated sections. Header standardisation (Reset Data + Config drawer) on SprintINSite and FlowInSite tools.
 - **May 25, 2026:** Seat enforcement live — FCT/PLN/POI tools now call `/api/licence-validate`. Added fingerprinting, async activation, fail-open. Verified 3-browser test on production.
@@ -136,6 +137,9 @@ If git lock: `rm -f .git/index.lock .git/HEAD.lock`
 
 ## Key Learnings
 
+- **Git workflow is strict:** Always create/use `feature/<descriptive-name>` before edits. Do not commit directly to `main`. For Netlify branch deploys, keep branch names short enough that `project-name + branch-name <= 63` characters; `feature/pln-velocity` worked where `feature/planinsite-configurable-velocity` was too long for branch deploy URLs.
+- **PlanInSite velocity baseline:** The Velocity Baseline panel previews teams found in the selected sprint window, not all teams in the import and not an allow-list. If raw imported CSV rows are unavailable after refresh, preview can only use saved team `velocityBySprint`; otherwise re-import the CSV before recalculating.
+- **PlanInSite PI Loading:** Only configured planning issue types should be addable to PI Loading. Defaults are Epic, Feature, and SAFe Epic. Stories, Tasks, Bugs, Sub-tasks, and Tests remain for velocity/backlog analysis and must not be selectable as PI load candidates.
 - `PiSScenrioModel1.png` has a typo — keep filename to avoid broken references
 - Module badge colours: cyan (#06b6d4) available, amber (#f59e0b) "In UAT", green (#10b981) platform
 - Dependency Mapping M10 is in UAT — amber badge, not "available"
