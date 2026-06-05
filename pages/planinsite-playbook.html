@@ -841,8 +841,8 @@
         <h4>Team table fields</h4>
         <ul>
           <li><strong>Team name</strong> — auto-detected from your CSV's Team Name or sprint prefix. Must match the CSV exactly for items to be assigned correctly.</li>
-          <li><strong>Avg Velocity</strong> — calculated from the Velocity Baseline panel below. Read-only once applied. Shows sprint count and "done items only" note.</li>
-          <li><strong>Sprints per PI</strong> — number of delivery sprints in this PI (not counting IP sprint). Editable per team. Default: 5.</li>
+          <li><strong>Avg Velocity</strong> — calculated from the Velocity Baseline panel below and shown with its sprint count and "done items only" note. To override it for a team, use <strong>Edit</strong> — enter the velocity manually and tick <strong>Lock</strong> so Apply Baseline won't overwrite it. Locked teams display a "✎ manual" marker.</li>
+          <li><strong>Sprints per PI</strong> — number of delivery sprints in this PI (not counting IP sprint). Default 5, set globally in Config and overridable per team via <strong>Edit</strong>. This is the planning horizon — it is independent of the velocity sprint divisor below.</li>
           <li><strong>Members</strong> — click the 👤 badge to expand the member chip list. Use × to remove cross-team noise. Use + Add to manually include missing members.</li>
         </ul>
       </div>
@@ -851,7 +851,7 @@
         <h4>Setting the Velocity Baseline — Selected Sprint Window</h4>
         <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Choose your sprint window</h5><p>In the <strong>Velocity Baseline</strong> panel, enter the sprint names you want to use as your velocity baseline — one per line. Use exact names as they appear in Jira (e.g. <code>FY27-Q1-S3</code>). Aim for 4–6 normal delivery sprints. Exclude practice sprints, Kanban buckets, and IP/planning sprints.</p></div></div>
         <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Choose a sprint assignment rule</h5><p>Select how multi-sprint items are attributed: <strong>Latest matching sprint</strong> (default — most recent sprint the item appeared in), <strong>Earliest matching sprint</strong>, or <strong>All matching sprints</strong> (counts the item in every sprint it was active). Latest is the most defensible for velocity planning.</p></div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set the sprint divisor</h5><p>The sprint divisor is the denominator for the velocity calculation. Default is 6. If you entered 4 sprints in the window but want to express velocity as a 6-sprint average (to be conservative), keep the divisor at 6. If you want raw average across only the sprints you entered, match the divisor to your sprint count.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Set the sprint divisor</h5><p>The sprint divisor is the denominator for the velocity calculation — the historical averaging window. Default is 6. If you entered 4 sprints in the window but want to express velocity as a 6-sprint average (to be conservative), keep the divisor at 6. If you want raw average across only the sprints you entered, match the divisor to your sprint count. <strong>Note:</strong> the divisor only affects the calculated velocity — it does <em>not</em> change your PI capacity sprint count, which is set separately by <strong>Sprints per PI</strong> in Config.</p></div></div>
         <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Click Apply Baseline</h5><p>The preview table updates immediately, showing completed story points per team per sprint and the calculated average velocity per team. Review the numbers before applying — the preview is your quality check. Once satisfied, Apply Baseline writes the velocity to each team and saves it.</p></div></div>
         <div class="step"><div class="step-num">5</div><div class="step-body"><h5>Baseline persists without the CSV</h5><p>Once applied, the velocity baseline is saved to browser storage. If you reload the tool without re-importing the CSV, the saved baseline is used for the preview — your team velocities are retained. To recalculate from fresh data, re-import the CSV and apply again.</p></div></div>
       </div>
@@ -934,11 +934,14 @@
         </div>
       </div>
 
-      <p class="pub-overview">PI Loading gives you the helicopter view of the entire PI — all teams on rows, all sprints in columns, with colour-coded capacity utilisation in each cell. This is the view you project in PI planning rooms and send to stakeholders as the committed PI plan. Only planning-level issue types (Epic, Feature, SAFe Epic by default) are eligible for PI Loading — delivery items such as Stories, Tasks, and Bugs remain in the backlog for velocity tracking only.</p>
+      <p class="pub-overview">PI Loading gives you the helicopter view of the entire PI — all teams on rows, all sprints in columns, with colour-coded capacity utilisation in each cell. This is the view you project in PI planning rooms and send to stakeholders as the committed PI plan. Only planning-level issue types (Feature, Epic, SAFe Epic by default) are eligible for PI Loading — delivery items such as Stories, Tasks, and Bugs remain in the backlog for velocity tracking only. The eligible levels are configurable: in <strong>Config → PI Loading Levels</strong> you can add levels above (Initiative, Theme, Portfolio Epic) or below (Story, Task, Bug, Sub-task) the default planning band if your organisation plans at a different altitude. This affects PI Loading only — it never changes velocity.</p>
 
       <div class="gate-wrap">
         <div class="gate-inner">
           <div class="gated-steps">
+            <h4>Before you load — set your levels and sizing</h4>
+            <div class="step"><div class="step-num">0</div><div class="step-body"><h5>Confirm eligible levels and sizing mode</h5><p>In <strong>Config → PI Loading Levels</strong>, confirm which hierarchy levels are eligible (default Feature, Epic, SAFe Epic). In <strong>Config → T-Shirt Sizing</strong>, pick Story Points or PI Planning (sprint-based). In sprint-based mode, each size loads as sprints × that team's velocity, so capacity stays honest without forcing hour estimates.</p></div></div>
+
             <h4>Reading the PI Loading grid</h4>
             <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Green cells — healthy commitment</h5><p>Team is committed within their sprint capacity for this sprint. Aim for all cells to be green by the end of PI planning — this means no team is over-committed and there's sprint buffer for emergent work.</p></div></div>
             <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Amber cells — approaching limit</h5><p>Team is 85–100% loaded for this sprint. Acceptable if the work is all Must Have, but be careful — a single unplanned item tips this sprint red. Consider shifting one story to the next sprint.</p></div></div>
@@ -1133,7 +1136,38 @@
         </div>
       </div>
 
-      <p class="pub-overview">Configuration controls your PI structure — sprints per PI, sprint duration, capacity factor defaults, and the capacity colour thresholds. These settings flow into every capacity calculation in the tool. Set them before importing data and avoid changing them mid-session.</p>
+      <p class="pub-overview">Configuration controls your PI structure — sprints per PI, sprint duration, capacity factor defaults, and the capacity colour thresholds — plus which hierarchy levels PI Loading accepts, how T-shirt sizes convert to points, and your Jira Site URL. These settings flow into every capacity calculation in the tool. Set them before importing data and avoid changing them mid-session. Open Configuration from the ⚙ <strong>Config</strong> button at the top right.</p>
+
+      <div class="pub-caps" style="margin-top:24px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2);border-radius:10px;padding:20px">
+        <h4 style="color:var(--t1);margin-bottom:12px">📐 T-Shirt Sizing — choosing a mode</h4>
+        <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:12px">PlanInSite supports two sizing approaches, set in <strong>Config → T-Shirt Sizing</strong>. Both feed the same capacity bars — the difference is how a size becomes points.</p>
+
+        <p style="font-size:13px;color:var(--t1);font-weight:700;margin-bottom:6px">Story Points</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:14px">Each size XS–XXL maps to a fixed point value you set (defaults 1 / 2 / 3 / 5 / 8 / 13). Use this when teams already estimate planning items in story points and you want a single shared scale across all teams.</p>
+
+        <p style="font-size:13px;color:var(--t1);font-weight:700;margin-bottom:6px">PI Planning (sprint-based)</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:10px">For ART-level planning a 5-size scale — XS, S, M, L, XL — gives enough spread to compare relative size without false precision. Each size is defined as a sprint range, and PI Loading converts it to points per team:</p>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg2);border-radius:6px;padding:10px 14px;color:var(--ac);margin-bottom:12px">
+          item points = size (in sprints) × that team's velocity per sprint
+        </div>
+        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">The default scale:</p>
+        <ul style="font-size:13px;color:var(--t2);line-height:1.9;padding-left:20px;margin-bottom:12px">
+          <li><strong>XS</strong> (≈0.5 sprint) — very small; likely finished inside a sprint or less.</li>
+          <li><strong>S</strong> (≈1 sprint) — small; roughly one sprint.</li>
+          <li><strong>M</strong> (≈3 sprints) — medium; about 2–4 sprints.</li>
+          <li><strong>L</strong> (≈5.5 sprints) — large; about 5–6 sprints.</li>
+          <li><strong>XL</strong> (≈6 sprints) — too big for comfortable commitment; split before PI Planning. PI Loading flags any XL item with a "split before PI" warning.</li>
+        </ul>
+        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">Worked example:</p>
+        <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:12px">Vanguard's velocity is 60 SP/sprint. An <strong>M</strong> feature (3 sprints) loads as 3 × 60 = <strong>180 points</strong> against their capacity. The COPS team, at 85 SP/sprint, would load the same M feature at 3 × 85 = <strong>255 points</strong> — the size stays relative to scope while the points stay honest to each team's throughput. No hidden conversion to hours.</p>
+        <p style="font-size:13px;color:var(--t2);font-weight:600;margin-bottom:6px">Using it well in the room:</p>
+        <ul style="font-size:13px;color:var(--t2);line-height:1.9;padding-left:20px">
+          <li>Keep the scale local and relative — compare scope, complexity and risk against other items in the same PI, not against a clock.</li>
+          <li>Size for comparison, not exact estimation. The goal is to spot the big items and the misfits quickly.</li>
+          <li>Treat XL as a prompt to split. If it can't be split before PI Planning, flag it as a risk and plan the spike to break it down.</li>
+          <li>Adjust the per-size sprint values in Config to match how your ART actually delivers — the defaults are a starting point.</li>
+        </ul>
+      </div>
 
       <div class="gate-wrap">
         <div class="gate-inner">
@@ -1143,6 +1177,9 @@
             <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Sprint duration (weeks)</h5><p>Length of each sprint — typically 1 or 2 weeks. This is used for date range display in the PI Loading view.</p></div></div>
             <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Default capacity factor (%)</h5><p>Applied to new teams as a default. Typical range 70–85%. Individual teams can override this in Teams & Capacity.</p></div></div>
             <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Capacity colour thresholds</h5><p>The amber threshold (default 85%) and red threshold (default 100%) can be adjusted to match your organisation's risk tolerance for sprint over-commitment.</p></div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-body"><h5>PI Loading Levels</h5><p>Choose which backlog hierarchy levels PI Loading can search and commit. The default planning band is <strong>Feature, Epic, SAFe Epic</strong>. Tick levels above (Initiative, Theme, Portfolio Epic) or below (Story, Task, Bug, Sub-task) only if you plan at that altitude. This controls PI Loading eligibility only and never alters velocity, which is driven by your delivery issue types.</p></div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-body"><h5>T-Shirt Sizing mode</h5><p>Switch between <strong>Story Points</strong> (each size maps to a fixed point value) and <strong>PI Planning (sprint-based)</strong> (each size is a sprint range that loads as sprints × the team's velocity). See the dedicated walkthrough below.</p></div></div>
+            <div class="step"><div class="step-num">7</div><div class="step-body"><h5>Jira Site URL</h5><p>Enter your Jira base URL (e.g. <code>https://yourco.atlassian.net</code>). Every issue key in the tool then becomes a clickable link straight to the issue in Jira. The value persists in browser storage and applies across all tabs.</p></div></div>
           </div>
         </div>
         <div class="gate-fade"></div>

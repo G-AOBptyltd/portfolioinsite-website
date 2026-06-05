@@ -1440,7 +1440,7 @@ function aobGateCheck(){
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">📥 Import Data</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Upload CSV from Jira or Advanced Roadmaps. Auto-maps standard column names.</div></div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">👥 Teams &amp; Capacity</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Configure team velocity, sprint count, and capacity per PI iteration.</div></div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">🔍 Backlog Refinement</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Rich table with MoSCoW scoring, inline editing, filtering, and bulk operations.</div></div>
-                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">🎯 PI Loading</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Visual PI board — drag items into sprints, track team load vs capacity.</div></div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">🎯 PI Loading</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Search planning items and commit them to each team. Capacity fills in real time. Which hierarchy levels appear is set in Config.</div></div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">📊 Dashboard</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">PI analytics — velocity trends, MoSCoW distribution, and team utilisation charts.</div></div>
               </div>
             </div>
@@ -1459,11 +1459,33 @@ function aobGateCheck(){
                 Team Velocity = total completed team SP ÷ number of relevant historical sprints<br>
                 PI Capacity = Team Velocity × PI sprint count
               </div>
-              <p style="color:var(--t2);font-size:13px;margin-bottom:8px;"><strong>Example:</strong> Vanguard velocity = 110 SP/sprint × 6 sprints = <strong>660 SP PI capacity</strong>. Only completed (Done/Resolved/Closed) work counts toward velocity.</p>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:8px;"><strong>Example:</strong> Vanguard velocity = 110 SP/sprint × 5 sprints = <strong>550 SP PI capacity</strong>. Only completed (Done/Resolved/Closed) work counts toward velocity.</p>
+              <div style="background:var(--bg2);border-radius:6px;padding:10px 14px;margin-bottom:8px">
+                <p style="font-size:12px;font-weight:700;color:var(--fg);margin-bottom:5px;">🔑 Sprint divisor vs Sprints per PI — they are different</p>
+                <p style="color:var(--t2);font-size:12px;line-height:1.7;">The <strong>sprint divisor</strong> (Velocity Baseline) is the historical averaging window — how many past sprints you divide delivered points by to get average velocity. <strong>Sprints per PI</strong> (Config) is the forward planning horizon that multiplies velocity into PI capacity. Setting one no longer changes the other.</p>
+              </div>
+              <div style="background:var(--bg2);border-radius:6px;padding:10px 14px;margin-bottom:8px">
+                <p style="font-size:12px;font-weight:700;color:var(--fg);margin-bottom:5px;">✎ Manual velocity override</p>
+                <p style="color:var(--t2);font-size:12px;line-height:1.7;">Velocity is calculated from the baseline by default. To override it for a team, use <strong>Edit</strong> on Teams &amp; Capacity — set avg velocity and sprints per PI directly, and tick <strong>Lock</strong> so Apply Baseline won't overwrite your manual figures. Locked teams show a "✎ manual" marker.</p>
+              </div>
               <div style="border-top:1px solid var(--bdr);margin-top:10px;padding-top:10px">
                 <p style="font-size:12px;font-weight:700;color:var(--fg);margin-bottom:5px;">⚖️ Why this may differ from FlowInSite</p>
                 <p style="color:var(--t2);font-size:12px;line-height:1.7;">FlowInSite sums each person's individual average delivered SP per participated sprint. That is useful for diagnosing team-member contribution and trends — but it is not the same as aggregate team throughput.<br><br>
                 Use PlanInSite velocity as the planning baseline. Cross-check with FlowInSite if the current named team differs materially from the historical team, or if FlowInSite shows new joiners, absences, or falling trends. Prefer the most recent 4–6 normal delivery sprints and exclude practice sprints, IP sprints, Kanban buckets, and holiday-affected periods.</p>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">⚙ PI Loading Levels &amp; T-Shirt Sizing</div>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:10px;">Both live in the <strong>Config</strong> drawer (gear icon, top right).</p>
+              <div style="border-top:1px solid var(--bdr);padding-top:10px;margin-bottom:6px">
+                <p style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:5px;">🎯 PI Loading Levels</p>
+                <p style="color:var(--t2);font-size:13px;line-height:1.7;margin-bottom:6px;">Choose which backlog hierarchy levels PI Loading can search and commit. The default is the planning band — <strong>Feature, Epic, SAFe Epic</strong>. Tick levels <strong>above</strong> (Initiative, Theme, Portfolio Epic) or <strong>below</strong> (Story, Task, Bug, Sub-task) only if you want them in PI Loading. This controls PI Loading only and does not affect velocity.</p>
+              </div>
+              <div style="border-top:1px solid var(--bdr);padding-top:10px">
+                <p style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:5px;">📐 T-Shirt Sizing — two modes</p>
+                <p style="color:var(--t2);font-size:13px;line-height:1.7;margin-bottom:6px;"><strong>Story Points</strong> — each size (XS–XXL) maps to a fixed point value you set.</p>
+                <p style="color:var(--t2);font-size:13px;line-height:1.7;"><strong>PI Planning (sprint-based)</strong> — sizes XS–XL are defined as sprint ranges and load against capacity as <strong>sprints × that team's velocity</strong>, so the points are team-specific. Keep sizing relative — compare scope, complexity and risk, not hours. <strong>XL</strong> is flagged "split before PI" as a signal to break it down.</p>
               </div>
             </div>
 
@@ -1472,6 +1494,7 @@ function aobGateCheck(){
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">💾 Export often.</strong> All data is browser-only — clearing site data resets the tool. Use Download → JSON to save your PI plan.</div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔃 Import flow.</strong> Import first → configure Teams &amp; Capacity → load PI Board. The board uses your velocity config to calculate capacity lines.</div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔗 Clickable issue keys.</strong> Add your Jira Site URL in Config (e.g. <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">https://yourco.atlassian.net</code>) and every DA-1234 key becomes a direct link to the issue in Jira.</div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">📧 Support.</strong> Contact <a href="mailto:support@portfolioinsite.com.au" style="color:var(--ac);">support@portfolioinsite.com.au</a> or visit <a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" style="color:var(--ac);">portfolioinsite.com.au</a>.</div>
               </div>
             </div>
