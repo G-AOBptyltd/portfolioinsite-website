@@ -1624,6 +1624,39 @@ function aobGateCheck(){
         </div>
 
         <div class="config-section">
+            <h3>🎯 PI Loading Levels</h3>
+            <p style="font-size:11px;color:var(--t3);margin-bottom:10px">Choose which backlog hierarchy levels PI Loading can search and commit. Default is the planning band (Feature / Epic / SAFe Epic). Add levels above or below only if you want them in PI Loading — this does not affect velocity.</p>
+            <div id="piLoadingLevels">
+                <div style="margin-bottom:8px">
+                    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:4px">Above (Portfolio)</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--t1)">
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Initiative" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Initiative</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Theme" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Theme</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Portfolio Epic" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Portfolio Epic</label>
+                    </div>
+                </div>
+                <div style="margin-bottom:8px;padding:6px 8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:6px">
+                    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ac);margin-bottom:4px">Planning band (default)</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--t1)">
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="SAFe Epic" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">SAFe Epic</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Epic" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Epic</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Feature" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Feature</label>
+                    </div>
+                </div>
+                <div style="margin-bottom:8px">
+                    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:4px">Below (Delivery)</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--t1)">
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Story" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Story</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Task" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Task</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Bug" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Bug</label>
+                        <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" class="piLoadType" value="Sub-task" onchange="savePiLoadingTypes()" style="accent-color:var(--ac)">Sub-task</label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="resetPiLoadingTypes()" style="width:100%;margin-top:4px;font-size:12px">Reset to planning band</button>
+        </div>
+
+        <div class="config-section">
             <h3>🔐 Licensing</h3>
             <p style="font-size:12px;color:var(--t3);margin-bottom:8px">Manage your PlanInSite licence via the badge in the header bar.</p>
             <button class="btn btn-primary" onclick="openLicModal()" style="width:100%;padding:8px">Manage Licence</button>
@@ -2475,6 +2508,7 @@ function aobGateCheck(){
                 includedTeams: [],
                 deliveryIssueTypes: ['Story','Task','Bug','Sub-task','Test','Test Set','Test Execution','Test Plan','Precondition'],
                 planningIssueTypes: ['Epic','Feature','SAFe Epic'],
+                piLoadingTypes: ['Epic','Feature','SAFe Epic'],
                 doneValues: ['Done']
             };
         }
@@ -2490,9 +2524,16 @@ function aobGateCheck(){
             return delivery.has(t) && !planning.has(t);
         }
 
+        // Issue types PI Loading is allowed to surface. Decoupled from planningIssueTypes
+        // (which governs velocity exclusion) so adding delivery levels here never affects velocity.
+        function getPiLoadingTypes(cfg = getVelocityConfig(loadData())) {
+            const list = cfg.piLoadingTypes && cfg.piLoadingTypes.length ? cfg.piLoadingTypes : cfg.planningIssueTypes;
+            return list || [];
+        }
+
         function isPIPlanningType(type, cfg = getVelocityConfig(loadData())) {
-            const planning = new Set((cfg.planningIssueTypes || []).map(_normText));
-            return planning.has(_normText(type));
+            const allowed = new Set(getPiLoadingTypes(cfg).map(_normText));
+            return allowed.has(_normText(type));
         }
 
         function getConfiguredSprintMatch(sprintName, cfg) {
@@ -3836,7 +3877,7 @@ function aobGateCheck(){
             const commitments = data.piCommitments || {};
             const sm = data.sizeMapping || { XS:1, S:2, M:3, L:5, XL:8, XXL:13 };
             const cfg = getVelocityConfig(data);
-            const planningTypes = (cfg.planningIssueTypes || getDefaultVelocityConfig().planningIssueTypes);
+            const planningTypes = getPiLoadingTypes(cfg);
             const selectedTeam = window._piTeamFilter || '';
 
             if (!teams.length) {
@@ -3903,7 +3944,7 @@ function aobGateCheck(){
 
                 // Search bar to add features
                 html += '<div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;gap:8px;align-items:center">';
-                html += '<input type="text" id="piSearch_' + team.name.replace(/\s/g,'_') + '" placeholder="Search planning items only: Epic, Feature, SAFe Epic..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px" onkeyup="if(event.key===\'Enter\')searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')">';
+                html += '<input type="text" id="piSearch_' + team.name.replace(/\s/g,'_') + '" placeholder="Search planning items only: ' + planningTypes.join(', ') + '..." style="flex:1;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px" onkeyup="if(event.key===\'Enter\')searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')">';
                 html += '<button class="btn btn-primary" onclick="searchPIItem(\'' + team.name.replace(/'/g,"\\'") + '\')" style="padding:8px 16px">Search & Add</button>';
                 html += '</div>';
 
@@ -3992,7 +4033,7 @@ function aobGateCheck(){
             console.log('PI Search results:', matches.length, matches.slice(0,3).map(i => i.key + ': ' + (i.summary||'').substring(0,40)));
 
             if (matches.length === 0) {
-                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching planning items found for "' + query + '". PI Loading only searches ' + (cfg.planningIssueTypes || []).join(', ') + '.</div>';
+                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching planning items found for "' + query + '". PI Loading only searches ' + getPiLoadingTypes(cfg).join(', ') + '.</div>';
                 return;
             }
 
@@ -4218,7 +4259,34 @@ function aobGateCheck(){
             sv('cfgPIEnd', data.piEnd);
             sv('cfgSprintWeeks', data.sprintWeeks || 2);
             sv('cfgCapFactor', data.capacityFactor || 80);
+            syncPiLoadingTypesControls(data);
             updatePIDateSummary(data);
+        }
+
+        function syncPiLoadingTypesControls(data = loadData()) {
+            const selected = new Set(getPiLoadingTypes(getVelocityConfig(data)).map(_normText));
+            document.querySelectorAll('.piLoadType').forEach(cb => {
+                cb.checked = selected.has(_normText(cb.value));
+            });
+        }
+
+        function savePiLoadingTypes() {
+            const data = loadData();
+            const chosen = Array.from(document.querySelectorAll('.piLoadType:checked')).map(cb => cb.value);
+            const types = chosen.length ? chosen : getDefaultVelocityConfig().piLoadingTypes;
+            data.velocityConfig = { ...getVelocityConfig(data), piLoadingTypes: types };
+            saveData(data);
+            if (typeof renderPILoading === 'function') renderPILoading();
+            showToast('PI Loading levels updated', 'success');
+        }
+
+        function resetPiLoadingTypes() {
+            const data = loadData();
+            data.velocityConfig = { ...getVelocityConfig(data), piLoadingTypes: getDefaultVelocityConfig().piLoadingTypes };
+            saveData(data);
+            syncPiLoadingTypesControls(data);
+            if (typeof renderPILoading === 'function') renderPILoading();
+            showToast('PI Loading levels reset to planning band', 'success');
         }
 
         function updatePIDateSummary(data) {
