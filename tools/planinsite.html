@@ -1553,6 +1553,35 @@ function aobGateCheck(){
 </div>
 </div>
 
+<div class="modal-overlay" id="teamEditModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;backdrop-filter:blur(3px);justify-content:center;align-items:center">
+<div style="background:var(--bg1);border:1px solid var(--bdr);border-radius:12px;padding:28px;max-width:440px;width:90%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+<button onclick="closeTeamEdit()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:4px">&times;</button>
+<h2 style="font-size:16px;margin:0 0 4px">Edit Team</h2>
+<span style="font-size:11px;color:var(--t3)">Override calculated velocity and PI sprint count</span>
+<input type="hidden" id="teamEditOriginalName">
+<div style="margin-top:18px">
+<label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px">Team name</label>
+<input id="teamEditName" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+<div>
+<label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px">Avg velocity / sprint</label>
+<input type="number" min="0" step="1" id="teamEditVelocity" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+</div>
+<div>
+<label style="font-size:12px;font-weight:600;color:var(--t2);display:block;margin-bottom:6px">Sprints per PI</label>
+<input type="number" min="1" max="20" step="1" id="teamEditSprints" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-size:13px">
+</div>
+</div>
+<label style="display:flex;align-items:flex-start;gap:8px;margin-top:14px;cursor:pointer;font-size:12px;color:var(--t1)"><input type="checkbox" id="teamEditLock" style="accent-color:var(--ac);margin-top:2px"><span>Lock these values — don't overwrite when "Apply Baseline" recalculates velocity from the sprint window.</span></label>
+<div id="teamEditCalcNote" style="font-size:11px;color:var(--t3);margin-top:10px"></div>
+<div style="display:flex;gap:8px;margin-top:18px">
+<button class="btn btn-primary" onclick="saveTeamEdit()" style="flex:1;justify-content:center">Save</button>
+<button class="btn btn-secondary" onclick="closeTeamEdit()">Cancel</button>
+</div>
+</div>
+</div>
+
     <div class="config-overlay" id="configOverlay" onclick="closeConfig()"></div>
     <div class="config-drawer" id="configDrawer">
         <h2>⚙ Config <button onclick="closeConfig()" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer">✕</button></h2>
@@ -3026,7 +3055,8 @@ function aobGateCheck(){
         function applyVelocityConfig() {
             const data = loadData();
             data.velocityConfig = readVelocityConfigControls();
-            if (data.velocityConfig.sprintCount) data.sprintsPerPI = data.velocityConfig.sprintCount;
+            // Note: velocity sprintCount is the historical averaging window — it must NOT redefine
+            // the PI planning horizon (data.sprintsPerPI), which is set in the Config drawer.
             recalculateTeamVelocitiesFromConfig(data);
             saveData(data);
             updateUI();
@@ -3042,15 +3072,17 @@ function aobGateCheck(){
                 data.teams = (data.teams || []).filter(team => includedTeams.has(_normText(team.name)));
             }
             (data.teams || []).forEach(team => {
-                team.sprints = data.sprintsPerPI || cfg.sprintCount || team.sprints || 5;
+                // PI horizon comes from Sprints per PI, never the historical averaging window.
+                if (!team.sprintsLocked) team.sprints = data.sprintsPerPI || team.sprints || 5;
                 const match = baseline.teams[_normaliseTeamName(team.name)];
                 if (!match) return;
-                team.velocity = match.avgVelocity || 0;
+                // Always record the calculated baseline for reference, but only apply it when not locked.
                 team.historicalSprints = baseline.sprintCount;
                 team.totalHistoricalPts = match.deliveredPoints || 0;
                 team.velocityBySprint = match.sprints;
                 team.velocityAssignmentRule = cfg.assignmentRule;
                 team.members = team.members && team.members.length ? team.members : match.members;
+                if (!team.velocityLocked) team.velocity = match.avgVelocity || 0;
             });
         }
 
@@ -3573,8 +3605,11 @@ function aobGateCheck(){
                 const memberCount = (t.members || []).length;
                 const vel = t.velocity || 0;
                 const sprintCount = t.historicalSprints || (Array.isArray(t.detectedSprints) ? t.detectedSprints.length : 0);
-                const velLabel = vel > 0 ? `${vel} pts` : '—';
-                const velSub = sprintCount > 0 ? `<span style="font-size:10px;color:var(--t3);display:block">${sprintCount} sprint${sprintCount!==1?'s':''} · done items only</span>` : '';
+                const locked = !!(t.velocityLocked || t.sprintsLocked);
+                const velLabel = (vel > 0 ? `${vel} pts` : '—') + (locked ? ' <span title="Manually overridden — not recalculated from baseline" style="font-size:10px;color:var(--ac);font-weight:600">✎ manual</span>' : '');
+                const velSub = locked
+                    ? `<span style="font-size:10px;color:var(--t3);display:block">manual override${sprintCount > 0 ? ' · baseline ' + sprintCount + ' sprint' + (sprintCount!==1?'s':'') : ''}</span>`
+                    : (sprintCount > 0 ? `<span style="font-size:10px;color:var(--t3);display:block">${sprintCount} sprint${sprintCount!==1?'s':''} · done items only</span>` : '');
                 return `<tr id="team-row-${t.name.replace(/\s+/g,'_')}">
                     <td style="font-weight:600">${t.name}</td>
                     <td>
@@ -3642,14 +3677,54 @@ function aobGateCheck(){
             const data = loadData();
             const team = data.teams.find(t => t.name === teamName);
             if (!team) return;
-
-            const newName = prompt('Team name:', team.name);
-            if (newName && newName !== teamName) {
-                team.name = newName;
-                saveData(data);
-                updateUI();
-                showToast('Team updated', 'success');
+            document.getElementById('teamEditOriginalName').value = teamName;
+            document.getElementById('teamEditName').value = team.name;
+            document.getElementById('teamEditVelocity').value = team.velocity || 0;
+            document.getElementById('teamEditSprints').value = (typeof team.sprints === 'number' ? team.sprints : (data.sprintsPerPI || 5));
+            document.getElementById('teamEditLock').checked = !!(team.velocityLocked || team.sprintsLocked);
+            const note = document.getElementById('teamEditCalcNote');
+            if (note) {
+                const hist = team.historicalSprints ? (team.totalHistoricalPts + ' pts over ' + team.historicalSprints + ' sprints') : 'no baseline applied yet';
+                note.innerHTML = (team.velocityLocked || team.sprintsLocked)
+                    ? 'Currently <strong style="color:var(--ac)">manually locked</strong>. Calculated baseline: ' + hist + '.'
+                    : 'Currently <strong>auto-calculated</strong> from baseline: ' + hist + '. Tick the lock to keep manual values.';
             }
+            const m = document.getElementById('teamEditModal');
+            m.style.display = 'flex';
+        }
+
+        function closeTeamEdit() {
+            const m = document.getElementById('teamEditModal');
+            if (m) m.style.display = 'none';
+        }
+
+        function saveTeamEdit() {
+            const data = loadData();
+            const orig = document.getElementById('teamEditOriginalName').value;
+            const team = data.teams.find(t => t.name === orig);
+            if (!team) { closeTeamEdit(); return; }
+            const newName = (document.getElementById('teamEditName').value || '').trim();
+            if (!newName) { showToast('Team name required', 'warning'); return; }
+            if (newName !== orig && data.teams.find(t => t.name === newName)) { showToast('A team with that name already exists', 'warning'); return; }
+            const vel = parseInt(document.getElementById('teamEditVelocity').value, 10);
+            const spr = parseInt(document.getElementById('teamEditSprints').value, 10);
+            const lock = document.getElementById('teamEditLock').checked;
+
+            // Preserve commitments keyed by old name on rename
+            if (newName !== orig && data.piCommitments && data.piCommitments[orig]) {
+                data.piCommitments[newName] = data.piCommitments[orig];
+                delete data.piCommitments[orig];
+            }
+            team.name = newName;
+            team.velocity = isNaN(vel) ? (team.velocity || 0) : vel;
+            team.sprints = (isNaN(spr) || spr < 1) ? (team.sprints || data.sprintsPerPI || 5) : spr;
+            team.velocityLocked = lock;
+            team.sprintsLocked = lock;
+
+            saveData(data);
+            closeTeamEdit();
+            updateUI();
+            showToast('Team updated' + (lock ? ' (values locked)' : ''), 'success');
         }
 
         // ============ CHARTS ============
@@ -4337,8 +4412,8 @@ function aobGateCheck(){
             data.sprintWeeks = parseInt(gv('cfgSprintWeeks')) || 2;
             data.capacityFactor = parseInt(gv('cfgCapFactor')) || 80;
 
-            // Update all teams' sprints-per-PI to match global setting
-            (data.teams || []).forEach(t => { t.sprints = data.sprintsPerPI; });
+            // Update all teams' sprints-per-PI to match global setting, except teams locked via Edit
+            (data.teams || []).forEach(t => { if (!t.sprintsLocked) t.sprints = data.sprintsPerPI; });
 
             saveData(data);
             updatePIDateSummary(data);
