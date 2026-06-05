@@ -1597,7 +1597,7 @@ function aobGateCheck(){
 
         <div class="config-section">
             <h3>🔗 Jira Site URL</h3>
-            <input id="drawerSiteUrl" placeholder="https://your-site.atlassian.net" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:12px" oninput="document.getElementById('siteUrl').value=this.value;saveSiteUrl()">
+            <input id="drawerSiteUrl" placeholder="https://your-site.atlassian.net" style="width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--bdr);background:var(--bg2);color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:12px" oninput="saveSiteUrl()">
             <p style="font-size:11px;color:var(--t3);margin-top:4px">Makes issue keys clickable links to Jira</p>
         </div>
 
@@ -4342,6 +4342,8 @@ function aobGateCheck(){
         function closeConfig() {
             document.getElementById('configOverlay').classList.remove('open');
             document.getElementById('configDrawer').classList.remove('open');
+            // Re-render so Jira Site URL / sizing changes take effect (e.g. clickable issue keys)
+            if (typeof updateUI === 'function') updateUI();
         }
 
         function renderDrawerTshirt() {
