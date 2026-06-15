@@ -3584,6 +3584,7 @@ function autoMap(headers, rows){
 }
 
 // COLUMN MAPPER
+function toggleSkipped(id,btn){var d=document.getElementById(id);if(!d)return;var hidden=d.style.display==='none';d.style.display=hidden?'block':'none';btn.textContent=hidden?'Hide unmapped columns':('Show all '+(d.getAttribute('data-n')||'')+' unmapped columns');}
 function mappingProfileExists(){try{return !!localStorage.getItem('ge_v15_mapprofile');}catch(e){return false;}}
 function saveMappingProfile(targetId){
   var map=targetId==='mapRows'?csvMapping:arCsvMapping;
@@ -3610,13 +3611,24 @@ function buildMapper(headers, targetId, mappingRef) {
   if(targetId==='mapRows'){csvMapping=mapping}else{arCsvMapping=mapping}
   const cont=document.getElementById(targetId);
   let h='<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap"><button class="btn btn-sm btn-g" onclick="saveMappingProfile(\''+targetId+'\')">Save mapping for next time</button><button class="btn btn-sm" onclick="clearMappingProfile()">Clear saved</button>'+(mappingProfileExists()?'<span style="font-size:10px;color:var(--hi)">\u2713 Saved mapping applied</span>':'<span style="font-size:10px;color:var(--t3)">Auto-detected from your columns</span>')+'</div>';
-  headers.forEach((hdr,idx)=>{
-    const mapped=Object.entries(mapping).find(([f,i])=>i===idx);
-    const sel=mapped?mapped[0]:'_skip';
-    h+='<div class="map-grid"><div class="map-src">'+esc(hdr)+'</div><div class="arrow">→</div><select class="fs" onchange="'+(targetId==='mapRows'?'csvMapping':'arCsvMapping')+'=rebuildMapping(\''+targetId+'\')" data-idx="'+idx+'" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:4px;background:var(--bgi);color:var(--t1);font-size:12px">';
-    WB_FIELDS.forEach(f=>{h+='<option value="'+f.key+'"'+(f.key===sel?' selected':'')+'>'+f.label+'</option>'});
-    h+='</select></div>';
+  const selVar=(targetId==='mapRows'?'csvMapping':'arCsvMapping');
+  function _mrow(hdr,idx,sel){
+    var r='<div class="map-grid"><div class="map-src">'+esc(hdr)+'</div><div class="arrow">→</div><select class="fs" onchange="'+selVar+'=rebuildMapping(\''+targetId+'\')" data-idx="'+idx+'" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:4px;background:var(--bgi);color:var(--t1);font-size:12px">';
+    WB_FIELDS.forEach(function(f){r+='<option value="'+f.key+'"'+(f.key===sel?' selected':'')+'>'+f.label+'</option>';});
+    return r+'</select></div>';
+  }
+  var mappedH='',skipH='',nMap=0,nSkip=0;
+  headers.forEach(function(hdr,idx){
+    var mp=Object.entries(mapping).find(function(e){return e[1]===idx;});
+    var sel=mp?mp[0]:'_skip';
+    if(sel==='_skip'){skipH+=_mrow(hdr,idx,sel);nSkip++;}else{mappedH+=_mrow(hdr,idx,sel);nMap++;}
   });
+  h+='<div style="font-size:11px;color:var(--t2);margin:2px 0 8px"><strong style="color:var(--t1)">'+nMap+'</strong> columns mapped to fields the tool uses &middot; '+nSkip+' skipped (not imported)</div>';
+  h+=mappedH;
+  if(nSkip){
+    h+='<button type="button" class="btn btn-sm" style="margin:10px 0 4px" onclick="toggleSkipped(\''+targetId+'_skipped\',this)">Show all '+nSkip+' unmapped columns</button>';
+    h+='<div id="'+targetId+'_skipped" data-n="'+nSkip+'" style="display:none;border-top:1px dashed var(--bdr);padding-top:8px">'+skipH+'</div>';
+  }
   cont.innerHTML=h;
   document.getElementById(targetId==='mapRows'?'mapperUI':'arMapperUI').style.display='block';
   showPreview(targetId);
