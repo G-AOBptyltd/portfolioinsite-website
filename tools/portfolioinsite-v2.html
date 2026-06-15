@@ -545,13 +545,13 @@ Playbook
 <div class="mf" style="margin-top:12px"><label>Story Points Field (JSON)</label><input id="cfEff" value="story_points" style="font-family:'JetBrains Mono',monospace;font-size:12px"></div>
 <div style="border-top:1px solid var(--bdr);margin-top:16px;padding-top:16px">
 <h3 style="font-size:14px;font-weight:700;margin-bottom:6px">Demo Data</h3>
-<p style="font-size:12px;color:var(--t2);margin-bottom:10px">Load a 10-team sample dataset — no import needed.</p>
-<button class="btn" style="background:var(--ac);border-color:var(--ac);color:#fff;width:100%;justify-content:center" onclick="loadSampleData()">⚡ Load Sample Data</button>
+<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Just exploring? Load a neutral sample dataset instead of importing.</p>
+<button class="btn btn-sm" style="background:transparent;color:var(--t2)" onclick="loadSampleData()">⚡ Load Sample Data</button>
 <div id="sampleStatus" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
 </div>
-<div class="ma">
+<div class="ma" style="position:sticky;bottom:0;background:var(--bg1);border-top:1px solid var(--bdr);padding-top:14px;margin-top:16px;gap:10px;align-items:center;justify-content:flex-start">
 <button class="btn" onclick="closeMod()">Cancel</button>
-<button class="btn btn-g" onclick="doImport()">Import</button>
+<button class="btn btn-p" onclick="doImport()" style="flex:1;justify-content:center;font-size:15px;font-weight:700;padding:12px 16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import data</button>
 </div>
 </div>
 </div>
