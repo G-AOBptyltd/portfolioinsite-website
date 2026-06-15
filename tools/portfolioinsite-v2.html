@@ -1766,7 +1766,7 @@ function rEpics(){
 
 // ═══ BACKLOG HEALTH (formerly Ageing) ═══
 let ageMode='updated';
-let ageFType='All',ageFAssignee='All',ageFReporter='All',ageFProject='All';
+let ageFType='All',ageFAssignee='All',ageFReporter='All',ageFProject='All',ageFTeam='All',ageFFix='All';
 let ageLens='auto'; // 'auto','schedule','residency','stalled'
 let ageDrill=null;
 
@@ -1805,11 +1805,13 @@ function rAge(){
   if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3></div>';return}
 
   // Apply filters
-  let FD=D;
+  let FD=D.filter(i=>!i.synthetic);
   if(ageFType!=='All')FD=FD.filter(i=>i.type===ageFType);
   if(ageFAssignee!=='All')FD=FD.filter(i=>i.assignee===ageFAssignee);
   if(ageFReporter!=='All')FD=FD.filter(i=>i.reporter===ageFReporter);
   if(ageFProject!=='All')FD=FD.filter(i=>(i.projectKey||i.space||'')===ageFProject);
+  if(ageFTeam!=='All')FD=FD.filter(i=>i.team===ageFTeam);
+  if(ageFFix!=='All')FD=FD.filter(i=>(i.fixVersion||'')===ageFFix);
 
   // Detect data availability
   const hasCreated=FD.filter(i=>i.created).length;
@@ -1832,7 +1834,9 @@ function rAge(){
   const assignees=[...new Set(D.map(i=>i.assignee).filter(Boolean))].sort();
   const reporters=[...new Set(D.map(i=>i.reporter).filter(Boolean))].sort();
   const projects=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-  const isFiltered=ageFType!=='All'||ageFAssignee!=='All'||ageFReporter!=='All'||ageFProject!=='All';
+  const teams=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.team).filter(Boolean))].sort();
+  const fixes=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.fixVersion).filter(Boolean))].sort();
+  const isFiltered=ageFType!=='All'||ageFAssignee!=='All'||ageFReporter!=='All'||ageFProject!=='All'||ageFTeam!=='All'||ageFFix!=='All';
 
   function selOpt(vals,cur,onch){
     let s='<select onchange="'+onch+'" style="padding:4px 8px;border-radius:6px;border:1px solid '+(cur!=='All'?'var(--ac)':'var(--bdr)')+';background:'+(cur!=='All'?'rgba(74,174,217,.1)':'var(--bg1)')+';color:var(--t1);font-size:12px;min-width:110px;cursor:pointer">';
@@ -1868,7 +1872,9 @@ function rAge(){
   h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Assignee</span>'+selOpt(assignees,ageFAssignee,"ageFAssignee=this.value;rAge()")+'</div>';
   if(reporters.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Reporter</span>'+selOpt(reporters,ageFReporter,"ageFReporter=this.value;rAge()")+'</div>'}
   if(projects.length>1){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Project</span>'+selOpt(projects,ageFProject,"ageFProject=this.value;rAge()")+'</div>'}
-  if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
+  if(teams.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Team</span>'+selOpt(teams,ageFTeam,"ageFTeam=this.value;rAge()")+'</div>'}
+  if(fixes.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Fix Version</span>'+selOpt(fixes,ageFFix,"ageFFix=this.value;rAge()")+'</div>'}
+  if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';ageFTeam=\'All\';ageFFix=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
   h+='</div>';
 
   // === DATA AVAILABILITY BADGES ===
