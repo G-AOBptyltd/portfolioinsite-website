@@ -1495,7 +1495,7 @@ function rDash(){
 
 // ═══ STRATEGIC QUADRANT MAP ═══
 let quadChart=null;
-let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='',quadFLevel='ef';
+let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='',quadFLevel='all';
 function rQuad(){
   const el=document.getElementById('quadC');
   const scored=D.filter(i=>tot(i)!=null&&i.effort!=null&&i.effort>0);
@@ -1570,7 +1570,7 @@ function rQuad(){
   const comps=[...new Set(scored.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
 
   let h=`<h2 style="font-size:20px;margin-bottom:4px">Strategic Quadrant Map</h2>
-  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort — bubble size = age. Plotting strategic units (Epics &amp; Features) by default; switch <strong>Level</strong> to Stories for detail. Click a bubble to open it in triage.</p>`;
+  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort — bubble size = age. Use <strong>Level</strong> to choose Epics &amp; Features (strategic, needs scored epics), Stories (detail), or All. Click a bubble to open it in triage.</p>`;
   h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
     <select class="fs" onchange="quadFLevel=this.value;rQuad()" title="Plot strategic units (Epics & Features) or drill to Stories"><option value="ef"${quadFLevel==='ef'?' selected':''}>Epics & Features</option><option value="story"${quadFLevel==='story'?' selected':''}>Stories</option><option value="all"${quadFLevel==='all'?' selected':''}>All levels</option></select>
     <select class="fs" onchange="quadFTyp=this.value;rQuad()"><option value="">All Types</option>${types.map(t=>`<option ${t===quadFTyp?'selected':''}>${t}</option>`).join('')}</select>
