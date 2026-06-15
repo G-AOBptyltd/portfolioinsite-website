@@ -1449,7 +1449,7 @@ let moscowChart=null,typeChart=null;
 let dashFTeam='',dashFFix='';
 function rDash(){
   const el=document.getElementById('dashC');
-  if(!FD.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
+  if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
   const FD=[].concat(D).filter(function(i){return !i.synthetic&&(!dashFTeam||i.team===dashFTeam)&&(!dashFFix||(i.fixVersion||'')===dashFFix);});
   const scored=FD.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
   const bkts={MUST:0,SHOULD:0,COULD:0,WONT:0,UNSCORED:0};
