@@ -1433,25 +1433,34 @@ function clrAll(){if(!D.length)return;if(confirm('Clear all '+D.length+' items?'
 
 // ═══ EXECUTIVE DASHBOARD ═══
 let moscowChart=null,typeChart=null;
+let dashFTeam='',dashFFix='';
 function rDash(){
   const el=document.getElementById('dashC');
-  if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
-  const scored=D.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
+  if(!FD.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
+  const FD=[].concat(D).filter(function(i){return !i.synthetic&&(!dashFTeam||i.team===dashFTeam)&&(!dashFFix||(i.fixVersion||'')===dashFFix);});
+  const scored=FD.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
   const bkts={MUST:0,SHOULD:0,COULD:0,WONT:0,UNSCORED:0};
-  D.forEach(i=>bkts[bkt(tot(i))]++);
+  FD.forEach(i=>bkts[bkt(tot(i))]++);
   const avg=totals.length?(totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1):0;
   const bfbs=scored.filter(i=>i.effort).map(i=>+(bfb(tot(i),i.effort)));
   const avgBfb=bfbs.length?(bfbs.reduce((a,b)=>a+b,0)/bfbs.length).toFixed(1):0;
-  const types={};D.forEach(i=>{const t=i.type||'Unknown';types[t]=(types[t]||0)+1});
+  const types={};FD.forEach(i=>{const t=i.type||'Unknown';types[t]=(types[t]||0)+1});
 
-  let h=`<div class="dg">
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--must)"></span>MUST HAVE</div><div class="sv" style="color:var(--must)">${bkts.MUST}</div><div class="ss">${D.length?(bkts.MUST/D.length*100).toFixed(0):0}% of backlog</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--should)"></span>SHOULD HAVE</div><div class="sv" style="color:var(--should)">${bkts.SHOULD}</div><div class="ss">${D.length?(bkts.SHOULD/D.length*100).toFixed(0):0}%</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--could)"></span>COULD HAVE</div><div class="sv" style="color:var(--could)">${bkts.COULD}</div><div class="ss">${D.length?(bkts.COULD/D.length*100).toFixed(0):0}%</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--wont)"></span>WON'T HAVE</div><div class="sv" style="color:var(--wont)">${bkts.WONT}</div><div class="ss">${D.length?(bkts.WONT/D.length*100).toFixed(0):0}%</div></div>
+  const dteams=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.team;}).filter(Boolean))].sort();
+  const dfixes=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.fixVersion;}).filter(Boolean))].sort();
+  var dfr='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px"><span style="font-size:11px;font-weight:600;color:var(--t2)">Filter:</span>';
+  if(dteams.length){dfr+='<select class="fs" onchange="dashFTeam=this.value;rDash()"><option value="">All Teams</option>'+dteams.map(function(t){return '<option'+(t===dashFTeam?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
+  if(dfixes.length){dfr+='<select class="fs" onchange="dashFFix=this.value;rDash()"><option value="">All Fix Versions</option>'+dfixes.map(function(t){return '<option'+(t===dashFFix?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
+  if(dashFTeam||dashFFix){dfr+='<button class="btn btn-sm" style="color:var(--red)" onclick="dashFTeam=\'\';dashFFix=\'\';rDash()">Clear</button>';}
+  dfr+='</div>';
+  let h=dfr+`<div class="dg">
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--must)"></span>MUST HAVE</div><div class="sv" style="color:var(--must)">${bkts.MUST}</div><div class="ss">${FD.length?(bkts.MUST/FD.length*100).toFixed(0):0}% of backlog</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--should)"></span>SHOULD HAVE</div><div class="sv" style="color:var(--should)">${bkts.SHOULD}</div><div class="ss">${FD.length?(bkts.SHOULD/FD.length*100).toFixed(0):0}%</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--could)"></span>COULD HAVE</div><div class="sv" style="color:var(--could)">${bkts.COULD}</div><div class="ss">${FD.length?(bkts.COULD/FD.length*100).toFixed(0):0}%</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--wont)"></span>WON'T HAVE</div><div class="sv" style="color:var(--wont)">${bkts.WONT}</div><div class="ss">${FD.length?(bkts.WONT/FD.length*100).toFixed(0):0}%</div></div>
   </div>`;
   h+=`<div class="dg" style="grid-template-columns:repeat(3,1fr)">
-    <div class="sc"><div class="sl">TOTAL ITEMS</div><div class="sv" style="color:var(--ac)">${D.length}</div><div class="ss">${scored.length} scored · ${D.length-scored.length} unscored</div></div>
+    <div class="sc"><div class="sl">TOTAL ITEMS</div><div class="sv" style="color:var(--ac)">${FD.length}</div><div class="ss">${scored.length} scored · ${FD.length-scored.length} unscored</div></div>
     <div class="sc"><div class="sl">AVERAGE SCORE</div><div class="sv">${avg}</div><div class="ss">out of ${MAX_SCORE} maximum</div></div>
     <div class="sc"><div class="sl">AVG BANG-FOR-BUCK</div><div class="sv" style="color:${bfbC(avgBfb)}">${avgBfb}</div><div class="ss">Value ÷ Effort ratio</div></div>
   </div>`;
@@ -1473,7 +1482,7 @@ function rDash(){
 
 // ═══ STRATEGIC QUADRANT MAP ═══
 let quadChart=null;
-let quadFTyp='',quadFMos='',quadFComp='',quadFProj='';
+let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='';
 function rQuad(){
   const el=document.getElementById('quadC');
   const scored=D.filter(i=>tot(i)!=null&&i.effort!=null&&i.effort>0);
@@ -1483,6 +1492,8 @@ function rQuad(){
   if(quadFMos)items=items.filter(i=>bkt(tot(i))===quadFMos);
   if(quadFComp)items=items.filter(i=>(i.component||'').split(', ').includes(quadFComp));
   if(quadFProj)items=items.filter(i=>(i.projectKey||i.space||'')===quadFProj);
+  if(quadFTeam)items=items.filter(i=>i.team===quadFTeam);
+  if(quadFFix)items=items.filter(i=>(i.fixVersion||'')===quadFFix);
 
   const valScore=i=>{const t=tot(i);const effContrib=qScore('q1',i.scores.q1);return t-effContrib};
   const bucketColors={MUST:'rgba(229,57,53,0.85)',SHOULD:'rgba(245,158,11,0.85)',COULD:'rgba(74,174,217,0.85)',WONT:'rgba(107,114,128,0.7)',UNSCORED:'rgba(51,60,82,0.7)'};
@@ -1551,6 +1562,8 @@ function rQuad(){
     <select class="fs" onchange="quadFMos=this.value;rQuad()"><option value="">All MoSCoW</option>${['MUST','SHOULD','COULD','WONT'].map(b=>`<option value="${b}" ${b===quadFMos?'selected':''}>${bucketLabelsMap[b]}</option>`).join('')}</select>
     ${comps.length?`<select class="fs" onchange="quadFComp=this.value;rQuad()"><option value="">All Components</option>${comps.map(c=>`<option ${c===quadFComp?'selected':''}>${c}</option>`).join('')}</select>`:''}
     ${(()=>{const prjs=[...new Set(scored.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();return prjs.length?`<select class="fs" onchange="quadFProj=this.value;rQuad()"><option value="">All Projects</option>${prjs.map(p=>`<option ${p===quadFProj?'selected':''}>${esc(p)}</option>`).join('')}</select>`:''})()}
+    ${(()=>{const tms=[...new Set(scored.map(i=>i.team).filter(Boolean))].sort();return tms.length?`<select class="fs" onchange="quadFTeam=this.value;rQuad()"><option value="">All Teams</option>${tms.map(t=>`<option ${t===quadFTeam?'selected':''}>${esc(t)}</option>`).join('')}</select>`:''})()}
+    ${(()=>{const fxs=[...new Set(scored.map(i=>i.fixVersion).filter(Boolean))].sort();return fxs.length?`<select class="fs" onchange="quadFFix=this.value;rQuad()"><option value="">All Fix Versions</option>${fxs.map(x=>`<option ${x===quadFFix?'selected':''}>${esc(x)}</option>`).join('')}</select>`:''})()}
     <span style="font-size:11px;color:var(--t2);margin-left:auto">${items.length} of ${scored.length} scored items</span>
   </div>`;
   h+=`<div class="dg">
