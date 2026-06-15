@@ -3373,8 +3373,9 @@ function parseCSV(text){
 }
 
 // AUTO-MAP COLUMNS
-function autoMap(headers){
-  const map={};
+// AUTO-MAP COLUMNS (v2: data-aware — among columns matching a role, prefer the most-populated one)
+function autoMap(headers, rows){
+  rows = rows || [];
   const patterns={
     id:[/^(key|id|number|issue.?key|sys.?id|ticket|ref|item.?id|work.?item|work.?item.?key)$/i],
     title:[/^(summary|title|short.?description|name|subject|description|headline)$/i],
@@ -3399,21 +3400,29 @@ function autoMap(headers){
     space:[/^(space|project|project.?name|product|portfolio|program)$/i],
     projectKey:[/^(project.?key|project.?code|project.?id)$/i]
   };
-  headers.forEach((h,idx)=>{
-    // Strip Jira "Custom field (...)" wrapper so inner name can match patterns
-    let clean=h.trim();
-    const cfMatch=clean.match(/^Custom field \((.+)\)$/i);
-    if(cfMatch) clean=cfMatch[1].trim();
-    for(const[field,pats]of Object.entries(patterns)){
-      if(!map[field]&&pats.some(p=>p.test(clean))){map[field]=idx;break}
+  // Strip Jira "Custom field (...)" wrapper so the inner name can match
+  const clean=headers.map(h=>{let c=(h||'').trim();const m=c.match(/^Custom field \((.+)\)$/i);return m?m[1].trim():c;});
+  const sample=rows.slice(0,400);
+  function fill(idx){let c=0;for(let r=0;r<sample.length;r++){const v=sample[r]&&sample[r][idx];if(v!=null&&String(v).trim()!=='')c++;}return c;}
+  const map={},claimed={};
+  // Process fields in priority order; each claims its best (most-populated) unclaimed matching column.
+  Object.keys(patterns).forEach(field=>{
+    const pats=patterns[field];let best=-1,bestFill=-1;
+    for(let idx=0;idx<headers.length;idx++){
+      if(claimed[idx])continue;
+      if(!pats.some(p=>p.test(clean[idx])))continue;
+      const f=fill(idx);
+      if(f>bestFill){bestFill=f;best=idx;}
     }
+    if(best>=0){map[field]=best;claimed[best]=true;}
   });
   return map;
 }
 
 // COLUMN MAPPER
 function buildMapper(headers, targetId, mappingRef) {
-  const mapping = autoMap(headers);
+  const _pp=(targetId==='mapRows'?csvParsed:arCsvParsed)||[];
+  const mapping = autoMap(headers, _pp.slice(1));
   if(targetId==='mapRows'){csvMapping=mapping}else{arCsvMapping=mapping}
   const cont=document.getElementById(targetId);
   let h='';
@@ -3613,7 +3622,7 @@ function importCsvPaste(){
   window._suiteRawCsv=raw;window._suiteRawCsvName='pasted-csv.csv';
   const parsed=parseCSV(raw);
   if(parsed.length<2){toast('Need header + data','err');return}
-  importFromParsedCsv(parsed, autoMap(parsed[0]));
+  importFromParsedCsv(parsed, autoMap(parsed[0], parsed.slice(1)));
 }
 
 function importArCsv(){
@@ -4015,7 +4024,7 @@ function useDetectedData(){
   window._suiteRawCsv=sh.raw;window._suiteRawCsvName=sh.filename||'suite-data.csv';
   const parsed=parseCSV(sh.raw);
   if(parsed.length<2){toast('Detected data appears empty','err');return;}
-  const mapping=autoMap(parsed[0]);
+  const mapping=autoMap(parsed[0], parsed.slice(1));
   importFromParsedCsv(parsed,mapping);
   dismissSuiteDetect();
   toast('Loaded '+sh.rowCount+' items from '+sh.source,'ok');
