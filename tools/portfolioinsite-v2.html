@@ -1482,12 +1482,13 @@ function rDash(){
 
 // ═══ STRATEGIC QUADRANT MAP ═══
 let quadChart=null;
-let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='';
+let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='',quadFLevel='ef';
 function rQuad(){
   const el=document.getElementById('quadC');
   const scored=D.filter(i=>tot(i)!=null&&i.effort!=null&&i.effort>0);
   if(scored.length<2){el.innerHTML='<div class="es"><h3>Not Enough Data</h3><p>Score at least 2 items with effort values.</p></div>';return}
   let items=scored;
+  if(quadFLevel==='ef')items=items.filter(i=>HT.includes(i.type));else if(quadFLevel==='story')items=items.filter(i=>!HT.includes(i.type));
   if(quadFTyp)items=items.filter(i=>i.type===quadFTyp);
   if(quadFMos)items=items.filter(i=>bkt(tot(i))===quadFMos);
   if(quadFComp)items=items.filter(i=>(i.component||'').split(', ').includes(quadFComp));
@@ -1556,8 +1557,9 @@ function rQuad(){
   const comps=[...new Set(scored.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
 
   let h=`<h2 style="font-size:20px;margin-bottom:4px">Strategic Quadrant Map</h2>
-  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort — bubble size = age. Click any bubble to jump to triage.</p>`;
+  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort — bubble size = age. Plotting strategic units (Epics &amp; Features) by default; switch <strong>Level</strong> to Stories for detail. Click a bubble to open it in triage.</p>`;
   h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <select class="fs" onchange="quadFLevel=this.value;rQuad()" title="Plot strategic units (Epics & Features) or drill to Stories"><option value="ef"${quadFLevel==='ef'?' selected':''}>Epics & Features</option><option value="story"${quadFLevel==='story'?' selected':''}>Stories</option><option value="all"${quadFLevel==='all'?' selected':''}>All levels</option></select>
     <select class="fs" onchange="quadFTyp=this.value;rQuad()"><option value="">All Types</option>${types.map(t=>`<option ${t===quadFTyp?'selected':''}>${t}</option>`).join('')}</select>
     <select class="fs" onchange="quadFMos=this.value;rQuad()"><option value="">All MoSCoW</option>${['MUST','SHOULD','COULD','WONT'].map(b=>`<option value="${b}" ${b===quadFMos?'selected':''}>${bucketLabelsMap[b]}</option>`).join('')}</select>
     ${comps.length?`<select class="fs" onchange="quadFComp=this.value;rQuad()"><option value="">All Components</option>${comps.map(c=>`<option ${c===quadFComp?'selected':''}>${c}</option>`).join('')}</select>`:''}
