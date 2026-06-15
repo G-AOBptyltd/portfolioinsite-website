@@ -1767,6 +1767,7 @@ function rEpics(){
 // ═══ BACKLOG HEALTH (formerly Ageing) ═══
 let ageMode='updated';
 let ageFType='All',ageFAssignee='All',ageFReporter='All',ageFProject='All',ageFTeam='All',ageFFix='All';
+let ageShowDone=false;
 let ageLens='auto'; // 'auto','schedule','residency','stalled'
 let ageDrill=null;
 
@@ -1805,7 +1806,7 @@ function rAge(){
   if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3></div>';return}
 
   // Apply filters
-  let FD=D.filter(i=>!i.synthetic);
+  let FD=D.filter(i=>!i.synthetic&&(ageShowDone||!isDone(i)));
   if(ageFType!=='All')FD=FD.filter(i=>i.type===ageFType);
   if(ageFAssignee!=='All')FD=FD.filter(i=>i.assignee===ageFAssignee);
   if(ageFReporter!=='All')FD=FD.filter(i=>i.reporter===ageFReporter);
@@ -1874,6 +1875,8 @@ function rAge(){
   if(projects.length>1){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Project</span>'+selOpt(projects,ageFProject,"ageFProject=this.value;rAge()")+'</div>'}
   if(teams.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Team</span>'+selOpt(teams,ageFTeam,"ageFTeam=this.value;rAge()")+'</div>'}
   if(fixes.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Fix Version</span>'+selOpt(fixes,ageFFix,"ageFFix=this.value;rAge()")+'</div>'}
+  h+='<button class="btn btn-sm" onclick="ageShowDone=!ageShowDone;rAge()" style="font-size:10px;border-color:'+(ageShowDone?'var(--bdr)':'var(--ac)')+';color:'+(ageShowDone?'var(--t2)':'var(--ac)')+'" title="Residency measures how long OPEN items have sat. Done items are completed, so excluded by default.">'+(ageShowDone?'Incl. Done':'Open only')+'</button>';
+  h+='<span style="font-size:10px;color:var(--t3);flex-basis:100%">Residency = how long OPEN items have sat un-actioned. Done items are excluded by default ('+(ageShowDone?'currently included':'toggle "Incl. Done" to include')+').</span>';
   if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';ageFTeam=\'All\';ageFFix=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
   h+='</div>';
 
