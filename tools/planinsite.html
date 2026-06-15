@@ -4321,6 +4321,20 @@ function aobGateCheck(){
         // ============ IMPORT/EXPORT ============
         function exportData() {
             const data = loadData();
+            // Items are session-only (MEM_ITEMS). If memory is empty, fall back to any
+            // pending/suite-detected backlog so a visible backlog always exports.
+            let items = (data.items && data.items.length) ? data.items
+                      : (window._pendingParsedItems && window._pendingParsedItems.length) ? window._pendingParsedItems
+                      : [];
+            if (!items.length && typeof readSuiteShare === 'function') {
+                const sh = readSuiteShare();
+                if (sh && sh.raw) { try { items = (parseCSVContent(sh.raw).items) || []; } catch (e) {} }
+            }
+            data.items = items;
+            if (!items.length) {
+                showToast('No backlog items to export yet — import a CSV (or click Import Items) first', 'error');
+                return;
+            }
             const json = JSON.stringify(data, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
