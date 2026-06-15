@@ -420,6 +420,8 @@ Playbook
 <select class="fs" id="fComp" onchange="render()"><option value="">All Components</option></select>
 <select class="fs" id="fEpic" onchange="render()"><option value="">All Epics</option></select>
 <select class="fs" id="fProj" onchange="render()"><option value="">All Projects</option></select>
+<button id="doneToggle" onclick="toggleDone()" class="fs" title="Show only open work, or include done/closed" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;width:auto;border-color:var(--ac);color:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Open only</span></button>
+<span id="gateHint" style="font-size:11px;color:var(--t3);align-self:center"></span>
 </div>
 </div>
 <div class="chip-bar" id="moscowChips" style="margin-bottom:16px">
@@ -667,11 +669,13 @@ function mk() {
     title: '',
     type: 'Story',
     status: 'To Do',
+    statusCategory: '',
     assignee: '',
     reporter: '',
     effort: null,
     created: '',
     parent: '',
+    parentName: '',
     priority: '',
     component: '',
     targetStart: '',
@@ -751,6 +755,16 @@ function nSt(s) {
   const capitalize = s.trim().charAt(0).toUpperCase() + s.trim().slice(1);
   return capitalize;
 }
+
+// v2: active/Done gate — Status Category first, status-string fallback
+var showDone = false;
+function isDone(it){
+  var sc=(it.statusCategory||'').trim().toLowerCase();
+  if(sc) return sc==='done'||sc==='complete'||sc==='completed'||sc==='closed';
+  return /^(done|closed|resolved|complete|completed|cancell?ed|won'?t do|won'?t fix|released|shipped|live|archived)$/i.test((it.status||'').trim());
+}
+function toggleDone(){showDone=!showDone;var b=document.getElementById('doneToggle');if(b){b.querySelector('span').textContent=showDone?'Showing all':'Open only';b.style.borderColor=showDone?'':'var(--ac)';b.style.color=showDone?'':'var(--ac)';}render();}
+function epicLabel(key){if(!key||key==='Unparented'||key==='No Team'||key==='No Component')return key;var c=D.find(function(x){return x.parent===key&&x.parentName;});if(c&&c.parentName)return c.parentName;var ep=D.find(function(x){return x.id===key;});if(ep&&ep.title)return ep.title;return key;}
 
 // ============================================================================
 // SCORING FUNCTIONS
@@ -1253,7 +1267,7 @@ function render(){
   const asg=document.getElementById('fAsg'),comp=document.getElementById('fComp'),epic=document.getElementById('fEpic'),proj=document.getElementById('fProj');
   if(asg){const v=asg.value;asg.innerHTML='<option value="">All Assignees</option>'+[...new Set(D.map(i=>i.assignee).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');asg.value=v}
   if(comp){const v=comp.value;comp.innerHTML='<option value="">All Components</option>'+[...new Set(D.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');comp.value=v}
-  if(epic){const v=epic.value;epic.innerHTML='<option value="">All Epics</option>'+[...new Set(D.map(i=>i.parent).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');epic.value=v}
+  if(epic){const v=epic.value;epic.innerHTML='<option value="">All Epics</option>'+[...new Set(D.map(i=>i.parent).filter(Boolean))].sort().map(a=>`<option value="${esc(a)}">${esc(epicLabel(a))}</option>`).join('');epic.value=v}
   if(proj){const v=proj.value;const pkeys=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();proj.innerHTML='<option value="">All Projects</option>'+pkeys.map(a=>`<option>${esc(a)}</option>`).join('');proj.value=v}
 
   // Filters
@@ -1265,8 +1279,10 @@ function render(){
   const fE=document.getElementById('fEpic')?.value||'';
   const fP=document.getElementById('fProj')?.value||'';
   const chips=activeChips();
+  {var _gh=document.getElementById('gateHint');if(_gh){var _dc=D.filter(isDone).length;_gh.textContent=D.length?(showDone?(D.length+' items · '+_dc+' done'):((D.length-_dc)+' open · '+_dc+' done hidden')):'';}}
 
   let f=D.filter((item,ri)=>{
+    if(!showDone&&isDone(item))return false;
     if(srch&&!item.id.toLowerCase().includes(srch)&&!item.title.toLowerCase().includes(srch)&&!item.assignee.toLowerCase().includes(srch)&&!(item.parent||'').toLowerCase().includes(srch))return false;
     if(fT&&item.type!==fT)return false;
     if(fS&&item.status!==fS)return false;
@@ -2474,7 +2490,7 @@ function rRoadmap() {
 
     // Label column with clickable collapse toggle
     h+='<div onclick="rmToggleGroup('+idx+')" style="width:'+labelWidth+'px;min-width:'+labelWidth+'px;padding:8px 10px;border-right:1px solid var(--bdr);background:var(--bg);position:sticky;left:0;z-index:5;cursor:pointer;user-select:none">';
-    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--t3)">'+chevron+'</span><span style="font-weight:600;font-size:11px;color:var(--ac)">'+esc(groupKey)+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--t3)">'+chevron+'</span><span style="font-weight:600;font-size:11px;color:var(--ac)">'+esc(rmGroupBy==='epic'?epicLabel(groupKey):groupKey)+'</span></div>';
     h+='<div style="font-size:10px;color:var(--t3);margin-top:2px">'+totalItems+' items &middot; '+totalEffort+' pts</div>';
     if(collapsed){
       // Inline MoSCoW summary chips when collapsed
@@ -2951,7 +2967,7 @@ function rPO() {
     const colSpan=poGroupBy==='team'?10:9;
 
     sortedGroups.forEach(([groupKey,group],idx)=>{
-      const groupTitle=poGroupBy==='feature'?D.find(i=>i.id===groupKey)?.title||groupKey:groupKey;
+      const groupTitle=poGroupBy==='feature'?(D.find(i=>i.id===groupKey)?.title||groupKey):(poGroupBy==='epic'?epicLabel(groupKey):groupKey);
       const totalEff=group.items.reduce((s,i)=>s+(i.effort||0),0);
       const must=group.items.filter(i=>bkt(tot(i))==='MUST').length;
       const should=group.items.filter(i=>bkt(tot(i))==='SHOULD').length;
@@ -3381,12 +3397,14 @@ function autoMap(headers, rows){
     title:[/^(summary|title|short.?description|name|subject|description|headline)$/i],
     type:[/^(issue.?type|type|category|class|item.?type|hierarchy)$/i],
     status:[/^(status|state|workflow|stage|resolution|work.?item.?status)$/i],
+    statusCategory:[/^(status.?category|work.?item.?status.?category)$/i],
     assignee:[/^(assignee|assigned.?to|owner|responsible)$/i],
     reporter:[/^(reporter|reported.?by|creator|requester|created.?by)$/i],
     effort:[/^(effort|story.?points?|points|estimate|size|sp)$/i],
     created:[/^(created|created.?date|opened|date.?created|sys.?created)$/i],
     updated:[/^(updated|updated.?date|modified|last.?updated|last.?modified|changed|resolved)$/i],
-    parent:[/^(parent|epic|epic.?link|epic.?name|epic.?key|parent.?key|parent.?link|parent.?summary)$/i],
+    parent:[/^(parent|parent.?key|parent.?link|epic|epic.?link|epic.?key)$/i],
+    parentName:[/^(parent.?summary|epic.?name|parent.?name)$/i],
     priority:[/^(priority|severity|urgency|impact)$/i],
     component:[/^(component|components|module|area|system)$/i],
     targetStart:[/^(target.?start|target.?start.?date|planned.?start|start.?date)$/i],
@@ -3640,12 +3658,14 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.title!=null)item.title=row[mapping.title]||'';
     if(mapping.type!=null)item.type=nTy(row[mapping.type]||'');
     if(mapping.status!=null)item.status=nSt(row[mapping.status]||'');
+    if(mapping.statusCategory!=null)item.statusCategory=row[mapping.statusCategory]||'';
     if(mapping.assignee!=null)item.assignee=row[mapping.assignee]||'';
     if(mapping.reporter!=null)item.reporter=row[mapping.reporter]||'';
     if(mapping.effort!=null){const v=nearFib(row[mapping.effort]);if(v!=null){item.effort=v;item.scores.q1=v}}
     if(mapping.created!=null)item.created=row[mapping.created]||'';
     if(mapping.updated!=null)item.updated=row[mapping.updated]||'';
     if(mapping.parent!=null)item.parent=row[mapping.parent]||'';
+    if(mapping.parentName!=null)item.parentName=row[mapping.parentName]||'';
     if(mapping.component!=null)item.component=row[mapping.component]||'';
     if(mapping.targetStart!=null)item.targetStart=row[mapping.targetStart]||'';
     if(mapping.targetEnd!=null)item.targetEnd=row[mapping.targetEnd]||'';
