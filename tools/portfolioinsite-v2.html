@@ -627,11 +627,14 @@ const WB_FIELDS = [
   { key: 'title', label: 'Title / Summary' },
   { key: 'type', label: 'Issue Type' },
   { key: 'status', label: 'Status' },
+  { key: 'statusCategory', label: 'Status Category' },
   { key: 'assignee', label: 'Assignee' },
+  { key: 'productOwner', label: 'Product Owner' },
   { key: 'reporter', label: 'Reporter' },
   { key: 'effort', label: 'Effort / Story Points' },
   { key: 'created', label: 'Created Date' },
   { key: 'parent', label: 'Parent / Epic' },
+  { key: 'parentName', label: 'Parent / Epic Name' },
   { key: 'priority', label: 'Priority' },
   { key: 'component', label: 'Component(s)' },
   { key: 'targetStart', label: 'Target Start' },
@@ -3581,12 +3584,32 @@ function autoMap(headers, rows){
 }
 
 // COLUMN MAPPER
+function mappingProfileExists(){try{return !!localStorage.getItem('ge_v15_mapprofile');}catch(e){return false;}}
+function saveMappingProfile(targetId){
+  var map=targetId==='mapRows'?csvMapping:arCsvMapping;
+  var hdrs=targetId==='mapRows'?csvHeaders:arCsvHeaders;
+  if(!map||!hdrs){toast('Nothing to save','err');return;}
+  var prof={};
+  Object.keys(map).forEach(function(k){if(hdrs[map[k]]!=null)prof[k]=hdrs[map[k]];});
+  try{localStorage.setItem('ge_v15_mapprofile',JSON.stringify(prof));toast('Mapping saved \u2014 applied automatically on your next import','ok');}catch(e){toast('Could not save mapping','err');}
+}
+function clearMappingProfile(){try{localStorage.removeItem('ge_v15_mapprofile');}catch(e){}toast('Saved mapping cleared','inf');if(typeof csvHeaders!=='undefined'&&csvHeaders){buildMapper(csvHeaders,'mapRows','csv');}}
+function applyMappingProfile(headers,mapping){
+  try{
+    var p=JSON.parse(localStorage.getItem('ge_v15_mapprofile')||'null');
+    if(!p)return mapping;
+    var hmap={}; headers.forEach(function(h,i){hmap[h]=i;});
+    Object.keys(p).forEach(function(k){var hn=p[k];if(hn!=null&&hmap[hn]!=null)mapping[k]=hmap[hn];});
+  }catch(e){}
+  return mapping;
+}
 function buildMapper(headers, targetId, mappingRef) {
   const _pp=(targetId==='mapRows'?csvParsed:arCsvParsed)||[];
   const mapping = autoMap(headers, _pp.slice(1));
+  applyMappingProfile(headers, mapping);
   if(targetId==='mapRows'){csvMapping=mapping}else{arCsvMapping=mapping}
   const cont=document.getElementById(targetId);
-  let h='';
+  let h='<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap"><button class="btn btn-sm btn-g" onclick="saveMappingProfile(\''+targetId+'\')">Save mapping for next time</button><button class="btn btn-sm" onclick="clearMappingProfile()">Clear saved</button>'+(mappingProfileExists()?'<span style="font-size:10px;color:var(--hi)">\u2713 Saved mapping applied</span>':'<span style="font-size:10px;color:var(--t3)">Auto-detected from your columns</span>')+'</div>';
   headers.forEach((hdr,idx)=>{
     const mapped=Object.entries(mapping).find(([f,i])=>i===idx);
     const sel=mapped?mapped[0]:'_skip';
