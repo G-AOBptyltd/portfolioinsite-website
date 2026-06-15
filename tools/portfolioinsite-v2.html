@@ -420,6 +420,12 @@ Playbook
 <select class="fs" id="fComp" onchange="render()"><option value="">All Components</option></select>
 <select class="fs" id="fEpic" onchange="render()"><option value="">All Epics</option></select>
 <select class="fs" id="fProj" onchange="render()"><option value="">All Projects</option></select>
+<select class="fs" id="fTeam" onchange="render()"><option value="">All Teams</option></select>
+<select class="fs" id="fPO" onchange="render()"><option value="">All POs</option></select>
+<select class="fs" id="fFix" onchange="render()"><option value="">All Fix Versions</option></select>
+<select class="fs" id="fDateField" onchange="render()" title="Filter by a date field within a range"><option value="">Date: any</option><option value="created">Created</option><option value="updated">Updated</option><option value="targetStart">Target start</option><option value="targetEnd">Target end</option></select>
+<input type="date" class="fs" id="fDateFrom" onchange="render()" title="From date" style="width:auto;padding:6px 8px">
+<input type="date" class="fs" id="fDateTo" onchange="render()" title="To date" style="width:auto;padding:6px 8px">
 <button id="doneToggle" onclick="toggleDone()" class="fs" title="Show only open work, or include done/closed" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;width:auto;border-color:var(--ac);color:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Open only</span></button>
 <span id="gateHint" style="font-size:11px;color:var(--t3);align-self:center"></span>
 </div>
@@ -681,6 +687,7 @@ function mk() {
     targetStart: '',
     targetEnd: '',
     team: '',
+    productOwner: '',
     fixVersion: '',
     labels: '',
     piAssignment: '',
@@ -1269,6 +1276,10 @@ function render(){
   if(comp){const v=comp.value;comp.innerHTML='<option value="">All Components</option>'+[...new Set(D.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');comp.value=v}
   if(epic){const v=epic.value;epic.innerHTML='<option value="">All Epics</option>'+[...new Set(D.map(i=>i.parent).filter(Boolean))].sort().map(a=>`<option value="${esc(a)}">${esc(epicLabel(a))}</option>`).join('');epic.value=v}
   if(proj){const v=proj.value;const pkeys=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();proj.innerHTML='<option value="">All Projects</option>'+pkeys.map(a=>`<option>${esc(a)}</option>`).join('');proj.value=v}
+  const team=document.getElementById('fTeam'),po=document.getElementById('fPO'),fix=document.getElementById('fFix');
+  if(team){const v=team.value;team.innerHTML='<option value="">All Teams</option>'+[...new Set(D.map(i=>i.team).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');team.value=v}
+  if(po){const v=po.value;po.innerHTML='<option value="">All POs</option>'+[...new Set(D.map(i=>i.productOwner).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');po.value=v}
+  if(fix){const v=fix.value;fix.innerHTML='<option value="">All Fix Versions</option>'+[...new Set(D.map(i=>i.fixVersion).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');fix.value=v}
 
   // Filters
   const srch=(document.getElementById('sSrch')?.value||'').toLowerCase();
@@ -1278,6 +1289,12 @@ function render(){
   const fC=document.getElementById('fComp')?.value||'';
   const fE=document.getElementById('fEpic')?.value||'';
   const fP=document.getElementById('fProj')?.value||'';
+  const fTeam=document.getElementById('fTeam')?.value||'';
+  const fPO=document.getElementById('fPO')?.value||'';
+  const fFix=document.getElementById('fFix')?.value||'';
+  const fDF=document.getElementById('fDateField')?.value||'';
+  const fDFrom=document.getElementById('fDateFrom')?.value||'';
+  const fDTo=document.getElementById('fDateTo')?.value||'';
   const chips=activeChips();
   {var _gh=document.getElementById('gateHint');if(_gh){var _dc=D.filter(isDone).length;_gh.textContent=D.length?(showDone?(D.length+' items · '+_dc+' done'):((D.length-_dc)+' open · '+_dc+' done hidden')):'';}}
 
@@ -1290,6 +1307,10 @@ function render(){
     if(fC&&!(item.component||'').split(', ').includes(fC))return false;
     if(fE&&item.parent!==fE)return false;
     if(fP&&(item.projectKey||item.space||'')!==fP)return false;
+    if(fTeam&&item.team!==fTeam)return false;
+    if(fPO&&(item.productOwner||'')!==fPO)return false;
+    if(fFix&&(item.fixVersion||'')!==fFix)return false;
+    if(fDF&&(fDFrom||fDTo)){var _dv=item[fDF];var _d=_dv?new Date(_dv):null;if(!_d||isNaN(_d))return false;if(fDFrom&&_d<new Date(fDFrom))return false;if(fDTo){var _t=new Date(fDTo);_t.setHours(23,59,59,999);if(_d>_t)return false;}}
     const b=bkt(tot(item));
     if(chips.length<5&&!chips.includes(b))return false;
     return true;
@@ -1573,7 +1594,7 @@ function rQuad(){
 }
 
 // ═══ EPICS ═══
-let epicFProj='',epicFType='',epicFStatus='',epicFAge='',epicSort='default',epicView='columns';
+let epicFProj='',epicFType='',epicFStatus='',epicFAge='',epicFTeam='',epicFPO='',epicFFix='',epicSort='default',epicView='columns';
 function rEpics(){
   const el=document.getElementById('epicC');
   const allEps=D.filter(i=>HT.includes(i.type));
@@ -1583,12 +1604,18 @@ function rEpics(){
   const prjs=[...new Set(allEps.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
   const types=[...new Set(allEps.map(i=>i.type).filter(Boolean))].sort();
   const statuses=[...new Set(allEps.map(i=>i.status).filter(Boolean))].sort();
+  const teams=[...new Set(allEps.map(i=>i.team).filter(Boolean))].sort();
+  const pos=[...new Set(allEps.map(i=>i.productOwner).filter(Boolean))].sort();
+  const fixes=[...new Set(allEps.map(i=>i.fixVersion).filter(Boolean))].sort();
 
   // Apply filters
   let eps=allEps;
   if(epicFProj)eps=eps.filter(i=>(i.projectKey||i.space||'')===epicFProj);
   if(epicFType)eps=eps.filter(i=>i.type===epicFType);
   if(epicFStatus)eps=eps.filter(i=>i.status===epicFStatus);
+  if(epicFTeam)eps=eps.filter(i=>i.team===epicFTeam);
+  if(epicFPO)eps=eps.filter(i=>(i.productOwner||'')===epicFPO);
+  if(epicFFix)eps=eps.filter(i=>(i.fixVersion||'')===epicFFix);
   if(epicFAge==='fresh')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a<=7});
   else if(epicFAge==='warm')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>7&&a<=30});
   else if(epicFAge==='stale')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>30&&a<=90});
@@ -1642,6 +1669,24 @@ function rEpics(){
     prjs.forEach(p=>{h+='<option'+(p===epicFProj?' selected':'')+'>'+esc(p)+'</option>'});
     h+='</select>';
   }
+  // Team filter
+  if(teams.length){
+    h+='<select class="fs" onchange="epicFTeam=this.value;rEpics()"><option value="">All Teams</option>';
+    teams.forEach(t=>{h+='<option'+(t===epicFTeam?' selected':'')+'>'+esc(t)+'</option>'});
+    h+='</select>';
+  }
+  // Product Owner filter
+  if(pos.length){
+    h+='<select class="fs" onchange="epicFPO=this.value;rEpics()"><option value="">All POs</option>';
+    pos.forEach(p=>{h+='<option'+(p===epicFPO?' selected':'')+'>'+esc(p)+'</option>'});
+    h+='</select>';
+  }
+  // Fix Version filter
+  if(fixes.length){
+    h+='<select class="fs" onchange="epicFFix=this.value;rEpics()"><option value="">All Fix Versions</option>';
+    fixes.forEach(fx=>{h+='<option'+(fx===epicFFix?' selected':'')+'>'+esc(fx)+'</option>'});
+    h+='</select>';
+  }
   // Age filter
   h+='<select class="fs" onchange="epicFAge=this.value;rEpics()"><option value="">All Ages</option>';
   h+='<option value="fresh"'+(epicFAge==='fresh'?' selected':'')+'>Fresh (≤7d)</option>';
@@ -1669,12 +1714,15 @@ function rEpics(){
   if(epicFType)activeFilters.push(epicFType);
   if(epicFStatus)activeFilters.push(epicFStatus);
   if(epicFProj)activeFilters.push(epicFProj);
+  if(epicFTeam)activeFilters.push(epicFTeam);
+  if(epicFPO)activeFilters.push(epicFPO);
+  if(epicFFix)activeFilters.push(epicFFix);
   if(epicFAge)activeFilters.push({fresh:'Fresh',warm:'Warm',stale:'Stale',rotten:'Rotten',nodate:'No Date'}[epicFAge]);
   h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">';
   h+='<span style="font-size:12px;color:var(--t2);font-weight:600">'+eps.length+' of '+allEps.length+' epics/features</span>';
   if(activeFilters.length){
     activeFilters.forEach(f=>{h+='<span style="font-size:10px;background:rgba(74,174,217,.15);color:var(--ac);padding:2px 8px;border-radius:10px">'+esc(f)+'</span>'});
-    h+='<a href="#" onclick="epicFProj=\'\';epicFType=\'\';epicFStatus=\'\';epicFAge=\'\';rEpics();return false" style="font-size:10px;color:var(--red);text-decoration:none;margin-left:4px">Clear All</a>';
+    h+='<a href="#" onclick="epicFProj=\'\';epicFType=\'\';epicFStatus=\'\';epicFAge=\'\';epicFTeam=\'\';epicFPO=\'\';epicFFix=\'\';rEpics();return false" style="font-size:10px;color:var(--red);text-decoration:none;margin-left:4px">Clear All</a>';
   }
   h+='</div>';
 
@@ -3399,6 +3447,7 @@ function autoMap(headers, rows){
     status:[/^(status|state|workflow|stage|resolution|work.?item.?status)$/i],
     statusCategory:[/^(status.?category|work.?item.?status.?category)$/i],
     assignee:[/^(assignee|assigned.?to|owner|responsible)$/i],
+    productOwner:[/^(product.?owner|p\.?o\.?|po|owner|business.?owner)$/i],
     reporter:[/^(reporter|reported.?by|creator|requester|created.?by)$/i],
     effort:[/^(effort|story.?points?|points|estimate|size|sp)$/i],
     created:[/^(created|created.?date|opened|date.?created|sys.?created)$/i],
@@ -3670,6 +3719,7 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.targetStart!=null)item.targetStart=row[mapping.targetStart]||'';
     if(mapping.targetEnd!=null)item.targetEnd=row[mapping.targetEnd]||'';
     if(mapping.team!=null)item.team=row[mapping.team]||'';
+    if(mapping.productOwner!=null)item.productOwner=row[mapping.productOwner]||'';
     if(mapping.fixVersion!=null)item.fixVersion=row[mapping.fixVersion]||'';
     if(mapping.labels!=null)item.labels=row[mapping.labels]||'';
     if(mapping.piAssignment!=null)item.piAssignment=row[mapping.piAssignment]||'';
