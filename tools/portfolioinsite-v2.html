@@ -2224,6 +2224,7 @@ let rmSprintWeeks=2;
 let rmNumPIs=5;
 let rmZoom='normal'; // 'compact','normal','wide'
 let rmSprintCap=40; // story points per sprint
+let rmShowCaps=false;
 let rmShowAll=false; // show items without dates
 let rmCollapsed={}; // roadmap group collapse state {groupKey: true/false}
 let rmSearch=''; // text search filter
@@ -2398,7 +2399,9 @@ function rRoadmap() {
   h+='</div>';
 
   h+='<label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);cursor:pointer"><input type="checkbox" '+(rmShowAll?'checked':'')+' onchange="rmShowAll=this.checked;rRoadmap()"> Show all (incl. no dates)</label>';
-  h+='<button class="btn btn-sm btn-g" onclick="autoAssignPIs()">Auto-assign to PIs</button>';
+  h+='<button class="btn btn-sm btn-g" onclick="autoAssignPIs()" title="Packs scored items into the earliest PI with capacity, per team, ordered by MoSCoW then Bang-for-Buck">Auto-assign to PIs</button>';
+  h+='<button class="btn btn-sm" onclick="rmShowCaps=!rmShowCaps;rRoadmap()">'+(rmShowCaps?'Hide capacity':'Team capacity')+'</button>';
+  h+='<span style="font-size:10px;color:var(--t3)">by priority &times; per-team capacity</span>';
   h+='</div>';
 
   // Row 3: Search, Top N, Collapse/Expand
@@ -2431,6 +2434,18 @@ function rRoadmap() {
     });
   }
 
+  if(rmShowCaps){
+    var capTeams=[...new Set(D.filter(function(i){return !i.synthetic;}).map(function(i){return i.team||'No Team';}))].sort();
+    window._rmCapTeams=capTeams;
+    h+='<div style="margin:0 0 12px;padding:10px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--bgi)">';
+    h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px"><strong style="font-size:12px;color:var(--t1)">Team capacity (points / sprint)</strong>';
+    h+='<button class="btn btn-sm btn-g" onclick="deriveTeamVelocity()">Estimate from completed work</button>';
+    h+='<button class="btn btn-sm" onclick="poTeamCaps={};rRoadmap()">Reset</button>';
+    h+='<span style="font-size:10px;color:var(--t3)">Default '+rmSprintCap+'/sprint &middot; Auto-assign packs each team to its own capacity</span></div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:8px">';
+    capTeams.forEach(function(t,ix){var cp=poTeamCaps[t]||rmSprintCap;h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:11px;color:var(--t2);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc(t)+'">'+esc(t)+'</span><input type="number" min="1" max="500" value="'+cp+'" onchange="rmSetTeamCap('+ix+',this.value)" style="width:56px;padding:3px 5px;border:1px solid var(--bdr);border-radius:4px;background:var(--bg2);color:var(--t1);font-size:11px;text-align:center"></div>';});
+    h+='</div></div>';
+  }
   // Group items
   const groups={};
   filtered.forEach(item=>{
@@ -2677,40 +2692,51 @@ function rRoadmap() {
 }
 
 function autoAssignPIs() {
-  const piCapacity=Math.round(rmSprintCap*(rmPiWeeks/rmSprintWeeks));
+  const sprintsPerPI=Math.max(1,Math.ceil(rmPiWeeks/rmSprintWeeks));
   const startYear=new Date(rmPiStart).getFullYear();
   const piNames=[];
   for(let i=0;i<rmNumPIs;i++){
     const yr=(startYear+Math.floor((new Date(rmPiStart).getMonth()+i*Math.ceil(rmPiWeeks/4.3))/12))%100;
     piNames.push('PI '+yr+'.'+(i+1));
   }
-
-  const scored=D.filter(i=>tot(i)!=null&&!i.piAssignment).sort((a,b)=>{
+  function teamPiCap(team){return (poTeamCaps[team]||rmSprintCap)*sprintsPerPI;}
+  const scored=D.filter(i=>!i.synthetic&&tot(i)!=null&&!i.piAssignment).sort((a,b)=>{
     const ba=bkt(tot(a)),bb=bkt(tot(b));
     const order={MUST:0,SHOULD:1,COULD:2,WONT:3,UNSCORED:4};
     if(order[ba]!==order[bb])return order[ba]-order[bb];
     return (+bfb(tot(b),b.effort||1))-(+bfb(tot(a),a.effort||1));
   });
-
-  const piUsed={};
-  piNames.forEach(pi=>{piUsed[pi]=D.filter(i=>i.piAssignment===pi).reduce((s,i)=>s+(i.effort||0),0)});
-
+  const used={};
+  D.forEach(i=>{if(i.piAssignment){const tm=i.team||'No Team';(used[tm]=used[tm]||{})[i.piAssignment]=(used[tm][i.piAssignment]||0)+(i.effort||0);}});
   let assigned=0;
   scored.forEach(item=>{
+    const tm=item.team||'No Team';
     const eff=item.effort||1;
+    const cap=teamPiCap(tm);
+    used[tm]=used[tm]||{};
     for(const pi of piNames){
-      if(piUsed[pi]+eff<=piCapacity){
+      if((used[tm][pi]||0)+eff<=cap){
         item.piAssignment=pi;
-        piUsed[pi]+=eff;
+        used[tm][pi]=(used[tm][pi]||0)+eff;
         assigned++;
         break;
       }
     }
   });
-
   save();rRoadmap();
-  toast('Auto-assigned '+assigned+' items to PIs','ok');
+  toast('Auto-assigned '+assigned+' items across teams by capacity','ok');
 }
+function deriveTeamVelocity(){
+  const sprintsPerPI=Math.max(1,Math.ceil(rmPiWeeks/rmSprintWeeks));
+  const horizon=Math.max(1,rmNumPIs*sprintsPerPI);
+  const donePts={};
+  D.forEach(i=>{if(!i.synthetic&&isDone(i)){const tm=i.team||'No Team';donePts[tm]=(donePts[tm]||0)+(i.effort||0);}});
+  var n=0;
+  Object.keys(donePts).forEach(function(tm){poTeamCaps[tm]=Math.max(1,Math.round(donePts[tm]/horizon));n++;});
+  rRoadmap();
+  toast(n?('Estimated velocity for '+n+' teams from completed work'):'No completed work to estimate from','ok');
+}
+function rmSetTeamCap(ix,v){var t=(window._rmCapTeams||[])[ix];if(t!=null){poTeamCaps[t]=+v||rmSprintCap;rRoadmap();}}
 
 function rmNavToItem(id) {
   document.querySelectorAll('#navTabs .tab').forEach(x=>x.classList.remove('on'));
