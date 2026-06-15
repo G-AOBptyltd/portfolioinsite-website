@@ -1299,6 +1299,7 @@ function render(){
   {var _gh=document.getElementById('gateHint');if(_gh){var _dc=D.filter(isDone).length;_gh.textContent=D.length?(showDone?(D.length+' items · '+_dc+' done'):((D.length-_dc)+' open · '+_dc+' done hidden')):'';}}
 
   let f=D.filter((item,ri)=>{
+    if(item.synthetic)return false;
     if(!showDone&&isDone(item))return false;
     if(srch&&!item.id.toLowerCase().includes(srch)&&!item.title.toLowerCase().includes(srch)&&!item.assignee.toLowerCase().includes(srch)&&!(item.parent||'').toLowerCase().includes(srch))return false;
     if(fT&&item.type!==fT)return false;
@@ -2302,7 +2303,7 @@ function rRoadmap() {
   }
 
   // Filter items
-  let filtered=D.filter(i=>{
+  let filtered=D.filter(i=>{if(i.synthetic)return false;
     const t=HT.includes(i.type);
     if(!t)return false;
     if(rmFType&&i.type!==rmFType)return false;
@@ -2953,6 +2954,7 @@ function rPO() {
     const groups={};
     // Apply backlog filters to PD
     const BL=PD.filter(item=>{
+      if(item.synthetic)return false;
       if(poFType&&item.type!==poFType)return false;
       if(poFAssignee==='__none__'){if(item.assignee)return false}
       else if(poFAssignee&&item.assignee!==poFAssignee)return false;
@@ -3474,12 +3476,13 @@ function autoMap(headers, rows){
   const map={},claimed={};
   // Process fields in priority order; each claims its best (most-populated) unclaimed matching column.
   Object.keys(patterns).forEach(field=>{
-    const pats=patterns[field];let best=-1,bestFill=-1;
+    const pats=patterns[field];let best=-1,bestScore=-1;
     for(let idx=0;idx<headers.length;idx++){
       if(claimed[idx])continue;
       if(!pats.some(p=>p.test(clean[idx])))continue;
-      const f=fill(idx);
-      if(f>bestFill){bestFill=f;best=idx;}
+      var hasKey=/(^|[^a-z])key([^a-z]|$)/i.test(clean[idx])?1:0;
+      var sc=fill(idx)*2+hasKey;
+      if(sc>bestScore){bestScore=sc;best=idx;}
     }
     if(best>=0){map[field]=best;claimed[best]=true;}
   });
@@ -3673,7 +3676,7 @@ function importJson(){
       if(f.priority){const pn=(f.priority.name||'').toLowerCase();const pm={highest:5,high:5,medium:3,low:1,lowest:1};if(pm[pn])item.scores.q4=pm[pn]}
       D.push(item);existing.add(key);added++;
     });
-    save();render();closeMod();
+    synthesiseEpics();save();render();closeMod();
     toast('Imported '+added+(dupes?', '+dupes+' dupes skipped':''),'ok');
   }catch(e){toast('Parse error: '+e.message,'err')}
 }
@@ -3697,6 +3700,23 @@ function importArCsv(){
   importFromParsedCsv(arCsvParsed, arCsvMapping);
 }
 
+function synthesiseEpics(){
+  var ids={}; D.forEach(function(i){ids[i.id]=1;});
+  var names={};
+  D.forEach(function(i){
+    if(i.synthetic)return;
+    var p=(i.parent||'').trim();
+    if(!p||ids[p])return;
+    if(names[p]===undefined||(!names[p]&&i.parentName))names[p]=(i.parentName||'').trim();
+  });
+  var added=0;
+  Object.keys(names).forEach(function(p){
+    if(ids[p])return;
+    var ep=mk(); ep.id=p; ep.type='Epic'; ep.title=names[p]||p; ep.status=''; ep.synthetic=true;
+    D.push(ep); ids[p]=1; added++;
+  });
+  return added;
+}
 function importFromParsedCsv(parsed, mapping){
   const existing=new Set(D.map(i=>i.id));
   let added=0,dupes=0;
@@ -3738,7 +3758,7 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.projectKey!=null)item.projectKey=row[mapping.projectKey]||'';
     D.push(item);existing.add(item.id);added++;
   }
-  save();render();closeMod();
+  synthesiseEpics();save();render();closeMod();
   toast('Imported '+added+' items'+(dupes?', '+dupes+' dupes':''),'ok');
   if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',added);
 }
