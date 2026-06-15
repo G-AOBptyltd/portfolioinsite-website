@@ -401,6 +401,13 @@ Playbook
     </select>
   </div>
 
+  <!-- Tabs -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:8px">&#128203; Tabs</h3>
+    <p style="font-size:11px;color:var(--t3);margin:0 0 12px">Show or hide tabs to declutter the tool. Hidden tabs can be restored here any time.</p>
+    <div id="cfgTabs" style="display:grid;gap:9px"></div>
+  </div>
+
   <!-- Data Management -->
   <div>
     <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#128190; Data Management</h3>
@@ -1129,6 +1136,11 @@ function setTheme(mode) {
 
 // ── POI Config Drawer ──────────────────────────────────────────────────────
 
+function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_v15_hiddentabs')||'[]'));}catch(e){return new Set();}}
+function setHiddenTabs(set){try{localStorage.setItem('ge_v15_hiddentabs',JSON.stringify([...set]));}catch(e){}}
+function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
+function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
+function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
 function openPoiConfig() {
   const overlay = document.getElementById('poiCfgOverlay');
   const drawer = document.getElementById('poiCfgDrawer');
@@ -1141,6 +1153,7 @@ function openPoiConfig() {
 
   // Render scoring dimension labels
   renderQLabels();
+  renderCfgTabs();
 
   // Sync default tab
   const defTab = localStorage.getItem('ge_v15_default_tab') || 'triage';
@@ -4216,7 +4229,7 @@ async function activateLicence() {
 }
 
 // Init
-load();loadCfg();loadTheme();loadQLabels();initTabSwitching();
+load();loadCfg();loadTheme();loadQLabels();initTabSwitching();applyTabVisibility();
 // Apply default landing tab
 (function(){
   const def = localStorage.getItem('ge_v15_default_tab');
