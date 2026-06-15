@@ -1177,7 +1177,7 @@ function aobGateCheck(){
           <div class="drop-zone-text">Drop CSV files here or click to browse</div>
           <div class="drop-zone-hint">Supports Jira and Advanced Roadmaps formats</div>
         </div>
-        <input type="file" id="fileInput" accept=".csv" style="display:none;" onchange="handleFileSelect(event)">
+        <input type="file" id="fileInput" accept=".csv,.json" style="display:none;" onchange="handleFileSelect(event)">
 
         <!-- Import settings -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
@@ -2909,12 +2909,19 @@ function aobGateCheck(){
             e.stopPropagation();
             document.getElementById('dropZone').classList.remove('dragover');
             const file = e.dataTransfer.files[0];
-            if (file) readCSVFile(file);
+            if (file) routeImportFile(file);
         }
 
         function handleFileSelect(e) {
             const file = e.target.files[0];
-            if (file) readCSVFile(file);
+            if (file) routeImportFile(file);
+        }
+
+        // Route by file type: .json restores a PlanInSite backup, anything else is treated as a CSV import.
+        function routeImportFile(file) {
+            const isJson = /\.json$/i.test(file.name) || file.type === 'application/json';
+            if (isJson) { restoreJSONFile(file); closePlnImport(); }
+            else { readCSVFile(file); }
         }
 
         function readCSVFile(file) {
@@ -4330,25 +4337,35 @@ function aobGateCheck(){
             input.accept = '.json';
             input.onchange = (e) => {
                 const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const imported = JSON.parse(event.target.result);
-                        // Restore items to memory, config to localStorage
-                        MEM_ITEMS = imported.items || [];
-                        const config = { ...imported };
-                        delete config.items;
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-                        updateUI();
-                        renderBacklog();
-                        showToast('Restored ' + MEM_ITEMS.length + ' items + config', 'success');
-                    } catch (err) {
-                        showToast('Invalid JSON file: ' + err.message, 'error');
-                    }
-                };
-                reader.readAsText(file);
+                if (file) restoreJSONFile(file);
             };
             input.click();
+        }
+
+        // Restore a PlanInSite JSON backup (the file produced by Export). Shared by the
+        // Import modal and the "Restore JSON Backup" button.
+        function restoreJSONFile(file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (!imported || typeof imported !== 'object' || (!('items' in imported) && !('teams' in imported))) {
+                        showToast("That doesn't look like a PlanInSite backup — use a .json file from Export.", 'error');
+                        return;
+                    }
+                    // Restore items to memory, config to localStorage
+                    MEM_ITEMS = imported.items || [];
+                    const config = { ...imported };
+                    delete config.items;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+                    updateUI();
+                    renderBacklog();
+                    showToast('Restored ' + MEM_ITEMS.length + ' items + config', 'success');
+                } catch (err) {
+                    showToast('Invalid JSON file: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
         }
 
         // ============ CONFIG DRAWER ============
