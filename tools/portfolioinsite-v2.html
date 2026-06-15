@@ -2216,7 +2216,7 @@ function rAgeHelp(){
 }
 // Roadmap state
 let rmGroupBy='epic'; // 'epic', 'team', 'component'
-let rmFType='',rmFMos='',rmFProj='';
+let rmFType='',rmFMos='',rmFProj='',rmFTeam='',rmFComp='',rmFFix='';
 let rmPiStart='2025-01-06'; // Monday start
 let rmPiWeeks=10;
 let rmSprintWeeks=2;
@@ -2309,12 +2309,16 @@ function rRoadmap() {
     if(rmFType&&i.type!==rmFType)return false;
     if(rmFMos&&bkt(tot(i))!==rmFMos)return false;
     if(rmFProj&&(i.projectKey||i.space||'')!==rmFProj)return false;
+    if(rmFTeam&&i.team!==rmFTeam)return false;
+    if(rmFComp&&!(i.component||'').split(', ').includes(rmFComp))return false;
+    if(rmFFix&&(i.fixVersion||'')!==rmFFix)return false;
     if(rmShowAll)return true;
     return i.targetStart||i.targetEnd||i.piAssignment;
   });
 
   // Build controls
-  let h='<div style="margin-bottom:16px">';
+  let h='<div style="margin:0 0 14px;padding:10px 14px;border-left:3px solid var(--ac);background:rgba(14,165,233,.06);border-radius:0 8px 8px 0;font-size:12px;color:var(--t2)"><strong style="color:var(--t1)">Roadmap &mdash; increment plan.</strong> Plots epics &amp; features across increments (PIs &amp; sprints), grouped by your selection. An item lands on the timeline once it has target dates or a PI (or via Auto-assign to PIs). For a backlog without dates, group by <strong>Fix Version</strong> or schedule items first.</div>';
+  h+='<div style="margin-bottom:16px">';
   h+='<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px">';
   h+='<div style="display:flex;align-items:center;gap:6px">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Group By:</label>';
@@ -2322,6 +2326,7 @@ function rRoadmap() {
   h+='<option value="epic"'+(rmGroupBy==='epic'?' selected':'')+'>Epic</option>';
   h+='<option value="team"'+(rmGroupBy==='team'?' selected':'')+'>Team</option>';
   h+='<option value="component"'+(rmGroupBy==='component'?' selected':'')+'>Component</option>';
+  h+='<option value="fixVersion"'+(rmGroupBy==='fixVersion'?' selected':'')+'>Fix Version</option>';
   h+='</select></div>';
 
   h+='<div style="display:flex;align-items:center;gap:6px">';
@@ -2352,6 +2357,13 @@ function rRoadmap() {
   rmProjs.forEach(p=>{h+='<option value="'+esc(p)+'"'+(rmFProj===p?' selected':'')+'>'+esc(p)+'</option>'});
   h+='</select></div>';
   }
+
+  var rmTeams=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.team).filter(Boolean))].sort();
+  if(rmTeams.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Team:</label><select class="fs" onchange="rmFTeam=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFTeam===''?' selected':'')+'>All</option>';rmTeams.forEach(function(t){h+='<option value="'+esc(t)+'"'+(rmFTeam===t?' selected':'')+'>'+esc(t)+'</option>'});h+='</select></div>';}
+  var rmComps=[...new Set(D.filter(i=>!i.synthetic).flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
+  if(rmComps.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Component:</label><select class="fs" onchange="rmFComp=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFComp===''?' selected':'')+'>All</option>';rmComps.forEach(function(c){h+='<option value="'+esc(c)+'"'+(rmFComp===c?' selected':'')+'>'+esc(c)+'</option>'});h+='</select></div>';}
+  var rmFixes=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.fixVersion).filter(Boolean))].sort();
+  if(rmFixes.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Fix Version:</label><select class="fs" onchange="rmFFix=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFFix===''?' selected':'')+'>All</option>';rmFixes.forEach(function(fx){h+='<option value="'+esc(fx)+'"'+(rmFFix===fx?' selected':'')+'>'+esc(fx)+'</option>'});h+='</select></div>';}
 
   h+='<div style="margin-left:auto;display:flex;gap:6px;align-items:center">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Zoom:</label>';
@@ -2422,6 +2434,7 @@ function rRoadmap() {
     if(rmGroupBy==='epic')groupKey=item.parent||'Unparented';
     else if(rmGroupBy==='team')groupKey=item.team||'No Team';
     else if(rmGroupBy==='component')groupKey=item.component||'No Component';
+    else if(rmGroupBy==='fixVersion')groupKey=item.fixVersion||'No Fix Version';
 
     if(!groups[groupKey])groups[groupKey]={name:groupKey,items:[]};
     groups[groupKey].items.push(item);
@@ -2606,7 +2619,7 @@ function rRoadmap() {
   });
   h+='</div></div></div>';  // close swimlanes, inner positioned div, scroll wrapper
 
-  if(!filtered.length){h+='<div class="es" style="margin-top:16px"><h3>No items with dates</h3><p>Tick "Show all" above, or assign target dates / PI assignments. You can also click "Auto-assign to PIs".</p></div>'}
+  if(!filtered.length){h+='<div class="es" style="margin-top:16px"><h3>Nothing scheduled yet</h3><p>This view plots epics &amp; features that have target dates or a PI. This backlog has very few dates, so the timeline is mostly empty &mdash; that is expected, not a fault. Tick "Show all" to list everything, click "Auto-assign to PIs" to seed a plan, or group by <strong>Fix Version</strong> (and use the Backlog Triage Fix Version filter) to plan by increment.</p></div>'}
 
   el.innerHTML=h;
 }
