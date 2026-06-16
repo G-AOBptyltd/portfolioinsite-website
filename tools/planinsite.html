@@ -4089,25 +4089,6 @@ function aobGateCheck(){
             html += '<span style="font-size:11px;color:var(--t3);margin-left:auto">PI loading accepts: ' + planningTypes.join(', ') + '</span>';
             html += '</div>';
 
-            // Component multi-select filter — narrows both committed tables and search/add results.
-            if (piAvailableComps.length || piHasNoComp) {
-                html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px">';
-                html += '<label style="font-size:12px;color:var(--t2);font-weight:600">Filter by component</label>';
-                piAvailableComps.forEach(name => {
-                    const on = piSel.includes(name);
-                    const esc = name.replace(/'/g, "\\'");
-                    html += '<button onclick="togglePIComponent(\'' + esc + '\')" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid ' + (on ? 'var(--ac)' : 'var(--bdr)') + ';background:' + (on ? 'var(--ac)' : 'var(--bg2)') + ';color:' + (on ? '#fff' : 'var(--t1)') + ';font-weight:' + (on ? '600' : '400') + '">' + name.replace(/</g, '&lt;') + '</button>';
-                });
-                if (piHasNoComp) {
-                    const on = piSel.includes('__none__');
-                    html += '<button onclick="togglePIComponent(\'__none__\')" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;font-style:italic;border:1px solid ' + (on ? 'var(--ac)' : 'var(--bdr)') + ';background:' + (on ? 'var(--ac)' : 'var(--bg2)') + ';color:' + (on ? '#fff' : 'var(--t3)') + '">(no component)</button>';
-                }
-                if (piSel.length) {
-                    html += '<button onclick="clearPIComponents()" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--bdr);background:transparent;color:var(--t2);margin-left:4px">✕ Clear (' + piSel.length + ')</button>';
-                }
-                html += '</div>';
-            }
-
             const teamsToRender = teams;
             teamsToRender.forEach(team => {
                 const sprintsPerPI = typeof team.sprints === 'number' ? team.sprints : 5;
