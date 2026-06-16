@@ -4009,6 +4009,31 @@ function aobGateCheck(){
         }
 
         // ============ PI LOADING ============
+        // ---- PI Loading component filter (multi-select) ----
+        // Component may be stored on the commit, or resolved from the matching backlog item.
+        function piResolveComponent(c, data) {
+            if (c && c.component) return c.component;
+            const it = (data.items || []).find(i => i.key === c.key);
+            return (it && it.component) ? it.component : '';
+        }
+        function piComponentMatch(c, data) {
+            const sel = window._piComponentFilter || [];
+            if (!sel.length) return true;
+            const list = piResolveComponent(c, data).split(',').map(s => s.trim()).filter(Boolean);
+            if (!list.length) return sel.includes('__none__');
+            return list.some(x => sel.includes(x));
+        }
+        function togglePIComponent(name) {
+            const sel = window._piComponentFilter || (window._piComponentFilter = []);
+            const idx = sel.indexOf(name);
+            if (idx >= 0) sel.splice(idx, 1); else sel.push(name);
+            renderPILoading();
+        }
+        function clearPIComponents() {
+            window._piComponentFilter = [];
+            renderPILoading();
+        }
+
         function renderPILoading() {
             const data = loadData();
             const container = document.getElementById('piLoadingContainer');
@@ -4023,6 +4048,17 @@ function aobGateCheck(){
             const cfg = getVelocityConfig(data);
             const planningTypes = getPiLoadingTypes(cfg);
             const selectedTeam = window._piTeamFilter || '';
+
+            // Build the universe of components (from commitments + loaded backlog) for the multi-select filter.
+            const piCompSet = new Set();
+            let piHasNoComp = false;
+            Object.values(commitments).forEach(arr => (arr || []).forEach(c => {
+                const list = piResolveComponent(c, data).split(',').map(s => s.trim()).filter(Boolean);
+                if (list.length) list.forEach(x => piCompSet.add(x)); else piHasNoComp = true;
+            }));
+            (data.items || []).forEach(i => (i.component || '').split(',').map(s => s.trim()).filter(Boolean).forEach(x => piCompSet.add(x)));
+            const piAvailableComps = [...piCompSet].sort((a, b) => a.localeCompare(b));
+            const piSel = window._piComponentFilter || [];
 
             if (!teams.length) {
                 container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--t3)">Configure teams first on the Teams & Capacity tab</p>';
@@ -4052,6 +4088,25 @@ function aobGateCheck(){
             html += '</select>';
             html += '<span style="font-size:11px;color:var(--t3);margin-left:auto">PI loading accepts: ' + planningTypes.join(', ') + '</span>';
             html += '</div>';
+
+            // Component multi-select filter — narrows both committed tables and search/add results.
+            if (piAvailableComps.length || piHasNoComp) {
+                html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:12px 14px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px">';
+                html += '<label style="font-size:12px;color:var(--t2);font-weight:600">Filter by component</label>';
+                piAvailableComps.forEach(name => {
+                    const on = piSel.includes(name);
+                    const esc = name.replace(/'/g, "\\'");
+                    html += '<button onclick="togglePIComponent(\'' + esc + '\')" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid ' + (on ? 'var(--ac)' : 'var(--bdr)') + ';background:' + (on ? 'var(--ac)' : 'var(--bg2)') + ';color:' + (on ? '#fff' : 'var(--t1)') + ';font-weight:' + (on ? '600' : '400') + '">' + name.replace(/</g, '&lt;') + '</button>';
+                });
+                if (piHasNoComp) {
+                    const on = piSel.includes('__none__');
+                    html += '<button onclick="togglePIComponent(\'__none__\')" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;font-style:italic;border:1px solid ' + (on ? 'var(--ac)' : 'var(--bdr)') + ';background:' + (on ? 'var(--ac)' : 'var(--bg2)') + ';color:' + (on ? '#fff' : 'var(--t3)') + '">(no component)</button>';
+                }
+                if (piSel.length) {
+                    html += '<button onclick="clearPIComponents()" style="padding:4px 11px;border-radius:14px;font-size:12px;cursor:pointer;border:1px solid var(--bdr);background:transparent;color:var(--t2);margin-left:4px">✕ Clear (' + piSel.length + ')</button>';
+                }
+                html += '</div>';
+            }
 
             const teamsToRender = teams;
             teamsToRender.forEach(team => {
@@ -4095,9 +4150,13 @@ function aobGateCheck(){
                 // Search results area
                 html += '<div id="piSearchResults_' + team.name.replace(/\s/g,'_') + '" style="padding:0 16px"></div>';
 
-                // Committed features table
-                if (teamCommits.length > 0) {
+                // Committed features table (respecting the component filter)
+                const visibleCommits = teamCommits.filter(c => piComponentMatch(c, data));
+                if (visibleCommits.length > 0) {
                     html += '<div style="padding:0 16px 16px">';
+                    if (piSel.length && visibleCommits.length !== teamCommits.length) {
+                        html += '<div style="font-size:11px;color:var(--t3);padding:8px 0 0">Showing ' + visibleCommits.length + ' of ' + teamCommits.length + ' committed features (component filter active)</div>';
+                    }
                     html += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">';
                     html += '<thead><tr style="border-bottom:1px solid var(--bdr)">';
                     html += '<th style="padding:8px;text-align:left;font-weight:600;color:var(--t2);font-size:11px;text-transform:uppercase">Key</th>';
@@ -4109,7 +4168,7 @@ function aobGateCheck(){
                     html += '<th style="padding:8px;text-align:center;font-weight:600;color:var(--t2);font-size:11px;text-transform:uppercase"></th>';
                     html += '</tr></thead><tbody>';
 
-                    teamCommits.forEach((c) => {
+                    visibleCommits.forEach((c) => {
                         const moscowClass = 'b-' + bkt(c);
                         html += '<tr style="border-bottom:1px solid rgba(42,54,84,.3)">';
                         html += '<td style="padding:8px">' + idLink(c.key) + '</td>';
@@ -4135,6 +4194,8 @@ function aobGateCheck(){
                     });
 
                     html += '</tbody></table></div>';
+                } else if (teamCommits.length > 0) {
+                    html += '<div style="padding:24px 16px;text-align:center;color:var(--t3);font-size:13px">No committed features match the selected component' + (piSel.length > 1 ? 's' : '') + '.</div>';
                 } else {
                     html += '<div style="padding:24px 16px;text-align:center;color:var(--t3);font-size:13px">No features committed yet. Search by Key above to add features to this team\'s PI.</div>';
                 }
@@ -4178,12 +4239,14 @@ function aobGateCheck(){
             const matches = data.items.filter(i =>
                 isPIPlanningType(i.type, cfg) &&
                 (i.key.toLowerCase().includes(query) || (i.summary||'').toLowerCase().includes(query) || (i.epic||'').toLowerCase().includes(query)) &&
-                !alreadyCommitted.has(i.key)
+                !alreadyCommitted.has(i.key) &&
+                piComponentMatch(i, data)
             ).slice(0, 50);
             console.log('PI Search results:', matches.length, matches.slice(0,3).map(i => i.key + ': ' + (i.summary||'').substring(0,40)));
 
             if (matches.length === 0) {
-                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching planning items found for "' + query + '". PI Loading only searches ' + getPiLoadingTypes(cfg).join(', ') + '.</div>';
+                const compNote = (window._piComponentFilter && window._piComponentFilter.length) ? ' A component filter is active — clear it above to widen results.' : '';
+                resultsDiv.innerHTML = '<div style="padding:12px;color:var(--t3);font-size:12px">No matching planning items found for "' + query + '". PI Loading only searches ' + getPiLoadingTypes(cfg).join(', ') + '.' + compNote + '</div>';
                 return;
             }
 
@@ -4257,6 +4320,7 @@ function aobGateCheck(){
                     epic: item.epic || '',
                     priority: item.priority || 'Medium',
                     moscow: item.moscow || '',
+                    component: item.component || '',
                     addedAt: new Date().toISOString()
                 });
                 added++;
@@ -4288,6 +4352,7 @@ function aobGateCheck(){
                 points: parseInt(item.points) || 0,
                 epic: item.epic || '',
                 priority: item.priority || 'Medium',
+                component: item.component || '',
                 addedAt: new Date().toISOString()
             });
 
