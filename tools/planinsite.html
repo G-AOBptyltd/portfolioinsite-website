@@ -4412,8 +4412,12 @@ function aobGateCheck(){
                 if (sh && sh.raw) { try { items = (parseCSVContent(sh.raw).items) || []; } catch (e) {} }
             }
             data.items = items;
-            if (!items.length) {
-                showToast('No backlog items to export yet — import a CSV (or click Import Items) first', 'error');
+            // Export is a full backup — allow it whenever there's anything worth saving:
+            // a backlog, committed features (PI Loading), or configured teams.
+            const hasCommits = data.piCommitments && Object.values(data.piCommitments).some(a => Array.isArray(a) && a.length);
+            const hasTeams = data.teams && data.teams.length;
+            if (!items.length && !hasCommits && !hasTeams) {
+                showToast('Nothing to export yet — add teams, commit features, or import a CSV first', 'error');
                 return;
             }
             const json = JSON.stringify(data, null, 2);
