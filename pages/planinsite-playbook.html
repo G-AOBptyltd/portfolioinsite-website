@@ -556,6 +556,14 @@
     .hpp-lic-bar button:hover{background:#0891b2}
     .hpp-lic-err{color:#f87171;font-size:11px}
     body.hpp-unlocked .hpp-lic-bar{display:none!important}
+  
+    /* ── LIVE MEDIA (full static images now, video later) ── */
+    .video-wrap:has(.pb-shot:not(.broken)){aspect-ratio:auto;max-width:100%}
+    .video-wrap .pb-shot{position:relative;width:100%;height:auto;display:block}
+    .img-wrap .pb-shot{width:100%;height:auto;display:block}
+    .pb-shot.broken{display:none}
+    .video-wrap .pb-shot:not(.broken) ~ .video-placeholder,
+    .img-wrap  .pb-shot:not(.broken) ~ .img-placeholder{display:none}
   </style>
 </head>
 <body>
@@ -699,6 +707,7 @@
       </div>
 
       <div class="video-wrap" id="vid-getting-started">
+        <img class="pb-shot" src="../img/planinsite/getting-started.png" alt="PlanInSite — Getting Started" loading="lazy" onerror="this.classList.add('broken')">
         <div class="video-placeholder">
           <div class="play-ring">▶</div>
           <p>Getting Started walkthrough<br><em>Video coming soon</em></p>
@@ -907,6 +916,7 @@
       </div>
 
       <div class="img-wrap">
+        <img class="pb-shot" src="../img/planinsite/backlog-refinement.png" alt="PlanInSite — Backlog Refinement" loading="lazy" onerror="this.classList.add('broken')">
         <div class="img-placeholder">
           <span>🔍</span>
           <p>Backlog Refinement screenshot — coming soon</p>
