@@ -312,7 +312,7 @@ function aobGateCheck(){
 <circle cx="14.8" cy="14.8" r=".8" fill="rgba(255,255,255,.6)"/>
 </svg></div>
 <div style="display:flex;flex-direction:column;gap:0">
-<div style="display:flex;align-items:center;gap:6px"><span class="logo-t">PortfolioInSite</span><span class="ver">v14</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span class="logo-t">PortfolioInSite</span><span class="ver">2.0</span></div>
 <div style="display:flex;align-items:center;gap:6px"><span class="tagline">Know what matters. Cut what doesn't.</span><span style="color:var(--t3);font-size:9px;opacity:.5">&middot;</span><a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" class="pi-badge">PortfolioInSite</a></div>
 </div>
 </div>
@@ -400,6 +400,13 @@ Playbook
     </select>
   </div>
 
+  <!-- Tabs -->
+  <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--bdr)">
+    <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:8px">&#128203; Tabs</h3>
+    <p style="font-size:11px;color:var(--t3);margin:0 0 12px">Show or hide tabs to declutter the tool. Hidden tabs can be restored here any time.</p>
+    <div id="cfgTabs" style="display:grid;gap:9px"></div>
+  </div>
+
   <!-- Data Management -->
   <div>
     <h3 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:12px">&#128190; Data Management</h3>
@@ -419,6 +426,14 @@ Playbook
 <select class="fs" id="fComp" onchange="render()"><option value="">All Components</option></select>
 <select class="fs" id="fEpic" onchange="render()"><option value="">All Epics</option></select>
 <select class="fs" id="fProj" onchange="render()"><option value="">All Projects</option></select>
+<select class="fs" id="fTeam" onchange="render()"><option value="">All Teams</option></select>
+<select class="fs" id="fPO" onchange="render()"><option value="">All POs</option></select>
+<select class="fs" id="fFix" onchange="render()"><option value="">All Fix Versions</option></select>
+<select class="fs" id="fDateField" onchange="render()" title="Filter by a date field within a range"><option value="">Date: any</option><option value="created">Created</option><option value="updated">Updated</option><option value="targetStart">Target start</option><option value="targetEnd">Target end</option></select>
+<input type="date" class="fs" id="fDateFrom" onchange="render()" title="From date" style="width:auto;padding:6px 8px">
+<input type="date" class="fs" id="fDateTo" onchange="render()" title="To date" style="width:auto;padding:6px 8px">
+<button id="doneToggle" onclick="toggleDone()" class="fs" title="Show only open work, or include done/closed" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;width:auto;border-color:var(--ac);color:var(--ac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Open only</span></button>
+<span id="gateHint" style="font-size:11px;color:var(--t3);align-self:center"></span>
 </div>
 </div>
 <div class="chip-bar" id="moscowChips" style="margin-bottom:16px">
@@ -544,13 +559,13 @@ Playbook
 <div class="mf" style="margin-top:12px"><label>Story Points Field (JSON)</label><input id="cfEff" value="story_points" style="font-family:'JetBrains Mono',monospace;font-size:12px"></div>
 <div style="border-top:1px solid var(--bdr);margin-top:16px;padding-top:16px">
 <h3 style="font-size:14px;font-weight:700;margin-bottom:6px">Demo Data</h3>
-<p style="font-size:12px;color:var(--t2);margin-bottom:10px">Load a 10-team sample dataset — no import needed.</p>
-<button class="btn" style="background:var(--ac);border-color:var(--ac);color:#fff;width:100%;justify-content:center" onclick="loadSampleData()">⚡ Load Sample Data</button>
+<p style="font-size:12px;color:var(--t3);margin-bottom:10px">Just exploring? Load a neutral sample dataset instead of importing.</p>
+<button class="btn btn-sm" style="background:transparent;color:var(--t2)" onclick="loadSampleData()">⚡ Load Sample Data</button>
 <div id="sampleStatus" style="font-size:12px;color:var(--t3);margin-top:8px"></div>
 </div>
-<div class="ma">
+<div class="ma" style="position:sticky;bottom:0;background:var(--bg1);border-top:1px solid var(--bdr);padding-top:14px;margin-top:16px;gap:10px;align-items:center;justify-content:flex-start">
 <button class="btn" onclick="closeMod()">Cancel</button>
-<button class="btn btn-g" onclick="doImport()">Import</button>
+<button class="btn btn-p" onclick="doImport()" style="flex:1;justify-content:center;font-size:15px;font-weight:700;padding:12px 16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import data</button>
 </div>
 </div>
 </div>
@@ -558,7 +573,7 @@ Playbook
 <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
 <svg viewBox="0 0 32 32" fill="none" width="20" height="20"><defs><linearGradient id="fg" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#14B8A6"/></linearGradient></defs><ellipse cx="16" cy="16" rx="13" ry="7.5" stroke="url(#fg)" stroke-width="2" fill="none"/><circle cx="16" cy="16" r="4" fill="url(#fg)"/><circle cx="16" cy="16" r="1.8" fill="#0f172a"/></svg>
 <span style="font-size:13px;font-weight:700;color:var(--t1)">PortfolioInSite</span>
-<span style="font-size:10px;color:var(--ac);background:rgba(14,165,233,.1);padding:1px 6px;border-radius:3px">v14</span>
+<span style="font-size:10px;color:var(--ac);background:rgba(14,165,233,.1);padding:1px 6px;border-radius:3px">2.0</span>
 </div>
 <div style="font-size:12px;color:var(--t2);margin-bottom:2px">AI-Native Portfolio Governance &mdash; Built for Jira Cloud</div>
 <div>Part of <a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" style="color:var(--ac);font-weight:600;text-decoration:none">PortfolioInSite</a> &middot; 19 modules, one governance platform</div>
@@ -618,11 +633,14 @@ const WB_FIELDS = [
   { key: 'title', label: 'Title / Summary' },
   { key: 'type', label: 'Issue Type' },
   { key: 'status', label: 'Status' },
+  { key: 'statusCategory', label: 'Status Category' },
   { key: 'assignee', label: 'Assignee' },
+  { key: 'productOwner', label: 'Product Owner' },
   { key: 'reporter', label: 'Reporter' },
   { key: 'effort', label: 'Effort / Story Points' },
   { key: 'created', label: 'Created Date' },
   { key: 'parent', label: 'Parent / Epic' },
+  { key: 'parentName', label: 'Parent / Epic Name' },
   { key: 'priority', label: 'Priority' },
   { key: 'component', label: 'Component(s)' },
   { key: 'targetStart', label: 'Target Start' },
@@ -666,16 +684,19 @@ function mk() {
     title: '',
     type: 'Story',
     status: 'To Do',
+    statusCategory: '',
     assignee: '',
     reporter: '',
     effort: null,
     created: '',
     parent: '',
+    parentName: '',
     priority: '',
     component: '',
     targetStart: '',
     targetEnd: '',
     team: '',
+    productOwner: '',
     fixVersion: '',
     labels: '',
     piAssignment: '',
@@ -750,6 +771,16 @@ function nSt(s) {
   const capitalize = s.trim().charAt(0).toUpperCase() + s.trim().slice(1);
   return capitalize;
 }
+
+// v2: active/Done gate — Status Category first, status-string fallback
+var showDone = false;
+function isDone(it){
+  var sc=(it.statusCategory||'').trim().toLowerCase();
+  if(sc) return sc==='done'||sc==='complete'||sc==='completed'||sc==='closed';
+  return /^(done|closed|resolved|complete|completed|cancell?ed|won'?t do|won'?t fix|released|shipped|live|archived)$/i.test((it.status||'').trim());
+}
+function toggleDone(){showDone=!showDone;var b=document.getElementById('doneToggle');if(b){b.querySelector('span').textContent=showDone?'Showing all':'Open only';b.style.borderColor=showDone?'':'var(--ac)';b.style.color=showDone?'':'var(--ac)';}render();}
+function epicLabel(key){if(!key||key==='Unparented'||key==='No Team'||key==='No Component')return key;var c=D.find(function(x){return x.parent===key&&x.parentName;});if(c&&c.parentName)return c.parentName;var ep=D.find(function(x){return x.id===key;});if(ep&&ep.title)return ep.title;return key;}
 
 // ============================================================================
 // SCORING FUNCTIONS
@@ -1104,6 +1135,11 @@ function setTheme(mode) {
 
 // ── POI Config Drawer ──────────────────────────────────────────────────────
 
+function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_v13_hiddentabs')||'[]'));}catch(e){return new Set();}}
+function setHiddenTabs(set){try{localStorage.setItem('ge_v13_hiddentabs',JSON.stringify([...set]));}catch(e){}}
+function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
+function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
+function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
 function openPoiConfig() {
   const overlay = document.getElementById('poiCfgOverlay');
   const drawer = document.getElementById('poiCfgDrawer');
@@ -1116,6 +1152,7 @@ function openPoiConfig() {
 
   // Render scoring dimension labels
   renderQLabels();
+  renderCfgTabs();
 
   // Sync default tab
   const defTab = localStorage.getItem('ge_v13_default_tab') || 'triage';
@@ -1252,8 +1289,12 @@ function render(){
   const asg=document.getElementById('fAsg'),comp=document.getElementById('fComp'),epic=document.getElementById('fEpic'),proj=document.getElementById('fProj');
   if(asg){const v=asg.value;asg.innerHTML='<option value="">All Assignees</option>'+[...new Set(D.map(i=>i.assignee).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');asg.value=v}
   if(comp){const v=comp.value;comp.innerHTML='<option value="">All Components</option>'+[...new Set(D.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');comp.value=v}
-  if(epic){const v=epic.value;epic.innerHTML='<option value="">All Epics</option>'+[...new Set(D.map(i=>i.parent).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');epic.value=v}
+  if(epic){const v=epic.value;epic.innerHTML='<option value="">All Epics</option>'+[...new Set(D.map(i=>i.parent).filter(Boolean))].sort().map(a=>`<option value="${esc(a)}">${esc(epicLabel(a))}</option>`).join('');epic.value=v}
   if(proj){const v=proj.value;const pkeys=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();proj.innerHTML='<option value="">All Projects</option>'+pkeys.map(a=>`<option>${esc(a)}</option>`).join('');proj.value=v}
+  const team=document.getElementById('fTeam'),po=document.getElementById('fPO'),fix=document.getElementById('fFix');
+  if(team){const v=team.value;team.innerHTML='<option value="">All Teams</option>'+[...new Set(D.map(i=>i.team).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');team.value=v}
+  if(po){const v=po.value;po.innerHTML='<option value="">All POs</option>'+[...new Set(D.map(i=>i.productOwner).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');po.value=v}
+  if(fix){const v=fix.value;fix.innerHTML='<option value="">All Fix Versions</option>'+[...new Set(D.map(i=>i.fixVersion).filter(Boolean))].sort().map(a=>`<option>${esc(a)}</option>`).join('');fix.value=v}
 
   // Filters
   const srch=(document.getElementById('sSrch')?.value||'').toLowerCase();
@@ -1263,9 +1304,18 @@ function render(){
   const fC=document.getElementById('fComp')?.value||'';
   const fE=document.getElementById('fEpic')?.value||'';
   const fP=document.getElementById('fProj')?.value||'';
+  const fTeam=document.getElementById('fTeam')?.value||'';
+  const fPO=document.getElementById('fPO')?.value||'';
+  const fFix=document.getElementById('fFix')?.value||'';
+  const fDF=document.getElementById('fDateField')?.value||'';
+  const fDFrom=document.getElementById('fDateFrom')?.value||'';
+  const fDTo=document.getElementById('fDateTo')?.value||'';
   const chips=activeChips();
+  {var _gh=document.getElementById('gateHint');if(_gh){var _dc=D.filter(isDone).length;_gh.textContent=D.length?(showDone?(D.length+' items · '+_dc+' done'):((D.length-_dc)+' open · '+_dc+' done hidden')):'';}}
 
   let f=D.filter((item,ri)=>{
+    if(item.synthetic)return false;
+    if(!showDone&&isDone(item))return false;
     if(srch&&!item.id.toLowerCase().includes(srch)&&!item.title.toLowerCase().includes(srch)&&!item.assignee.toLowerCase().includes(srch)&&!(item.parent||'').toLowerCase().includes(srch))return false;
     if(fT&&item.type!==fT)return false;
     if(fS&&item.status!==fS)return false;
@@ -1273,6 +1323,10 @@ function render(){
     if(fC&&!(item.component||'').split(', ').includes(fC))return false;
     if(fE&&item.parent!==fE)return false;
     if(fP&&(item.projectKey||item.space||'')!==fP)return false;
+    if(fTeam&&item.team!==fTeam)return false;
+    if(fPO&&(item.productOwner||'')!==fPO)return false;
+    if(fFix&&(item.fixVersion||'')!==fFix)return false;
+    if(fDF&&(fDFrom||fDTo)){var _dv=item[fDF];var _d=_dv?new Date(_dv):null;if(!_d||isNaN(_d))return false;if(fDFrom&&_d<new Date(fDFrom))return false;if(fDTo){var _t=new Date(fDTo);_t.setHours(23,59,59,999);if(_d>_t)return false;}}
     const b=bkt(tot(item));
     if(chips.length<5&&!chips.includes(b))return false;
     return true;
@@ -1391,25 +1445,34 @@ function clrAll(){if(!D.length)return;if(confirm('Clear all '+D.length+' items?'
 
 // ═══ EXECUTIVE DASHBOARD ═══
 let moscowChart=null,typeChart=null;
+let dashFTeam='',dashFFix='';
 function rDash(){
   const el=document.getElementById('dashC');
   if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
-  const scored=D.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
+  const FD=[].concat(D).filter(function(i){return !i.synthetic&&(!dashFTeam||i.team===dashFTeam)&&(!dashFFix||(i.fixVersion||'')===dashFFix);});
+  const scored=FD.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
   const bkts={MUST:0,SHOULD:0,COULD:0,WONT:0,UNSCORED:0};
-  D.forEach(i=>bkts[bkt(tot(i))]++);
+  FD.forEach(i=>bkts[bkt(tot(i))]++);
   const avg=totals.length?(totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1):0;
   const bfbs=scored.filter(i=>i.effort).map(i=>+(bfb(tot(i),i.effort)));
   const avgBfb=bfbs.length?(bfbs.reduce((a,b)=>a+b,0)/bfbs.length).toFixed(1):0;
-  const types={};D.forEach(i=>{const t=i.type||'Unknown';types[t]=(types[t]||0)+1});
+  const types={};FD.forEach(i=>{const t=i.type||'Unknown';types[t]=(types[t]||0)+1});
 
-  let h=`<div class="dg">
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--must)"></span>MUST HAVE</div><div class="sv" style="color:var(--must)">${bkts.MUST}</div><div class="ss">${D.length?(bkts.MUST/D.length*100).toFixed(0):0}% of backlog</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--should)"></span>SHOULD HAVE</div><div class="sv" style="color:var(--should)">${bkts.SHOULD}</div><div class="ss">${D.length?(bkts.SHOULD/D.length*100).toFixed(0):0}%</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--could)"></span>COULD HAVE</div><div class="sv" style="color:var(--could)">${bkts.COULD}</div><div class="ss">${D.length?(bkts.COULD/D.length*100).toFixed(0):0}%</div></div>
-    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--wont)"></span>WON'T HAVE</div><div class="sv" style="color:var(--wont)">${bkts.WONT}</div><div class="ss">${D.length?(bkts.WONT/D.length*100).toFixed(0):0}%</div></div>
+  const dteams=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.team;}).filter(Boolean))].sort();
+  const dfixes=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.fixVersion;}).filter(Boolean))].sort();
+  var dfr='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px"><span style="font-size:11px;font-weight:600;color:var(--t2)">Filter:</span>';
+  if(dteams.length){dfr+='<select class="fs" onchange="dashFTeam=this.value;rDash()"><option value="">All Teams</option>'+dteams.map(function(t){return '<option'+(t===dashFTeam?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
+  if(dfixes.length){dfr+='<select class="fs" onchange="dashFFix=this.value;rDash()"><option value="">All Fix Versions</option>'+dfixes.map(function(t){return '<option'+(t===dashFFix?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
+  if(dashFTeam||dashFFix){dfr+='<button class="btn btn-sm" style="color:var(--red)" onclick="dashFTeam=\'\';dashFFix=\'\';rDash()">Clear</button>';}
+  dfr+='</div>';
+  let h=dfr+`<div class="dg">
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--must)"></span>MUST HAVE</div><div class="sv" style="color:var(--must)">${bkts.MUST}</div><div class="ss">${FD.length?(bkts.MUST/FD.length*100).toFixed(0):0}% of backlog</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--should)"></span>SHOULD HAVE</div><div class="sv" style="color:var(--should)">${bkts.SHOULD}</div><div class="ss">${FD.length?(bkts.SHOULD/FD.length*100).toFixed(0):0}%</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--could)"></span>COULD HAVE</div><div class="sv" style="color:var(--could)">${bkts.COULD}</div><div class="ss">${FD.length?(bkts.COULD/FD.length*100).toFixed(0):0}%</div></div>
+    <div class="sc"><div class="sl" style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--wont)"></span>WON'T HAVE</div><div class="sv" style="color:var(--wont)">${bkts.WONT}</div><div class="ss">${FD.length?(bkts.WONT/FD.length*100).toFixed(0):0}%</div></div>
   </div>`;
   h+=`<div class="dg" style="grid-template-columns:repeat(3,1fr)">
-    <div class="sc"><div class="sl">TOTAL ITEMS</div><div class="sv" style="color:var(--ac)">${D.length}</div><div class="ss">${scored.length} scored · ${D.length-scored.length} unscored</div></div>
+    <div class="sc"><div class="sl">TOTAL ITEMS</div><div class="sv" style="color:var(--ac)">${FD.length}</div><div class="ss">${scored.length} scored · ${FD.length-scored.length} unscored</div></div>
     <div class="sc"><div class="sl">AVERAGE SCORE</div><div class="sv">${avg}</div><div class="ss">out of ${MAX_SCORE} maximum</div></div>
     <div class="sc"><div class="sl">AVG BANG-FOR-BUCK</div><div class="sv" style="color:${bfbC(avgBfb)}">${avgBfb}</div><div class="ss">Value ÷ Effort ratio</div></div>
   </div>`;
@@ -1431,16 +1494,39 @@ function rDash(){
 
 // ═══ STRATEGIC QUADRANT MAP ═══
 let quadChart=null;
-let quadFTyp='',quadFMos='',quadFComp='',quadFProj='';
+let quadFTyp='',quadFMos='',quadFComp='',quadFProj='',quadFTeam='',quadFFix='',quadFLevel='rollup';
 function rQuad(){
   const el=document.getElementById('quadC');
   const scored=D.filter(i=>tot(i)!=null&&i.effort!=null&&i.effort>0);
   if(scored.length<2){el.innerHTML='<div class="es"><h3>Not Enough Data</h3><p>Score at least 2 items with effort values.</p></div>';return}
   let items=scored;
+  if(quadFLevel==='ef')items=items.filter(i=>HT.includes(i.type));else if(quadFLevel==='story')items=items.filter(i=>!HT.includes(i.type));
   if(quadFTyp)items=items.filter(i=>i.type===quadFTyp);
   if(quadFMos)items=items.filter(i=>bkt(tot(i))===quadFMos);
   if(quadFComp)items=items.filter(i=>(i.component||'').split(', ').includes(quadFComp));
   if(quadFProj)items=items.filter(i=>(i.projectKey||i.space||'')===quadFProj);
+  if(quadFTeam)items=items.filter(i=>i.team===quadFTeam);
+  if(quadFFix)items=items.filter(i=>(i.fixVersion||'')===quadFFix);
+  if(quadFLevel==='rollup'){
+    var _byEpic={};
+    items.forEach(function(it){var k=(it.parent||'').trim()||'(no epic)';(_byEpic[k]=_byEpic[k]||[]).push(it);});
+    var _snapYN=function(a){return a>=2.5?5:0;};
+    var _snapLMH=function(a){return a<2?1:(a<4?3:5);};
+    var _FB=[0,1,2,3,5,8,13,21];
+    var _av=function(kids,q){var s=0,c=0;kids.forEach(function(it){if(it.scores&&it.scores[q]!=null){s+=it.scores[q];c++;}});return c?s/c:null;};
+    var _agg=[];
+    Object.keys(_byEpic).forEach(function(k){
+      var kids=_byEpic[k];var n=kids.length;
+      var eRaw=kids.reduce(function(s,it){return s+(it.effort||0);},0)/n;
+      var eff=_FB.reduce(function(p,v){return Math.abs(v-eRaw)<Math.abs(p-eRaw)?v:p;},0);
+      var a2=_av(kids,'q2'),a3=_av(kids,'q3'),a4=_av(kids,'q4'),a5=_av(kids,'q5');
+      var rep=kids[0];
+      _agg.push({id:k,title:(k==='(no epic)'?'(No epic)':epicLabel(k))+' — '+n+' stories',type:'Epic',status:'',effort:eff,
+        scores:{q1:eff,q2:a2==null?null:_snapYN(a2),q3:a3==null?null:_snapLMH(a3),q4:a4==null?null:_snapLMH(a4),q5:a5==null?null:_snapYN(a5)},
+        team:rep.team,component:rep.component,created:rep.created,updated:rep.updated,parent:'',_epicKey:k,_count:n});
+    });
+    items=_agg;
+  }
 
   const valScore=i=>{const t=tot(i);const effContrib=qScore('q1',i.scores.q1);return t-effContrib};
   const bucketColors={MUST:'rgba(229,57,53,0.85)',SHOULD:'rgba(245,158,11,0.85)',COULD:'rgba(74,174,217,0.85)',WONT:'rgba(107,114,128,0.7)',UNSCORED:'rgba(51,60,82,0.7)'};
@@ -1448,7 +1534,7 @@ function rQuad(){
   const bucketLabelsMap={MUST:'Must Have',SHOULD:'Should Have',COULD:'Could Have',WONT:"Won't Have"};
 
   // For large datasets, aggregate overlapping points into clusters
-  const isLarge=items.length>200;
+  const isLarge=quadFLevel!=='rollup'&&items.length>200;
   const groups={};
   if(isLarge){
     // Aggregate: group by effort + rounded valScore, then show count-sized bubbles
@@ -1503,13 +1589,16 @@ function rQuad(){
   const comps=[...new Set(scored.flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
 
   let h=`<h2 style="font-size:20px;margin-bottom:4px">Strategic Quadrant Map</h2>
-  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort — bubble size = age. Click any bubble to jump to triage.</p>`;
+  <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort. <strong>Epic rollup</strong> (default) plots one bubble per epic from its stories\u2019 combined scores \u2014 strategic <em>and</em> populated. Use <strong>Level</strong> for Stories/All detail. Click a bubble to drill into that epic.</p>`;
   h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <select class="fs" onchange="quadFLevel=this.value;rQuad()" title="Plot strategic units (Epics & Features) or drill to Stories"><option value="rollup"${quadFLevel==='rollup'?' selected':''}>Epic rollup</option><option value="ef"${quadFLevel==='ef'?' selected':''}>Epics & Features</option><option value="story"${quadFLevel==='story'?' selected':''}>Stories</option><option value="all"${quadFLevel==='all'?' selected':''}>All levels</option></select>
     <select class="fs" onchange="quadFTyp=this.value;rQuad()"><option value="">All Types</option>${types.map(t=>`<option ${t===quadFTyp?'selected':''}>${t}</option>`).join('')}</select>
     <select class="fs" onchange="quadFMos=this.value;rQuad()"><option value="">All MoSCoW</option>${['MUST','SHOULD','COULD','WONT'].map(b=>`<option value="${b}" ${b===quadFMos?'selected':''}>${bucketLabelsMap[b]}</option>`).join('')}</select>
     ${comps.length?`<select class="fs" onchange="quadFComp=this.value;rQuad()"><option value="">All Components</option>${comps.map(c=>`<option ${c===quadFComp?'selected':''}>${c}</option>`).join('')}</select>`:''}
     ${(()=>{const prjs=[...new Set(scored.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();return prjs.length?`<select class="fs" onchange="quadFProj=this.value;rQuad()"><option value="">All Projects</option>${prjs.map(p=>`<option ${p===quadFProj?'selected':''}>${esc(p)}</option>`).join('')}</select>`:''})()}
-    <span style="font-size:11px;color:var(--t2);margin-left:auto">${items.length} of ${scored.length} scored items</span>
+    ${(()=>{const tms=[...new Set(scored.map(i=>i.team).filter(Boolean))].sort();return tms.length?`<select class="fs" onchange="quadFTeam=this.value;rQuad()"><option value="">All Teams</option>${tms.map(t=>`<option ${t===quadFTeam?'selected':''}>${esc(t)}</option>`).join('')}</select>`:''})()}
+    ${(()=>{const fxs=[...new Set(scored.map(i=>i.fixVersion).filter(Boolean))].sort();return fxs.length?`<select class="fs" onchange="quadFFix=this.value;rQuad()"><option value="">All Fix Versions</option>${fxs.map(x=>`<option ${x===quadFFix?'selected':''}>${esc(x)}</option>`).join('')}</select>`:''})()}
+    <span style="font-size:11px;color:var(--t2);margin-left:auto">${quadFLevel==='rollup'?items.length+' epics ('+scored.length+' scored stories)':items.length+' of '+scored.length+' scored items'}</span>
   </div>`;
   h+=`<div class="dg">
     <div class="sc" style="border-left:3px solid var(--hi)"><div class="sl" style="color:var(--hi)">QUICK WINS</div><div class="sv" style="color:var(--hi)">${qCounts.qw}</div><div class="ss">High value · Low effort</div></div>
@@ -1551,12 +1640,12 @@ function rQuad(){
     const t2=getComputedStyle(document.documentElement).getPropertyValue('--t2').trim();
     const gridC=getComputedStyle(document.documentElement).getPropertyValue('--bdr').trim();
     const yMax=Math.max(20,...datasets.flatMap(ds=>ds.data.map(p=>p.y)))+1;
-    quadChart=new Chart(cv,{type:'bubble',data:{datasets},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:'EFFORT (Fibonacci) →',color:t2,font:{family:'DM Sans',size:12,weight:'600'}},min:0,max:22,ticks:{color:t2,stepSize:1,callback:v=>FIB_VALS.includes(v)?v:''},grid:{color:gridC}},y:{title:{display:true,text:'← VALUE SCORE',color:t2,font:{family:'DM Sans',size:12,weight:'600'}},min:0,max:yMax,ticks:{color:t2,stepSize:5},grid:{color:gridC}}},plugins:{legend:{position:'bottom',labels:{color:t2,font:{family:'DM Sans',size:12},padding:16,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{title:ctx=>{const p=ctx[0].raw;return p._count>1?p._count+' items at effort '+p.x+', value '+p.y:p._item.id+' — '+p._item.title},label:ctx=>{const p=ctx.raw;if(p._count>1)return['Cluster of '+p._count+' items','Effort: '+p.x+'  Value Score: '+p.y,'Representative: '+p._item.id,'Avg Age: '+p._age+'d'];const lines=['Type: '+p._item.type+'  Status: '+p._item.status,'Effort: '+p._item.effort+'  Value: '+Math.round(p.y)+'/20  Total: '+p._tot+'/'+MAX_SCORE,'BfB: '+p._bfb+'  Age: '+p._age+'d'];if(p._item.component)lines.push('Component: '+p._item.component);if(p._cluster)lines.push('\u26A0 '+p._cluster+' items share this position');return lines}},backgroundColor:'rgba(13,20,37,.95)',borderColor:'var(--ac)',borderWidth:1,titleFont:{family:'DM Sans',size:13,weight:'600'},bodyFont:{family:'JetBrains Mono',size:11},padding:12,cornerRadius:8},zoom:{zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'xy'},pan:{enabled:true,mode:'xy'},limits:{x:{min:0,max:22},y:{min:0}}}},onClick:(evt,elements)=>{if(elements.length){const ds=elements[0].datasetIndex,idx=elements[0].index;const item=quadChart.data.datasets[ds].data[idx]._item;document.querySelectorAll('#navTabs .tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));document.querySelector('#navTabs .tab[data-t="triage"]').classList.add('on');document.getElementById('p-triage').classList.add('on');render();setTimeout(()=>{const row=document.querySelector(`tr[data-id="${item.id}"]`);if(row){row.scrollIntoView({behavior:'smooth',block:'center'});row.style.outline='2px solid var(--ac)';setTimeout(()=>{row.style.outline=''},3000)}},100)}}},plugins:[quadrantPlugin]});
+    quadChart=new Chart(cv,{type:'bubble',data:{datasets},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:'EFFORT (Fibonacci) →',color:t2,font:{family:'DM Sans',size:12,weight:'600'}},min:0,max:22,ticks:{color:t2,stepSize:1,callback:v=>FIB_VALS.includes(v)?v:''},grid:{color:gridC}},y:{title:{display:true,text:'← VALUE SCORE',color:t2,font:{family:'DM Sans',size:12,weight:'600'}},min:0,max:yMax,ticks:{color:t2,stepSize:5},grid:{color:gridC}}},plugins:{legend:{position:'bottom',labels:{color:t2,font:{family:'DM Sans',size:12},padding:16,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{title:ctx=>{const p=ctx[0].raw;return p._count>1?p._count+' items at effort '+p.x+', value '+p.y:p._item.id+' — '+p._item.title},label:ctx=>{const p=ctx.raw;if(p._count>1)return['Cluster of '+p._count+' items','Effort: '+p.x+'  Value Score: '+p.y,'Representative: '+p._item.id,'Avg Age: '+p._age+'d'];const lines=['Type: '+p._item.type+'  Status: '+p._item.status,'Effort: '+p._item.effort+'  Value: '+Math.round(p.y)+'/20  Total: '+p._tot+'/'+MAX_SCORE,'BfB: '+p._bfb+'  Age: '+p._age+'d'];if(p._item.component)lines.push('Component: '+p._item.component);if(p._cluster)lines.push('\u26A0 '+p._cluster+' items share this position');return lines}},backgroundColor:'rgba(13,20,37,.95)',borderColor:'var(--ac)',borderWidth:1,titleFont:{family:'DM Sans',size:13,weight:'600'},bodyFont:{family:'JetBrains Mono',size:11},padding:12,cornerRadius:8},zoom:{zoom:{wheel:{enabled:true},pinch:{enabled:true},mode:'xy'},pan:{enabled:true,mode:'xy'},limits:{x:{min:0,max:22},y:{min:0}}}},onClick:(evt,elements)=>{if(elements.length){const ds=elements[0].datasetIndex,idx=elements[0].index;const item=quadChart.data.datasets[ds].data[idx]._item;if(item._epicKey){document.querySelectorAll('#navTabs .tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));document.querySelector('#navTabs .tab[data-t="triage"]').classList.add('on');document.getElementById('p-triage').classList.add('on');var _sb=document.getElementById('sSrch');if(_sb)_sb.value=(item._epicKey==='(no epic)'?'':item._epicKey);render();return;}document.querySelectorAll('#navTabs .tab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));document.querySelector('#navTabs .tab[data-t="triage"]').classList.add('on');document.getElementById('p-triage').classList.add('on');render();setTimeout(()=>{const row=document.querySelector(`tr[data-id="${item.id}"]`);if(row){row.scrollIntoView({behavior:'smooth',block:'center'});row.style.outline='2px solid var(--ac)';setTimeout(()=>{row.style.outline=''},3000)}},100)}}},plugins:[quadrantPlugin]});
   },50);
 }
 
 // ═══ EPICS ═══
-let epicFProj='',epicFType='',epicFStatus='',epicFAge='',epicSort='default',epicView='columns';
+let epicFProj='',epicFType='',epicFStatus='',epicFAge='',epicFTeam='',epicFPO='',epicFFix='',epicSort='default',epicView='columns';
 function rEpics(){
   const el=document.getElementById('epicC');
   const allEps=D.filter(i=>HT.includes(i.type));
@@ -1566,12 +1655,18 @@ function rEpics(){
   const prjs=[...new Set(allEps.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
   const types=[...new Set(allEps.map(i=>i.type).filter(Boolean))].sort();
   const statuses=[...new Set(allEps.map(i=>i.status).filter(Boolean))].sort();
+  const teams=[...new Set(allEps.map(i=>i.team).filter(Boolean))].sort();
+  const pos=[...new Set(allEps.map(i=>i.productOwner).filter(Boolean))].sort();
+  const fixes=[...new Set(allEps.map(i=>i.fixVersion).filter(Boolean))].sort();
 
   // Apply filters
   let eps=allEps;
   if(epicFProj)eps=eps.filter(i=>(i.projectKey||i.space||'')===epicFProj);
   if(epicFType)eps=eps.filter(i=>i.type===epicFType);
   if(epicFStatus)eps=eps.filter(i=>i.status===epicFStatus);
+  if(epicFTeam)eps=eps.filter(i=>i.team===epicFTeam);
+  if(epicFPO)eps=eps.filter(i=>(i.productOwner||'')===epicFPO);
+  if(epicFFix)eps=eps.filter(i=>(i.fixVersion||'')===epicFFix);
   if(epicFAge==='fresh')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a<=7});
   else if(epicFAge==='warm')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>7&&a<=30});
   else if(epicFAge==='stale')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>30&&a<=90});
@@ -1625,6 +1720,24 @@ function rEpics(){
     prjs.forEach(p=>{h+='<option'+(p===epicFProj?' selected':'')+'>'+esc(p)+'</option>'});
     h+='</select>';
   }
+  // Team filter
+  if(teams.length){
+    h+='<select class="fs" onchange="epicFTeam=this.value;rEpics()"><option value="">All Teams</option>';
+    teams.forEach(t=>{h+='<option'+(t===epicFTeam?' selected':'')+'>'+esc(t)+'</option>'});
+    h+='</select>';
+  }
+  // Product Owner filter
+  if(pos.length){
+    h+='<select class="fs" onchange="epicFPO=this.value;rEpics()"><option value="">All POs</option>';
+    pos.forEach(p=>{h+='<option'+(p===epicFPO?' selected':'')+'>'+esc(p)+'</option>'});
+    h+='</select>';
+  }
+  // Fix Version filter
+  if(fixes.length){
+    h+='<select class="fs" onchange="epicFFix=this.value;rEpics()"><option value="">All Fix Versions</option>';
+    fixes.forEach(fx=>{h+='<option'+(fx===epicFFix?' selected':'')+'>'+esc(fx)+'</option>'});
+    h+='</select>';
+  }
   // Age filter
   h+='<select class="fs" onchange="epicFAge=this.value;rEpics()"><option value="">All Ages</option>';
   h+='<option value="fresh"'+(epicFAge==='fresh'?' selected':'')+'>Fresh (≤7d)</option>';
@@ -1652,12 +1765,15 @@ function rEpics(){
   if(epicFType)activeFilters.push(epicFType);
   if(epicFStatus)activeFilters.push(epicFStatus);
   if(epicFProj)activeFilters.push(epicFProj);
+  if(epicFTeam)activeFilters.push(epicFTeam);
+  if(epicFPO)activeFilters.push(epicFPO);
+  if(epicFFix)activeFilters.push(epicFFix);
   if(epicFAge)activeFilters.push({fresh:'Fresh',warm:'Warm',stale:'Stale',rotten:'Rotten',nodate:'No Date'}[epicFAge]);
   h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">';
   h+='<span style="font-size:12px;color:var(--t2);font-weight:600">'+eps.length+' of '+allEps.length+' epics/features</span>';
   if(activeFilters.length){
     activeFilters.forEach(f=>{h+='<span style="font-size:10px;background:rgba(74,174,217,.15);color:var(--ac);padding:2px 8px;border-radius:10px">'+esc(f)+'</span>'});
-    h+='<a href="#" onclick="epicFProj=\'\';epicFType=\'\';epicFStatus=\'\';epicFAge=\'\';rEpics();return false" style="font-size:10px;color:var(--red);text-decoration:none;margin-left:4px">Clear All</a>';
+    h+='<a href="#" onclick="epicFProj=\'\';epicFType=\'\';epicFStatus=\'\';epicFAge=\'\';epicFTeam=\'\';epicFPO=\'\';epicFFix=\'\';rEpics();return false" style="font-size:10px;color:var(--red);text-decoration:none;margin-left:4px">Clear All</a>';
   }
   h+='</div>';
 
@@ -1697,7 +1813,8 @@ function rEpics(){
 
 // ═══ BACKLOG HEALTH (formerly Ageing) ═══
 let ageMode='updated';
-let ageFType='All',ageFAssignee='All',ageFReporter='All',ageFProject='All';
+let ageFType='All',ageFAssignee='All',ageFReporter='All',ageFProject='All',ageFTeam='All',ageFFix='All';
+let ageShowDone=false;
 let ageLens='auto'; // 'auto','schedule','residency','stalled'
 let ageDrill=null;
 
@@ -1736,11 +1853,13 @@ function rAge(){
   if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3></div>';return}
 
   // Apply filters
-  let FD=D;
+  let FD=D.filter(i=>!i.synthetic&&(ageShowDone||!isDone(i)));
   if(ageFType!=='All')FD=FD.filter(i=>i.type===ageFType);
   if(ageFAssignee!=='All')FD=FD.filter(i=>i.assignee===ageFAssignee);
   if(ageFReporter!=='All')FD=FD.filter(i=>i.reporter===ageFReporter);
   if(ageFProject!=='All')FD=FD.filter(i=>(i.projectKey||i.space||'')===ageFProject);
+  if(ageFTeam!=='All')FD=FD.filter(i=>i.team===ageFTeam);
+  if(ageFFix!=='All')FD=FD.filter(i=>(i.fixVersion||'')===ageFFix);
 
   // Detect data availability
   const hasCreated=FD.filter(i=>i.created).length;
@@ -1763,7 +1882,9 @@ function rAge(){
   const assignees=[...new Set(D.map(i=>i.assignee).filter(Boolean))].sort();
   const reporters=[...new Set(D.map(i=>i.reporter).filter(Boolean))].sort();
   const projects=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-  const isFiltered=ageFType!=='All'||ageFAssignee!=='All'||ageFReporter!=='All'||ageFProject!=='All';
+  const teams=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.team).filter(Boolean))].sort();
+  const fixes=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.fixVersion).filter(Boolean))].sort();
+  const isFiltered=ageFType!=='All'||ageFAssignee!=='All'||ageFReporter!=='All'||ageFProject!=='All'||ageFTeam!=='All'||ageFFix!=='All';
 
   function selOpt(vals,cur,onch){
     let s='<select onchange="'+onch+'" style="padding:4px 8px;border-radius:6px;border:1px solid '+(cur!=='All'?'var(--ac)':'var(--bdr)')+';background:'+(cur!=='All'?'rgba(74,174,217,.1)':'var(--bg1)')+';color:var(--t1);font-size:12px;min-width:110px;cursor:pointer">';
@@ -1799,7 +1920,11 @@ function rAge(){
   h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Assignee</span>'+selOpt(assignees,ageFAssignee,"ageFAssignee=this.value;rAge()")+'</div>';
   if(reporters.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Reporter</span>'+selOpt(reporters,ageFReporter,"ageFReporter=this.value;rAge()")+'</div>'}
   if(projects.length>1){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Project</span>'+selOpt(projects,ageFProject,"ageFProject=this.value;rAge()")+'</div>'}
-  if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
+  if(teams.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Team</span>'+selOpt(teams,ageFTeam,"ageFTeam=this.value;rAge()")+'</div>'}
+  if(fixes.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Fix Version</span>'+selOpt(fixes,ageFFix,"ageFFix=this.value;rAge()")+'</div>'}
+  h+='<button class="btn btn-sm" onclick="ageShowDone=!ageShowDone;rAge()" style="font-size:10px;border-color:'+(ageShowDone?'var(--bdr)':'var(--ac)')+';color:'+(ageShowDone?'var(--t2)':'var(--ac)')+'" title="Residency measures how long OPEN items have sat. Done items are completed, so excluded by default.">'+(ageShowDone?'Incl. Done':'Open only')+'</button>';
+  h+='<span style="font-size:10px;color:var(--t3);flex-basis:100%">Residency = how long OPEN items have sat un-actioned. Done items are excluded by default ('+(ageShowDone?'currently included':'toggle "Incl. Done" to include')+').</span>';
+  if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';ageFTeam=\'All\';ageFFix=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
   h+='</div>';
 
   // === DATA AVAILABILITY BADGES ===
@@ -2150,13 +2275,15 @@ function rAgeHelp(){
 }
 // Roadmap state
 let rmGroupBy='epic'; // 'epic', 'team', 'component'
-let rmFType='',rmFMos='',rmFProj='';
+let rmSchedBy='timeline'; // 'timeline' | 'fixversion'
+let rmFType='',rmFMos='',rmFProj='',rmFTeam='',rmFComp='',rmFFix='';
 let rmPiStart='2025-01-06'; // Monday start
 let rmPiWeeks=10;
 let rmSprintWeeks=2;
 let rmNumPIs=5;
 let rmZoom='normal'; // 'compact','normal','wide'
 let rmSprintCap=40; // story points per sprint
+let rmShowCaps=false;
 let rmShowAll=false; // show items without dates
 let rmCollapsed={}; // roadmap group collapse state {groupKey: true/false}
 let rmSearch=''; // text search filter
@@ -2237,18 +2364,22 @@ function rRoadmap() {
   }
 
   // Filter items
-  let filtered=D.filter(i=>{
+  let filtered=D.filter(i=>{if(i.synthetic)return false;
     const t=HT.includes(i.type);
     if(!t)return false;
     if(rmFType&&i.type!==rmFType)return false;
     if(rmFMos&&bkt(tot(i))!==rmFMos)return false;
     if(rmFProj&&(i.projectKey||i.space||'')!==rmFProj)return false;
+    if(rmFTeam&&i.team!==rmFTeam)return false;
+    if(rmFComp&&!(i.component||'').split(', ').includes(rmFComp))return false;
+    if(rmFFix&&(i.fixVersion||'')!==rmFFix)return false;
     if(rmShowAll)return true;
     return i.targetStart||i.targetEnd||i.piAssignment;
   });
 
   // Build controls
-  let h='<div style="margin-bottom:16px">';
+  let h='<div style="margin:0 0 14px;padding:10px 14px;border-left:3px solid var(--ac);background:rgba(14,165,233,.06);border-radius:0 8px 8px 0;font-size:12px;color:var(--t2)"><strong style="color:var(--t1)">Roadmap &mdash; increment plan.</strong> Plots epics &amp; features across increments (PIs &amp; sprints), grouped by your selection. An item lands on the timeline once it has target dates or a PI (or via Auto-assign to PIs). For a backlog without dates, group by <strong>Fix Version</strong> or schedule items first.</div>';
+  h+='<div style="margin-bottom:16px">';
   h+='<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px">';
   h+='<div style="display:flex;align-items:center;gap:6px">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Group By:</label>';
@@ -2256,7 +2387,11 @@ function rRoadmap() {
   h+='<option value="epic"'+(rmGroupBy==='epic'?' selected':'')+'>Epic</option>';
   h+='<option value="team"'+(rmGroupBy==='team'?' selected':'')+'>Team</option>';
   h+='<option value="component"'+(rmGroupBy==='component'?' selected':'')+'>Component</option>';
+  h+='<option value="fixVersion"'+(rmGroupBy==='fixVersion'?' selected':'')+'>Fix Version</option>';
   h+='</select></div>';
+  h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Schedule by:</label>';
+  h+='<button class="btn btn-sm'+(rmSchedBy==='timeline'?' btn-ac':'')+'" onclick="rmSchedBy=\'timeline\';rRoadmap()">Timeline</button>';
+  h+='<button class="btn btn-sm'+(rmSchedBy==='fixversion'?' btn-ac':'')+'" onclick="rmSchedBy=\'fixversion\';rRoadmap()">Fix Version</button></div>';
 
   h+='<div style="display:flex;align-items:center;gap:6px">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Type:</label>';
@@ -2287,6 +2422,13 @@ function rRoadmap() {
   h+='</select></div>';
   }
 
+  var rmTeams=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.team).filter(Boolean))].sort();
+  if(rmTeams.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Team:</label><select class="fs" onchange="rmFTeam=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFTeam===''?' selected':'')+'>All</option>';rmTeams.forEach(function(t){h+='<option value="'+esc(t)+'"'+(rmFTeam===t?' selected':'')+'>'+esc(t)+'</option>'});h+='</select></div>';}
+  var rmComps=[...new Set(D.filter(i=>!i.synthetic).flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
+  if(rmComps.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Component:</label><select class="fs" onchange="rmFComp=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFComp===''?' selected':'')+'>All</option>';rmComps.forEach(function(c){h+='<option value="'+esc(c)+'"'+(rmFComp===c?' selected':'')+'>'+esc(c)+'</option>'});h+='</select></div>';}
+  var rmFixes=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.fixVersion).filter(Boolean))].sort();
+  if(rmFixes.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Fix Version:</label><select class="fs" onchange="rmFFix=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFFix===''?' selected':'')+'>All</option>';rmFixes.forEach(function(fx){h+='<option value="'+esc(fx)+'"'+(rmFFix===fx?' selected':'')+'>'+esc(fx)+'</option>'});h+='</select></div>';}
+
   h+='<div style="margin-left:auto;display:flex;gap:6px;align-items:center">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Zoom:</label>';
   h+='<button class="btn btn-sm'+(rmZoom==='compact'?' btn-ac':'')+'" onclick="rmZoom=\'compact\';rRoadmap()">Compact</button>';
@@ -2316,7 +2458,9 @@ function rRoadmap() {
   h+='</div>';
 
   h+='<label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);cursor:pointer"><input type="checkbox" '+(rmShowAll?'checked':'')+' onchange="rmShowAll=this.checked;rRoadmap()"> Show all (incl. no dates)</label>';
-  h+='<button class="btn btn-sm btn-g" onclick="autoAssignPIs()">Auto-assign to PIs</button>';
+  h+='<button class="btn btn-sm btn-g" onclick="autoAssignPIs()" title="Packs scored items into the earliest PI with capacity, per team, ordered by MoSCoW then Bang-for-Buck">Auto-assign to PIs</button>';
+  h+='<button class="btn btn-sm" onclick="rmShowCaps=!rmShowCaps;rRoadmap()">'+(rmShowCaps?'Hide capacity':'Team capacity')+'</button>';
+  h+='<span style="font-size:10px;color:var(--t3)">by priority &times; per-team capacity</span>';
   h+='</div>';
 
   // Row 3: Search, Top N, Collapse/Expand
@@ -2349,6 +2493,18 @@ function rRoadmap() {
     });
   }
 
+  if(rmShowCaps){
+    var capTeams=[...new Set(D.filter(function(i){return !i.synthetic;}).map(function(i){return i.team||'No Team';}))].sort();
+    window._rmCapTeams=capTeams;
+    h+='<div style="margin:0 0 12px;padding:10px 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--bgi)">';
+    h+='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px"><strong style="font-size:12px;color:var(--t1)">Team capacity (points / sprint)</strong>';
+    h+='<button class="btn btn-sm btn-g" onclick="deriveTeamVelocity()">Estimate from completed work</button>';
+    h+='<button class="btn btn-sm" onclick="poTeamCaps={};rRoadmap()">Reset</button>';
+    h+='<span style="font-size:10px;color:var(--t3)">Default '+rmSprintCap+'/sprint &middot; Auto-assign packs each team to its own capacity</span></div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:8px">';
+    capTeams.forEach(function(t,ix){var cp=poTeamCaps[t]||rmSprintCap;h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:11px;color:var(--t2);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc(t)+'">'+esc(t)+'</span><input type="number" min="1" max="500" value="'+cp+'" onchange="rmSetTeamCap('+ix+',this.value)" style="width:56px;padding:3px 5px;border:1px solid var(--bdr);border-radius:4px;background:var(--bg2);color:var(--t1);font-size:11px;text-align:center"></div>';});
+    h+='</div></div>';
+  }
   // Group items
   const groups={};
   filtered.forEach(item=>{
@@ -2356,6 +2512,7 @@ function rRoadmap() {
     if(rmGroupBy==='epic')groupKey=item.parent||'Unparented';
     else if(rmGroupBy==='team')groupKey=item.team||'No Team';
     else if(rmGroupBy==='component')groupKey=item.component||'No Component';
+    else if(rmGroupBy==='fixVersion')groupKey=item.fixVersion||'No Fix Version';
 
     if(!groups[groupKey])groups[groupKey]={name:groupKey,items:[]};
     groups[groupKey].items.push(item);
@@ -2367,6 +2524,54 @@ function rRoadmap() {
 
   const today=new Date();
 
+  if(rmSchedBy==='fixversion'){
+    var gi=D.filter(function(i){
+      if(i.synthetic)return false;
+      if(rmFType&&i.type!==rmFType)return false;
+      if(rmFMos&&bkt(tot(i))!==rmFMos)return false;
+      if(rmFProj&&(i.projectKey||i.space||'')!==rmFProj)return false;
+      if(rmFTeam&&i.team!==rmFTeam)return false;
+      if(rmFComp&&!(i.component||'').split(', ').includes(rmFComp))return false;
+      if(rmFFix&&(i.fixVersion||'')!==rmFFix)return false;
+      return true;
+    });
+    var NOINC='No increment';
+    var grpMap={};
+    gi.forEach(function(i){
+      var k=rmGroupBy==='team'?(i.team||'No Team'):rmGroupBy==='component'?(i.component||'No Component'):rmGroupBy==='fixVersion'?(i.fixVersion||'No Fix Version'):(i.parent||'Unparented');
+      (grpMap[k]=grpMap[k]||[]).push(i);
+    });
+    var grpRows=Object.keys(grpMap).map(function(k){return [k,grpMap[k]];}).sort(function(a,b){return b[1].length-a[1].length;});
+    var fvSet={}; gi.forEach(function(i){fvSet[(i.fixVersion||'').trim()||NOINC]=1;});
+    var fvCols=Object.keys(fvSet).sort(function(a,b){if(a===NOINC)return 1;if(b===NOINC)return -1;return a.localeCompare(b);});
+    var glabel=rmGroupBy==='team'?'Team':rmGroupBy==='component'?'Component':rmGroupBy==='fixVersion'?'Fix Version':'Epic';
+    h+='<div style="font-size:11px;color:var(--t2);margin:0 0 8px">Increment grid &mdash; '+gi.length+' items by '+esc(glabel)+' (rows) &times; Fix Version (columns). Uses your Fix Version data &mdash; no dates needed.</div>';
+    if(!gi.length){h+='<div class="es" style="margin-top:8px"><h3>No items</h3><p>No items match the current filters.</p></div>';el.innerHTML=h;return;}
+    h+='<div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:var(--r)">';
+    h+='<table style="border-collapse:collapse;font-size:11px;min-width:100%"><thead><tr style="background:var(--bg)">';
+    h+='<th style="position:sticky;left:0;background:var(--bg);z-index:2;text-align:left;padding:8px 12px;border-bottom:1px solid var(--bdr);border-right:1px solid var(--bdr);min-width:180px;color:var(--t2)">'+esc(glabel)+'</th>';
+    fvCols.forEach(function(fv){h+='<th style="text-align:center;padding:8px 10px;border-bottom:1px solid var(--bdr);border-right:1px solid var(--bdr);color:var(--ac);font-weight:600;min-width:130px">'+esc(fv)+'</th>';});
+    h+='</tr></thead><tbody>';
+    grpRows.forEach(function(g){
+      var key=g[0], items=g[1];
+      var label=rmGroupBy==='epic'?epicLabel(key):key;
+      h+='<tr style="border-bottom:1px solid var(--bdr)">';
+      h+='<td style="position:sticky;left:0;background:var(--bgi);z-index:1;padding:6px 12px;font-weight:600;color:var(--ac);border-right:1px solid var(--bdr)">'+esc(label)+'</td>';
+      fvCols.forEach(function(fv){
+        var ci=items.filter(function(i){return ((i.fixVersion||'').trim()||NOINC)===fv;});
+        if(!ci.length){h+='<td style="border-right:1px solid var(--bdr)"></td>';return;}
+        var pts=ci.reduce(function(sm,i){return sm+(i.effort||0);},0);
+        h+='<td style="vertical-align:top;padding:4px 5px;border-right:1px solid var(--bdr);min-width:130px">';
+        h+='<div style="font-size:9px;color:var(--t3);margin-bottom:3px">'+ci.length+' &middot; '+pts+' pts</div>';
+        ci.slice(0,6).forEach(function(i){h+='<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:4px;padding:2px 5px;margin-bottom:2px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px" title="'+esc(i.id+' '+i.title)+'">'+esc(i.id)+' '+esc(i.title)+'</div>';});
+        if(ci.length>6)h+='<div style="font-size:9px;color:var(--t3)">+'+(ci.length-6)+' more</div>';
+        h+='</td>';
+      });
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+    el.innerHTML=h;return;
+  }
   // Build timeline — scrollable wrapper
   h+='<div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
   h+='<div style="position:relative;width:'+totalWidth+'px;min-width:'+totalWidth+'px">';
@@ -2473,7 +2678,7 @@ function rRoadmap() {
 
     // Label column with clickable collapse toggle
     h+='<div onclick="rmToggleGroup('+idx+')" style="width:'+labelWidth+'px;min-width:'+labelWidth+'px;padding:8px 10px;border-right:1px solid var(--bdr);background:var(--bg);position:sticky;left:0;z-index:5;cursor:pointer;user-select:none">';
-    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--t3)">'+chevron+'</span><span style="font-weight:600;font-size:11px;color:var(--ac)">'+esc(groupKey)+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--t3)">'+chevron+'</span><span style="font-weight:600;font-size:11px;color:var(--ac)">'+esc(rmGroupBy==='epic'?epicLabel(groupKey):groupKey)+'</span></div>';
     h+='<div style="font-size:10px;color:var(--t3);margin-top:2px">'+totalItems+' items &middot; '+totalEffort+' pts</div>';
     if(collapsed){
       // Inline MoSCoW summary chips when collapsed
@@ -2540,46 +2745,57 @@ function rRoadmap() {
   });
   h+='</div></div></div>';  // close swimlanes, inner positioned div, scroll wrapper
 
-  if(!filtered.length){h+='<div class="es" style="margin-top:16px"><h3>No items with dates</h3><p>Tick "Show all" above, or assign target dates / PI assignments. You can also click "Auto-assign to PIs".</p></div>'}
+  if(!filtered.length){h+='<div class="es" style="margin-top:16px"><h3>Nothing scheduled yet</h3><p>This view plots epics &amp; features that have target dates or a PI. This backlog has very few dates, so the timeline is mostly empty &mdash; that is expected, not a fault. Tick "Show all" to list everything, click "Auto-assign to PIs" to seed a plan, or group by <strong>Fix Version</strong> (and use the Backlog Triage Fix Version filter) to plan by increment.</p><button class="btn btn-sm btn-g" onclick="rmSchedBy=\'fixversion\';rRoadmap()" style="margin-top:6px">View by Fix Version</button></div>'}
 
   el.innerHTML=h;
 }
 
 function autoAssignPIs() {
-  const piCapacity=Math.round(rmSprintCap*(rmPiWeeks/rmSprintWeeks));
+  const sprintsPerPI=Math.max(1,Math.ceil(rmPiWeeks/rmSprintWeeks));
   const startYear=new Date(rmPiStart).getFullYear();
   const piNames=[];
   for(let i=0;i<rmNumPIs;i++){
     const yr=(startYear+Math.floor((new Date(rmPiStart).getMonth()+i*Math.ceil(rmPiWeeks/4.3))/12))%100;
     piNames.push('PI '+yr+'.'+(i+1));
   }
-
-  const scored=D.filter(i=>tot(i)!=null&&!i.piAssignment).sort((a,b)=>{
+  function teamPiCap(team){return (poTeamCaps[team]||rmSprintCap)*sprintsPerPI;}
+  const scored=D.filter(i=>!i.synthetic&&tot(i)!=null&&!i.piAssignment).sort((a,b)=>{
     const ba=bkt(tot(a)),bb=bkt(tot(b));
     const order={MUST:0,SHOULD:1,COULD:2,WONT:3,UNSCORED:4};
     if(order[ba]!==order[bb])return order[ba]-order[bb];
     return (+bfb(tot(b),b.effort||1))-(+bfb(tot(a),a.effort||1));
   });
-
-  const piUsed={};
-  piNames.forEach(pi=>{piUsed[pi]=D.filter(i=>i.piAssignment===pi).reduce((s,i)=>s+(i.effort||0),0)});
-
+  const used={};
+  D.forEach(i=>{if(i.piAssignment){const tm=i.team||'No Team';(used[tm]=used[tm]||{})[i.piAssignment]=(used[tm][i.piAssignment]||0)+(i.effort||0);}});
   let assigned=0;
   scored.forEach(item=>{
+    const tm=item.team||'No Team';
     const eff=item.effort||1;
+    const cap=teamPiCap(tm);
+    used[tm]=used[tm]||{};
     for(const pi of piNames){
-      if(piUsed[pi]+eff<=piCapacity){
+      if((used[tm][pi]||0)+eff<=cap){
         item.piAssignment=pi;
-        piUsed[pi]+=eff;
+        used[tm][pi]=(used[tm][pi]||0)+eff;
         assigned++;
         break;
       }
     }
   });
-
   save();rRoadmap();
-  toast('Auto-assigned '+assigned+' items to PIs','ok');
+  toast('Auto-assigned '+assigned+' items across teams by capacity','ok');
 }
+function deriveTeamVelocity(){
+  const sprintsPerPI=Math.max(1,Math.ceil(rmPiWeeks/rmSprintWeeks));
+  const horizon=Math.max(1,rmNumPIs*sprintsPerPI);
+  const donePts={};
+  D.forEach(i=>{if(!i.synthetic&&isDone(i)){const tm=i.team||'No Team';donePts[tm]=(donePts[tm]||0)+(i.effort||0);}});
+  var n=0;
+  Object.keys(donePts).forEach(function(tm){poTeamCaps[tm]=Math.max(1,Math.round(donePts[tm]/horizon));n++;});
+  rRoadmap();
+  toast(n?('Estimated velocity for '+n+' teams from completed work'):'No completed work to estimate from','ok');
+}
+function rmSetTeamCap(ix,v){var t=(window._rmCapTeams||[])[ix];if(t!=null){poTeamCaps[t]=+v||rmSprintCap;rRoadmap();}}
 
 function rmNavToItem(id) {
   document.querySelectorAll('#navTabs .tab').forEach(x=>x.classList.remove('on'));
@@ -2888,6 +3104,7 @@ function rPO() {
     const groups={};
     // Apply backlog filters to PD
     const BL=PD.filter(item=>{
+      if(item.synthetic)return false;
       if(poFType&&item.type!==poFType)return false;
       if(poFAssignee==='__none__'){if(item.assignee)return false}
       else if(poFAssignee&&item.assignee!==poFAssignee)return false;
@@ -2950,7 +3167,7 @@ function rPO() {
     const colSpan=poGroupBy==='team'?10:9;
 
     sortedGroups.forEach(([groupKey,group],idx)=>{
-      const groupTitle=poGroupBy==='feature'?D.find(i=>i.id===groupKey)?.title||groupKey:groupKey;
+      const groupTitle=poGroupBy==='feature'?(D.find(i=>i.id===groupKey)?.title||groupKey):(poGroupBy==='epic'?epicLabel(groupKey):groupKey);
       const totalEff=group.items.reduce((s,i)=>s+(i.effort||0),0);
       const must=group.items.filter(i=>bkt(tot(i))==='MUST').length;
       const should=group.items.filter(i=>bkt(tot(i))==='SHOULD').length;
@@ -3372,19 +3589,23 @@ function parseCSV(text){
 }
 
 // AUTO-MAP COLUMNS
-function autoMap(headers){
-  const map={};
+// AUTO-MAP COLUMNS (v2: data-aware — among columns matching a role, prefer the most-populated one)
+function autoMap(headers, rows){
+  rows = rows || [];
   const patterns={
     id:[/^(key|id|number|issue.?key|sys.?id|ticket|ref|item.?id|work.?item|work.?item.?key)$/i],
     title:[/^(summary|title|short.?description|name|subject|description|headline)$/i],
     type:[/^(issue.?type|type|category|class|item.?type|hierarchy)$/i],
     status:[/^(status|state|workflow|stage|resolution|work.?item.?status)$/i],
+    statusCategory:[/^(status.?category|work.?item.?status.?category)$/i],
     assignee:[/^(assignee|assigned.?to|owner|responsible)$/i],
+    productOwner:[/^(product.?owner|p\.?o\.?|po|owner|business.?owner)$/i],
     reporter:[/^(reporter|reported.?by|creator|requester|created.?by)$/i],
     effort:[/^(effort|story.?points?|points|estimate|size|sp)$/i],
     created:[/^(created|created.?date|opened|date.?created|sys.?created)$/i],
     updated:[/^(updated|updated.?date|modified|last.?updated|last.?modified|changed|resolved)$/i],
-    parent:[/^(parent|epic|epic.?link|epic.?name|epic.?key|parent.?key|parent.?link|parent.?summary)$/i],
+    parent:[/^(parent|parent.?key|parent.?link|epic|epic.?link|epic.?key)$/i],
+    parentName:[/^(parent.?summary|epic.?name|parent.?name)$/i],
     priority:[/^(priority|severity|urgency|impact)$/i],
     component:[/^(component|components|module|area|system)$/i],
     targetStart:[/^(target.?start|target.?start.?date|planned.?start|start.?date)$/i],
@@ -3398,31 +3619,72 @@ function autoMap(headers){
     space:[/^(space|project|project.?name|product|portfolio|program)$/i],
     projectKey:[/^(project.?key|project.?code|project.?id)$/i]
   };
-  headers.forEach((h,idx)=>{
-    // Strip Jira "Custom field (...)" wrapper so inner name can match patterns
-    let clean=h.trim();
-    const cfMatch=clean.match(/^Custom field \((.+)\)$/i);
-    if(cfMatch) clean=cfMatch[1].trim();
-    for(const[field,pats]of Object.entries(patterns)){
-      if(!map[field]&&pats.some(p=>p.test(clean))){map[field]=idx;break}
+  // Strip Jira "Custom field (...)" wrapper so the inner name can match
+  const clean=headers.map(h=>{let c=(h||'').trim();const m=c.match(/^Custom field \((.+)\)$/i);return m?m[1].trim():c;});
+  const sample=rows.slice(0,400);
+  function fill(idx){let c=0;for(let r=0;r<sample.length;r++){const v=sample[r]&&sample[r][idx];if(v!=null&&String(v).trim()!=='')c++;}return c;}
+  const map={},claimed={};
+  // Process fields in priority order; each claims its best (most-populated) unclaimed matching column.
+  Object.keys(patterns).forEach(field=>{
+    const pats=patterns[field];let best=-1,bestScore=-1;
+    for(let idx=0;idx<headers.length;idx++){
+      if(claimed[idx])continue;
+      if(!pats.some(p=>p.test(clean[idx])))continue;
+      var hasKey=/(^|[^a-z])key([^a-z]|$)/i.test(clean[idx])?1:0;
+      var sc=fill(idx)*2+hasKey;
+      if(sc>bestScore){bestScore=sc;best=idx;}
     }
+    if(best>=0){map[field]=best;claimed[best]=true;}
   });
   return map;
 }
 
 // COLUMN MAPPER
+function toggleSkipped(id,btn){var d=document.getElementById(id);if(!d)return;var hidden=d.style.display==='none';d.style.display=hidden?'block':'none';btn.textContent=hidden?'Hide unmapped columns':('Show all '+(d.getAttribute('data-n')||'')+' unmapped columns');}
+function mappingProfileExists(){try{return !!localStorage.getItem('ge_v13_mapprofile');}catch(e){return false;}}
+function saveMappingProfile(targetId){
+  var map=targetId==='mapRows'?csvMapping:arCsvMapping;
+  var hdrs=targetId==='mapRows'?csvHeaders:arCsvHeaders;
+  if(!map||!hdrs){toast('Nothing to save','err');return;}
+  var prof={};
+  Object.keys(map).forEach(function(k){if(hdrs[map[k]]!=null)prof[k]=hdrs[map[k]];});
+  try{localStorage.setItem('ge_v13_mapprofile',JSON.stringify(prof));toast('Mapping saved \u2014 applied automatically on your next import','ok');}catch(e){toast('Could not save mapping','err');}
+}
+function clearMappingProfile(){try{localStorage.removeItem('ge_v13_mapprofile');}catch(e){}toast('Saved mapping cleared','inf');if(typeof csvHeaders!=='undefined'&&csvHeaders){buildMapper(csvHeaders,'mapRows','csv');}}
+function applyMappingProfile(headers,mapping){
+  try{
+    var p=JSON.parse(localStorage.getItem('ge_v13_mapprofile')||'null');
+    if(!p)return mapping;
+    var hmap={}; headers.forEach(function(h,i){hmap[h]=i;});
+    Object.keys(p).forEach(function(k){var hn=p[k];if(hn!=null&&hmap[hn]!=null)mapping[k]=hmap[hn];});
+  }catch(e){}
+  return mapping;
+}
 function buildMapper(headers, targetId, mappingRef) {
-  const mapping = autoMap(headers);
+  const _pp=(targetId==='mapRows'?csvParsed:arCsvParsed)||[];
+  const mapping = autoMap(headers, _pp.slice(1));
+  applyMappingProfile(headers, mapping);
   if(targetId==='mapRows'){csvMapping=mapping}else{arCsvMapping=mapping}
   const cont=document.getElementById(targetId);
-  let h='';
-  headers.forEach((hdr,idx)=>{
-    const mapped=Object.entries(mapping).find(([f,i])=>i===idx);
-    const sel=mapped?mapped[0]:'_skip';
-    h+='<div class="map-grid"><div class="map-src">'+esc(hdr)+'</div><div class="arrow">→</div><select class="fs" onchange="'+(targetId==='mapRows'?'csvMapping':'arCsvMapping')+'=rebuildMapping(\''+targetId+'\')" data-idx="'+idx+'" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:4px;background:var(--bgi);color:var(--t1);font-size:12px">';
-    WB_FIELDS.forEach(f=>{h+='<option value="'+f.key+'"'+(f.key===sel?' selected':'')+'>'+f.label+'</option>'});
-    h+='</select></div>';
+  let h='<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap"><button class="btn btn-sm btn-g" onclick="saveMappingProfile(\''+targetId+'\')">Save mapping for next time</button><button class="btn btn-sm" onclick="clearMappingProfile()">Clear saved</button>'+(mappingProfileExists()?'<span style="font-size:10px;color:var(--hi)">\u2713 Saved mapping applied</span>':'<span style="font-size:10px;color:var(--t3)">Auto-detected from your columns</span>')+'</div>';
+  const selVar=(targetId==='mapRows'?'csvMapping':'arCsvMapping');
+  function _mrow(hdr,idx,sel){
+    var r='<div class="map-grid"><div class="map-src">'+esc(hdr)+'</div><div class="arrow">→</div><select class="fs" onchange="'+selVar+'=rebuildMapping(\''+targetId+'\')" data-idx="'+idx+'" style="padding:4px 8px;border:1px solid var(--bdr);border-radius:4px;background:var(--bgi);color:var(--t1);font-size:12px">';
+    WB_FIELDS.forEach(function(f){r+='<option value="'+f.key+'"'+(f.key===sel?' selected':'')+'>'+f.label+'</option>';});
+    return r+'</select></div>';
+  }
+  var mappedH='',skipH='',nMap=0,nSkip=0;
+  headers.forEach(function(hdr,idx){
+    var mp=Object.entries(mapping).find(function(e){return e[1]===idx;});
+    var sel=mp?mp[0]:'_skip';
+    if(sel==='_skip'){skipH+=_mrow(hdr,idx,sel);nSkip++;}else{mappedH+=_mrow(hdr,idx,sel);nMap++;}
   });
+  h+='<div style="font-size:11px;color:var(--t2);margin:2px 0 8px"><strong style="color:var(--t1)">'+nMap+'</strong> columns mapped to fields the tool uses &middot; '+nSkip+' skipped (not imported)</div>';
+  h+=mappedH;
+  if(nSkip){
+    h+='<button type="button" class="btn btn-sm" style="margin:10px 0 4px" onclick="toggleSkipped(\''+targetId+'_skipped\',this)">Show all '+nSkip+' unmapped columns</button>';
+    h+='<div id="'+targetId+'_skipped" data-n="'+nSkip+'" style="display:none;border-top:1px dashed var(--bdr);padding-top:8px">'+skipH+'</div>';
+  }
   cont.innerHTML=h;
   document.getElementById(targetId==='mapRows'?'mapperUI':'arMapperUI').style.display='block';
   showPreview(targetId);
@@ -3596,7 +3858,7 @@ function importJson(){
       if(f.priority){const pn=(f.priority.name||'').toLowerCase();const pm={highest:5,high:5,medium:3,low:1,lowest:1};if(pm[pn])item.scores.q4=pm[pn]}
       D.push(item);existing.add(key);added++;
     });
-    save();render();closeMod();
+    synthesiseEpics();save();render();closeMod();
     toast('Imported '+added+(dupes?', '+dupes+' dupes skipped':''),'ok');
   }catch(e){toast('Parse error: '+e.message,'err')}
 }
@@ -3612,7 +3874,7 @@ function importCsvPaste(){
   window._suiteRawCsv=raw;window._suiteRawCsvName='pasted-csv.csv';
   const parsed=parseCSV(raw);
   if(parsed.length<2){toast('Need header + data','err');return}
-  importFromParsedCsv(parsed, autoMap(parsed[0]));
+  importFromParsedCsv(parsed, autoMap(parsed[0], parsed.slice(1)));
 }
 
 function importArCsv(){
@@ -3620,6 +3882,23 @@ function importArCsv(){
   importFromParsedCsv(arCsvParsed, arCsvMapping);
 }
 
+function synthesiseEpics(){
+  var ids={}; D.forEach(function(i){ids[i.id]=1;});
+  var names={};
+  D.forEach(function(i){
+    if(i.synthetic)return;
+    var p=(i.parent||'').trim();
+    if(!p||ids[p])return;
+    if(names[p]===undefined||(!names[p]&&i.parentName))names[p]=(i.parentName||'').trim();
+  });
+  var added=0;
+  Object.keys(names).forEach(function(p){
+    if(ids[p])return;
+    var ep=mk(); ep.id=p; ep.type='Epic'; ep.title=names[p]||p; ep.status=''; ep.synthetic=true;
+    D.push(ep); ids[p]=1; added++;
+  });
+  return added;
+}
 function importFromParsedCsv(parsed, mapping){
   const existing=new Set(D.map(i=>i.id));
   let added=0,dupes=0;
@@ -3630,16 +3909,19 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.title!=null)item.title=row[mapping.title]||'';
     if(mapping.type!=null)item.type=nTy(row[mapping.type]||'');
     if(mapping.status!=null)item.status=nSt(row[mapping.status]||'');
+    if(mapping.statusCategory!=null)item.statusCategory=row[mapping.statusCategory]||'';
     if(mapping.assignee!=null)item.assignee=row[mapping.assignee]||'';
     if(mapping.reporter!=null)item.reporter=row[mapping.reporter]||'';
     if(mapping.effort!=null){const v=nearFib(row[mapping.effort]);if(v!=null){item.effort=v;item.scores.q1=v}}
     if(mapping.created!=null)item.created=row[mapping.created]||'';
     if(mapping.updated!=null)item.updated=row[mapping.updated]||'';
     if(mapping.parent!=null)item.parent=row[mapping.parent]||'';
+    if(mapping.parentName!=null)item.parentName=row[mapping.parentName]||'';
     if(mapping.component!=null)item.component=row[mapping.component]||'';
     if(mapping.targetStart!=null)item.targetStart=row[mapping.targetStart]||'';
     if(mapping.targetEnd!=null)item.targetEnd=row[mapping.targetEnd]||'';
     if(mapping.team!=null)item.team=row[mapping.team]||'';
+    if(mapping.productOwner!=null)item.productOwner=row[mapping.productOwner]||'';
     if(mapping.fixVersion!=null)item.fixVersion=row[mapping.fixVersion]||'';
     if(mapping.labels!=null)item.labels=row[mapping.labels]||'';
     if(mapping.piAssignment!=null)item.piAssignment=row[mapping.piAssignment]||'';
@@ -3658,7 +3940,7 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.projectKey!=null)item.projectKey=row[mapping.projectKey]||'';
     D.push(item);existing.add(item.id);added++;
   }
-  save();render();closeMod();
+  synthesiseEpics();save();render();closeMod();
   toast('Imported '+added+' items'+(dupes?', '+dupes+' dupes':''),'ok');
   if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',added);
 }
@@ -3966,7 +4248,7 @@ async function activateLicence() {
 }
 
 // Init
-load();loadCfg();loadTheme();loadQLabels();initTabSwitching();
+load();loadCfg();loadTheme();loadQLabels();initTabSwitching();applyTabVisibility();
 // Apply default landing tab
 (function(){
   const def = localStorage.getItem('ge_v13_default_tab');
@@ -4014,7 +4296,7 @@ function useDetectedData(){
   window._suiteRawCsv=sh.raw;window._suiteRawCsvName=sh.filename||'suite-data.csv';
   const parsed=parseCSV(sh.raw);
   if(parsed.length<2){toast('Detected data appears empty','err');return;}
-  const mapping=autoMap(parsed[0]);
+  const mapping=autoMap(parsed[0], parsed.slice(1));
   importFromParsedCsv(parsed,mapping);
   dismissSuiteDetect();
   toast('Loaded '+sh.rowCount+' items from '+sh.source,'ok');
