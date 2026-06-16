@@ -4169,7 +4169,7 @@ function aobGateCheck(){
                     html += '</tr></thead><tbody>';
 
                     visibleCommits.forEach((c) => {
-                        const moscowClass = 'b-' + bkt(c);
+                        const cur = bkt(c);
                         html += '<tr style="border-bottom:1px solid rgba(42,54,84,.3)">';
                         html += '<td style="padding:8px">' + idLink(c.key) + '</td>';
                         html += '<td style="padding:8px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (c.summary || '') + '</td>';
@@ -4188,7 +4188,13 @@ function aobGateCheck(){
                         }
                         html += '</td>';
                         html += '<td style="padding:8px;text-align:center;font-family:\'JetBrains Mono\',monospace;font-weight:700;color:' + (c.points ? 'var(--ac)' : 'var(--t3)') + '">' + (c.points || 0) + '</td>';
-                        html += '<td style="padding:8px;text-align:center"><span class="bb ' + moscowClass + '" style="font-size:9px">' + bkt(c) + '</span></td>';
+                        html += '<td style="padding:8px;text-align:center">';
+                        html += '<select onchange="updatePICommitPriority(\'' + team.name.replace(/'/g,"\\'") + '\',' + c.commitIdx + ',this.value)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--bdr);background:var(--bg2);font-size:12px;font-weight:700;color:var(--' + cur.toLowerCase() + ',var(--t1))" title="Change MoSCoW priority">';
+                        [['MUST','Must'],['SHOULD','Should'],['COULD','Could'],['WONT','Won\'t']].forEach(function(p){
+                            html += '<option value="' + p[0] + '"' + (cur === p[0] ? ' selected' : '') + '>' + p[1] + '</option>';
+                        });
+                        html += '<option value=""' + (cur === 'UNSCORED' ? ' selected' : '') + '>—</option>';
+                        html += '</select></td>';
                         html += '<td style="padding:8px;text-align:center"><button onclick="removePICommit(\'' + team.name.replace(/'/g,"\\'") + '\',' + c.commitIdx + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px" title="Remove">✕</button></td>';
                         html += '</tr>';
                     });
@@ -4381,6 +4387,35 @@ function aobGateCheck(){
 
             saveData(data);
             renderPILoading();
+        }
+
+        // Change MoSCoW priority inline on the PI Loading tab. Writes through to the
+        // master backlog item (and any other team's commitment of the same key) so the
+        // change is reflected everywhere — Backlog, MoSCoW analysis, and Dashboard.
+        function updatePICommitPriority(teamName, idx, value) {
+            const data = loadData();
+            if (!data.piCommitments || !data.piCommitments[teamName]) return;
+            const commit = data.piCommitments[teamName][idx];
+            if (!commit) return;
+
+            commit.moscow = value; // '' = unscored (falls back to derived priority)
+
+            // Reflect on the master backlog item
+            if (data.items && commit.key) {
+                const item = data.items.find(i => i.key === commit.key);
+                if (item) item.moscow = value;
+            }
+            // Keep any other team's commitment of the same feature in sync
+            Object.keys(data.piCommitments).forEach(function(tn){
+                (data.piCommitments[tn] || []).forEach(function(c){
+                    if (c.key === commit.key) c.moscow = value;
+                });
+            });
+
+            saveData(data);
+            renderPILoading();
+            if (typeof renderMoscowAnalysis === 'function') { try { renderMoscowAnalysis(); } catch (e) {} }
+            if (typeof renderDashboard === 'function') { try { renderDashboard(); } catch (e) {} }
         }
 
         // ============ IMPORT/EXPORT ============
