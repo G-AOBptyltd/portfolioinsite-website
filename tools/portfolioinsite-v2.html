@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PortfolioInSite — Portfolio Dashboard</title>
+<meta name="robots" content="noindex,nofollow">
+<title>PortfolioInSite 2.0 (Preview) — Portfolio Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
@@ -312,7 +313,7 @@ function aobGateCheck(){
 <circle cx="14.8" cy="14.8" r=".8" fill="rgba(255,255,255,.6)"/>
 </svg></div>
 <div style="display:flex;flex-direction:column;gap:0">
-<div style="display:flex;align-items:center;gap:6px"><span class="logo-t">PortfolioInSite</span><span class="ver">2.0</span></div>
+<div style="display:flex;align-items:center;gap:6px"><span class="logo-t">PortfolioInSite</span><span class="ver">2.0</span> <span style="font-size:9px;font-weight:700;color:#d97706;background:rgba(245,158,11,.15);padding:1px 6px;border-radius:4px;letter-spacing:.04em">PREVIEW</span></div>
 <div style="display:flex;align-items:center;gap:6px"><span class="tagline">Know what matters. Cut what doesn't.</span><span style="color:var(--t3);font-size:9px;opacity:.5">&middot;</span><a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" class="pi-badge">PortfolioInSite</a></div>
 </div>
 </div>
@@ -926,7 +927,7 @@ function agCl(days) {
 
 function save() {
   try {
-    localStorage.setItem('ge_v13', JSON.stringify(D));
+    localStorage.setItem('ge_v15', JSON.stringify(D));
   } catch (e) {
     console.error('Failed to save data:', e);
   }
@@ -934,7 +935,7 @@ function save() {
 
 function load() {
   try {
-    const saved = localStorage.getItem('ge_v13');
+    const saved = localStorage.getItem('ge_v15');
     if (saved) {
       D = JSON.parse(saved).map(item => {
         if (!item.scores) {
@@ -946,12 +947,12 @@ function load() {
       return;
     }
   } catch (e) {
-    console.error('Failed to load ge_v13:', e);
+    console.error('Failed to load ge_v15:', e);
   }
 
   // Migrate from v12
   try {
-    const v12 = localStorage.getItem('ge_v12');
+    const v12 = localStorage.getItem('ge_v15_x12');
     if (v12) {
       D = JSON.parse(v12).map(item => {
         if (!item.scores) item.scores = { q1: item.q1 ?? null, q2: item.q2 ?? null, q3: item.q3 ?? null, q4: item.q4 ?? null, q5: item.q5 ?? null };
@@ -962,12 +963,12 @@ function load() {
       return;
     }
   } catch (e) {
-    console.error('Failed to load ge_v12:', e);
+    console.error('Failed to load ge_v15_x12:', e);
   }
 
   // Migrate from v11
   try {
-    const v11 = localStorage.getItem('ge_v11');
+    const v11 = localStorage.getItem('ge_v15_x11');
     if (v11) {
       D = JSON.parse(v11).map(item => {
         if (!item.scores) item.scores = { q1: item.q1 ?? null, q2: item.q2 ?? null, q3: item.q3 ?? null, q4: item.q4 ?? null, q5: item.q5 ?? null };
@@ -978,12 +979,12 @@ function load() {
       return;
     }
   } catch (e) {
-    console.error('Failed to load ge_v11:', e);
+    console.error('Failed to load ge_v15_x11:', e);
   }
 
   // Migrate from v9
   try {
-    const legacy = localStorage.getItem('blr_v9');
+    const legacy = localStorage.getItem('ge_v15_x9');
     if (legacy) {
       const old = JSON.parse(legacy);
       if (Array.isArray(old)) {
@@ -1003,7 +1004,7 @@ function load() {
       }
     }
   } catch (e) {
-    console.error('Failed to load blr_v9:', e);
+    console.error('Failed to load ge_v15_x9:', e);
   }
 
   D = [];
@@ -1012,7 +1013,7 @@ function load() {
 function saveCfg() {
   try {
     const url = siteUrl();
-    localStorage.setItem('ge_v13_site', url);
+    localStorage.setItem('ge_v15_site', url);
   } catch (e) {
     console.error('Failed to save config:', e);
   }
@@ -1020,7 +1021,7 @@ function saveCfg() {
 
 function loadCfg() {
   try {
-    const saved = localStorage.getItem('ge_v13_site');
+    const saved = localStorage.getItem('ge_v15_site');
     if (saved) {
       const inp = document.getElementById('siteUrl');
       if (inp) inp.value = saved;
@@ -1111,7 +1112,7 @@ document.addEventListener('click', (e) => {
 // ============================================================================
 
 function setTheme(mode) {
-  localStorage.setItem('ge_v13_theme', mode);
+  localStorage.setItem('ge_v15_theme', mode);
 
   if (mode === 'system') {
     const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
@@ -1135,8 +1136,8 @@ function setTheme(mode) {
 
 // ── POI Config Drawer ──────────────────────────────────────────────────────
 
-function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_v13_hiddentabs')||'[]'));}catch(e){return new Set();}}
-function setHiddenTabs(set){try{localStorage.setItem('ge_v13_hiddentabs',JSON.stringify([...set]));}catch(e){}}
+function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_v15_hiddentabs')||'[]'));}catch(e){return new Set();}}
+function setHiddenTabs(set){try{localStorage.setItem('ge_v15_hiddentabs',JSON.stringify([...set]));}catch(e){}}
 function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
 function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
 function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
@@ -1155,12 +1156,12 @@ function openPoiConfig() {
   renderCfgTabs();
 
   // Sync default tab
-  const defTab = localStorage.getItem('ge_v13_default_tab') || 'triage';
+  const defTab = localStorage.getItem('ge_v15_default_tab') || 'triage';
   const sel = document.getElementById('cfgDefaultTab');
   if (sel) sel.value = defTab;
 
   // Sync theme buttons
-  const curTheme = localStorage.getItem('ge_v13_theme') || 'light';
+  const curTheme = localStorage.getItem('ge_v15_theme') || 'light';
   ['Light','Dark','System'].forEach(t => {
     const btn = document.getElementById('poiTheme' + t);
     if (!btn) return;
@@ -1184,7 +1185,7 @@ function closePoiConfig() {
 function renderQLabels() {
   const container = document.getElementById('cfgQLabels');
   if (!container) return;
-  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  const saved = JSON.parse(localStorage.getItem('ge_v15_qlabels') || '{}');
   container.innerHTML = Q.map((q, i) => {
     const val = saved[q.k] || q.f;
     return `<div style="display:grid;grid-template-columns:56px 1fr;align-items:center;gap:8px">
@@ -1195,9 +1196,9 @@ function renderQLabels() {
 }
 
 function saveQLabel(key, val) {
-  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  const saved = JSON.parse(localStorage.getItem('ge_v15_qlabels') || '{}');
   saved[key] = val;
-  localStorage.setItem('ge_v13_qlabels', JSON.stringify(saved));
+  localStorage.setItem('ge_v15_qlabels', JSON.stringify(saved));
   // Update the live Q array so scoring UI reflects the new label
   const q = Q.find(x => x.k === key);
   if (q) q.f = val;
@@ -1206,7 +1207,7 @@ function saveQLabel(key, val) {
 
 function resetQLabels() {
   if (!confirm('Reset scoring dimension labels to defaults?')) return;
-  localStorage.removeItem('ge_v13_qlabels');
+  localStorage.removeItem('ge_v15_qlabels');
   const defaults = [
     { k:'q1', f:'Effort (Fibonacci)' },
     { k:'q2', f:'Regulatory / Compliance' },
@@ -1220,19 +1221,19 @@ function resetQLabels() {
 }
 
 function loadQLabels() {
-  const saved = JSON.parse(localStorage.getItem('ge_v13_qlabels') || '{}');
+  const saved = JSON.parse(localStorage.getItem('ge_v15_qlabels') || '{}');
   Q.forEach(q => { if (saved[q.k]) q.f = saved[q.k]; });
 }
 
 function saveDefaultTab(tab) {
   const val = tab || document.getElementById('cfgDefaultTab')?.value || 'triage';
-  localStorage.setItem('ge_v13_default_tab', val);
+  localStorage.setItem('ge_v15_default_tab', val);
 }
 
 function poiResetData() {
   if (!confirm('You will delete all your working data. This cannot be undone.\n\nAre you sure?')) return;
-  ['ge_v13','ge_v13_site','ge_v13_theme','ge_v13_qlabels','ge_v13_default_tab',
-   'ge_v12','ge_v11','ge_v10','ge_v10_site','ge_v10_sync','blr_v9'].forEach(k => localStorage.removeItem(k));
+  ['ge_v15','ge_v15_site','ge_v15_theme','ge_v15_qlabels','ge_v15_default_tab',
+   'ge_v15_x12','ge_v15_x11','ge_v10','ge_v10_site','ge_v15_sync','ge_v15_x9'].forEach(k => localStorage.removeItem(k));
   D = [];
   closePoiConfig();
   render();
@@ -1240,7 +1241,7 @@ function poiResetData() {
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem('ge_v13_theme') || 'light';
+  const saved = localStorage.getItem('ge_v15_theme') || 'light';
   setTheme(saved);
 }
 
@@ -1254,7 +1255,7 @@ function updateChartTheme() {
 }
 
 window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => {
-  if (localStorage.getItem('ge_v13_theme') === 'system') setTheme('system');
+  if (localStorage.getItem('ge_v15_theme') === 'system') setTheme('system');
 });
 
 // ============================================================================
@@ -3641,19 +3642,19 @@ function autoMap(headers, rows){
 
 // COLUMN MAPPER
 function toggleSkipped(id,btn){var d=document.getElementById(id);if(!d)return;var hidden=d.style.display==='none';d.style.display=hidden?'block':'none';btn.textContent=hidden?'Hide unmapped columns':('Show all '+(d.getAttribute('data-n')||'')+' unmapped columns');}
-function mappingProfileExists(){try{return !!localStorage.getItem('ge_v13_mapprofile');}catch(e){return false;}}
+function mappingProfileExists(){try{return !!localStorage.getItem('ge_v15_mapprofile');}catch(e){return false;}}
 function saveMappingProfile(targetId){
   var map=targetId==='mapRows'?csvMapping:arCsvMapping;
   var hdrs=targetId==='mapRows'?csvHeaders:arCsvHeaders;
   if(!map||!hdrs){toast('Nothing to save','err');return;}
   var prof={};
   Object.keys(map).forEach(function(k){if(hdrs[map[k]]!=null)prof[k]=hdrs[map[k]];});
-  try{localStorage.setItem('ge_v13_mapprofile',JSON.stringify(prof));toast('Mapping saved \u2014 applied automatically on your next import','ok');}catch(e){toast('Could not save mapping','err');}
+  try{localStorage.setItem('ge_v15_mapprofile',JSON.stringify(prof));toast('Mapping saved \u2014 applied automatically on your next import','ok');}catch(e){toast('Could not save mapping','err');}
 }
-function clearMappingProfile(){try{localStorage.removeItem('ge_v13_mapprofile');}catch(e){}toast('Saved mapping cleared','inf');if(typeof csvHeaders!=='undefined'&&csvHeaders){buildMapper(csvHeaders,'mapRows','csv');}}
+function clearMappingProfile(){try{localStorage.removeItem('ge_v15_mapprofile');}catch(e){}toast('Saved mapping cleared','inf');if(typeof csvHeaders!=='undefined'&&csvHeaders){buildMapper(csvHeaders,'mapRows','csv');}}
 function applyMappingProfile(headers,mapping){
   try{
-    var p=JSON.parse(localStorage.getItem('ge_v13_mapprofile')||'null');
+    var p=JSON.parse(localStorage.getItem('ge_v15_mapprofile')||'null');
     if(!p)return mapping;
     var hmap={}; headers.forEach(function(h,i){hmap[h]=i;});
     Object.keys(p).forEach(function(k){var hn=p[k];if(hn!=null&&hmap[hn]!=null)mapping[k]=hmap[hn];});
@@ -4005,7 +4006,7 @@ function genApiUrl(){
   document.getElementById('genUrl').textContent=url;
   document.getElementById('urlRes').style.display='block';
   document.getElementById('btnGen').style.display='none';
-  try{localStorage.setItem('ge_v10_sync',JSON.stringify({site,proj,jql:extra}))}catch(e){}
+  try{localStorage.setItem('ge_v15_sync',JSON.stringify({site,proj,jql:extra}))}catch(e){}
   showSyncBtn();toast('URL generated','ok');
 }
 
@@ -4021,7 +4022,7 @@ function genBookmarklet(){
 }
 
 // SYNC
-function loadSyncCfg(){try{const s=localStorage.getItem('ge_v10_sync');return s?JSON.parse(s):null}catch(e){return null}}
+function loadSyncCfg(){try{const s=localStorage.getItem('ge_v15_sync');return s?JSON.parse(s):null}catch(e){return null}}
 function showSyncBtn(){const cfg=loadSyncCfg();const btn=document.getElementById('btnSync');if(btn)btn.style.display=(cfg&&cfg.site&&cfg.proj)?'inline-flex':'none'}
 async function syncJira(){
   const cfg=loadSyncCfg();if(!cfg){toast('Import from Jira first','err');return}
@@ -4251,7 +4252,7 @@ async function activateLicence() {
 load();loadCfg();loadTheme();loadQLabels();initTabSwitching();applyTabVisibility();
 // Apply default landing tab
 (function(){
-  const def = localStorage.getItem('ge_v13_default_tab');
+  const def = localStorage.getItem('ge_v15_default_tab');
   if (def && def !== 'triage') {
     const t = document.querySelector(`#navTabs [data-t="${def}"]`);
     if (t) t.click();
@@ -4268,7 +4269,7 @@ function loadSampleData() {
 }
 
 // ── Suite Data Share (Portfolio Group: POI ↔ FCT ↔ PLN) ────────
-const SUITE_SHARE_KEY='aob_suite_raw_csv';
+const SUITE_SHARE_KEY='aob_suite_raw_csv_v2';
 const SUITE_TOOL_ID='POI';
 const SUITE_TOOL_NAME='PortfolioInSite Web';
 
