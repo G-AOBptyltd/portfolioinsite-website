@@ -4372,9 +4372,13 @@ function aobGateCheck(){
                     const config = { ...imported };
                     delete config.items;
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-                    updateUI();
-                    renderBacklog();
-                    showToast('Restored ' + MEM_ITEMS.length + ' items + config', 'success');
+                    // Repaint every view so restored teams, commitments, capacity and PI board all show.
+                    [updateUI, renderBacklog, renderCapacity, renderMoscowAnalysis, renderPILoading, renderBacklogView, renderDashboard]
+                        .forEach(fn => { try { if (typeof fn === 'function') fn(); } catch (e) { console.warn('restore repaint:', e.message); } });
+                    const teamCount = Array.isArray(imported.teams) ? imported.teams.length : 0;
+                    const commitCount = imported.piCommitments
+                        ? Object.values(imported.piCommitments).reduce((n, a) => n + (Array.isArray(a) ? a.length : 0), 0) : 0;
+                    showToast('Restored ' + teamCount + ' teams, ' + commitCount + ' committed features, ' + MEM_ITEMS.length + ' backlog items', 'success');
                 } catch (err) {
                     showToast('Invalid JSON file: ' + err.message, 'error');
                 }
