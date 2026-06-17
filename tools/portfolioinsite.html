@@ -1505,7 +1505,7 @@ let dashFTeam='',dashFFix='';
 function rDash(){
   const el=document.getElementById('dashC');
   if(!D.length){el.innerHTML='<div class="es"><h3>No data</h3><p>Import items first</p></div>';return}
-  const FD=[].concat(D).filter(function(i){return !i.synthetic&&(!dashFTeam||i.team===dashFTeam)&&(!dashFFix||(i.fixVersion||'')===dashFFix);});
+  const FD=[].concat(D).filter(function(i){return !i.synthetic&&msPass('dash-team',i.team)&&msPass('dash-fix',(i.fixVersion||''));});
   const scored=FD.filter(i=>tot(i)!=null),totals=scored.map(i=>tot(i));
   const bkts={MUST:0,SHOULD:0,COULD:0,WONT:0,UNSCORED:0};
   FD.forEach(i=>bkts[bkt(tot(i))]++);
@@ -1517,8 +1517,8 @@ function rDash(){
   const dteams=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.team;}).filter(Boolean))].sort();
   const dfixes=[...new Set([].concat(D).filter(function(i){return !i.synthetic;}).map(function(i){return i.fixVersion;}).filter(Boolean))].sort();
   var dfr='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px"><span style="font-size:11px;font-weight:600;color:var(--t2)">Filter:</span>';
-  if(dteams.length){dfr+='<select class="fs" onchange="dashFTeam=this.value;rDash()"><option value="">All Teams</option>'+dteams.map(function(t){return '<option'+(t===dashFTeam?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
-  if(dfixes.length){dfr+='<select class="fs" onchange="dashFFix=this.value;rDash()"><option value="">All Fix Versions</option>'+dfixes.map(function(t){return '<option'+(t===dashFFix?' selected':'')+'>'+esc(t)+'</option>';}).join('')+'</select>';}
+  if(dteams.length){dfr+=msW('dash-team','Team',dteams,rDash);}
+  if(dfixes.length){dfr+=msW('dash-fix','Fix Version',dfixes,rDash);}
   if(dashFTeam||dashFFix){dfr+='<button class="btn btn-sm" style="color:var(--red)" onclick="dashFTeam=\'\';dashFFix=\'\';rDash()">Clear</button>';}
   dfr+='</div>';
   let h=dfr+`<div class="dg">
@@ -1557,12 +1557,12 @@ function rQuad(){
   if(scored.length<2){el.innerHTML='<div class="es"><h3>Not Enough Data</h3><p>Score at least 2 items with effort values.</p></div>';return}
   let items=scored;
   if(quadFLevel==='ef')items=items.filter(i=>HT.includes(i.type));else if(quadFLevel==='story')items=items.filter(i=>!HT.includes(i.type));
-  if(quadFTyp)items=items.filter(i=>i.type===quadFTyp);
+  items=items.filter(i=>msPass('quad-type',i.type));
   if(quadFMos)items=items.filter(i=>bkt(tot(i))===quadFMos);
-  if(quadFComp)items=items.filter(i=>(i.component||'').split(', ').includes(quadFComp));
-  if(quadFProj)items=items.filter(i=>(i.projectKey||i.space||'')===quadFProj);
-  if(quadFTeam)items=items.filter(i=>i.team===quadFTeam);
-  if(quadFFix)items=items.filter(i=>(i.fixVersion||'')===quadFFix);
+  items=items.filter(i=>msAny('quad-comp',(i.component||'').split(', ').map(function(c){return c.trim();})));
+  items=items.filter(i=>msPass('quad-proj',(i.projectKey||i.space||'')));
+  items=items.filter(i=>msPass('quad-team',i.team));
+  items=items.filter(i=>msPass('quad-fix',(i.fixVersion||'')));
   if(quadFLevel==='rollup'){
     var _byEpic={};
     items.forEach(function(it){var k=(it.parent||'').trim()||'(no epic)';(_byEpic[k]=_byEpic[k]||[]).push(it);});
@@ -1648,12 +1648,12 @@ function rQuad(){
   <p style="color:var(--t3);font-size:12px;margin-bottom:16px">Value vs Effort. <strong>Epic rollup</strong> (default) plots one bubble per epic from its stories\u2019 combined scores \u2014 strategic <em>and</em> populated. Use <strong>Level</strong> for Stories/All detail. Click a bubble to drill into that epic.</p>`;
   h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
     <select class="fs" onchange="quadFLevel=this.value;rQuad()" title="Plot strategic units (Epics & Features) or drill to Stories"><option value="rollup"${quadFLevel==='rollup'?' selected':''}>Epic rollup</option><option value="ef"${quadFLevel==='ef'?' selected':''}>Epics & Features</option><option value="story"${quadFLevel==='story'?' selected':''}>Stories</option><option value="all"${quadFLevel==='all'?' selected':''}>All levels</option></select>
-    <select class="fs" onchange="quadFTyp=this.value;rQuad()"><option value="">All Types</option>${types.map(t=>`<option ${t===quadFTyp?'selected':''}>${t}</option>`).join('')}</select>
+    ${msW('quad-type','Type',types,rQuad)}
     <select class="fs" onchange="quadFMos=this.value;rQuad()"><option value="">All MoSCoW</option>${['MUST','SHOULD','COULD','WONT'].map(b=>`<option value="${b}" ${b===quadFMos?'selected':''}>${bucketLabelsMap[b]}</option>`).join('')}</select>
-    ${comps.length?`<select class="fs" onchange="quadFComp=this.value;rQuad()"><option value="">All Components</option>${comps.map(c=>`<option ${c===quadFComp?'selected':''}>${c}</option>`).join('')}</select>`:''}
-    ${(()=>{const prjs=[...new Set(scored.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();return prjs.length?`<select class="fs" onchange="quadFProj=this.value;rQuad()"><option value="">All Projects</option>${prjs.map(p=>`<option ${p===quadFProj?'selected':''}>${esc(p)}</option>`).join('')}</select>`:''})()}
-    ${(()=>{const tms=[...new Set(scored.map(i=>i.team).filter(Boolean))].sort();return tms.length?`<select class="fs" onchange="quadFTeam=this.value;rQuad()"><option value="">All Teams</option>${tms.map(t=>`<option ${t===quadFTeam?'selected':''}>${esc(t)}</option>`).join('')}</select>`:''})()}
-    ${(()=>{const fxs=[...new Set(scored.map(i=>i.fixVersion).filter(Boolean))].sort();return fxs.length?`<select class="fs" onchange="quadFFix=this.value;rQuad()"><option value="">All Fix Versions</option>${fxs.map(x=>`<option ${x===quadFFix?'selected':''}>${esc(x)}</option>`).join('')}</select>`:''})()}
+    ${comps.length?msW('quad-comp','Component',comps,rQuad):''}
+    ${(()=>{const prjs=[...new Set(scored.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();return prjs.length?msW('quad-proj','Project',prjs,rQuad):''})()}
+    ${(()=>{const tms=[...new Set(scored.map(i=>i.team).filter(Boolean))].sort();return tms.length?msW('quad-team','Team',tms,rQuad):''})()}
+    ${(()=>{const fxs=[...new Set(scored.map(i=>i.fixVersion).filter(Boolean))].sort();return fxs.length?msW('quad-fix','Fix Version',fxs,rQuad):''})()}
     <span style="font-size:11px;color:var(--t2);margin-left:auto">${quadFLevel==='rollup'?items.length+' epics ('+scored.length+' scored stories)':items.length+' of '+scored.length+' scored items'}</span>
   </div>`;
   h+=`<div class="dg">
@@ -1890,12 +1890,12 @@ function rAge(){
 
   // Apply filters
   let FD=D.filter(i=>!i.synthetic&&(ageShowDone||!isDone(i)));
-  if(ageFType!=='All')FD=FD.filter(i=>i.type===ageFType);
+  FD=FD.filter(i=>msPass('age-type',i.type));
   if(ageFAssignee!=='All')FD=FD.filter(i=>i.assignee===ageFAssignee);
   if(ageFReporter!=='All')FD=FD.filter(i=>i.reporter===ageFReporter);
-  if(ageFProject!=='All')FD=FD.filter(i=>(i.projectKey||i.space||'')===ageFProject);
-  if(ageFTeam!=='All')FD=FD.filter(i=>i.team===ageFTeam);
-  if(ageFFix!=='All')FD=FD.filter(i=>(i.fixVersion||'')===ageFFix);
+  FD=FD.filter(i=>msPass('age-proj',(i.projectKey||i.space||'')));
+  FD=FD.filter(i=>msPass('age-team',i.team));
+  FD=FD.filter(i=>msPass('age-fix',(i.fixVersion||'')));
 
   // Detect data availability
   const hasCreated=FD.filter(i=>i.created).length;
@@ -1952,12 +1952,12 @@ function rAge(){
   // === FILTERS ===
   h+='<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px;padding:10px 14px;background:var(--bgi);border:1px solid var(--bdr);border-radius:8px">';
   h+='<span style="font-size:11px;font-weight:600;color:var(--t2)">Filter:</span>';
-  h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Type</span>'+selOpt(types,ageFType,"ageFType=this.value;rAge()")+'</div>';
+  h+=msW('age-type','Type',types,rAge);
   h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Assignee</span>'+selOpt(assignees,ageFAssignee,"ageFAssignee=this.value;rAge()")+'</div>';
   if(reporters.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Reporter</span>'+selOpt(reporters,ageFReporter,"ageFReporter=this.value;rAge()")+'</div>'}
-  if(projects.length>1){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Project</span>'+selOpt(projects,ageFProject,"ageFProject=this.value;rAge()")+'</div>'}
-  if(teams.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Team</span>'+selOpt(teams,ageFTeam,"ageFTeam=this.value;rAge()")+'</div>'}
-  if(fixes.length){h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--t3)">Fix Version</span>'+selOpt(fixes,ageFFix,"ageFFix=this.value;rAge()")+'</div>'}
+  if(projects.length>1){h+=msW('age-proj','Project',projects,rAge);}
+  if(teams.length){h+=msW('age-team','Team',teams,rAge);}
+  if(fixes.length){h+=msW('age-fix','Fix Version',fixes,rAge);}
   h+='<button class="btn btn-sm" onclick="ageShowDone=!ageShowDone;rAge()" style="font-size:10px;border-color:'+(ageShowDone?'var(--bdr)':'var(--ac)')+';color:'+(ageShowDone?'var(--t2)':'var(--ac)')+'" title="Residency measures how long OPEN items have sat. Done items are completed, so excluded by default.">'+(ageShowDone?'Incl. Done':'Open only')+'</button>';
   h+='<span style="font-size:10px;color:var(--t3);flex-basis:100%">Residency = how long OPEN items have sat un-actioned. Done items are excluded by default ('+(ageShowDone?'currently included':'toggle "Incl. Done" to include')+').</span>';
   if(isFiltered){h+='<button class="btn btn-sm" onclick="ageFType=\'All\';ageFAssignee=\'All\';ageFReporter=\'All\';ageFProject=\'All\';ageFTeam=\'All\';ageFFix=\'All\';rAge()" style="font-size:10px;color:var(--red)">Clear</button>'}
@@ -2403,12 +2403,12 @@ function rRoadmap() {
   let filtered=D.filter(i=>{if(i.synthetic)return false;
     const t=HT.includes(i.type);
     if(!t)return false;
-    if(rmFType&&i.type!==rmFType)return false;
-    if(rmFMos&&bkt(tot(i))!==rmFMos)return false;
-    if(rmFProj&&(i.projectKey||i.space||'')!==rmFProj)return false;
-    if(rmFTeam&&i.team!==rmFTeam)return false;
-    if(rmFComp&&!(i.component||'').split(', ').includes(rmFComp))return false;
-    if(rmFFix&&(i.fixVersion||'')!==rmFFix)return false;
+    if(!msPass('rm-type',i.type))return false;
+    if(!msPass('rm-mos',bkt(tot(i))))return false;
+    if(!msPass('rm-proj',(i.projectKey||i.space||'')))return false;
+    if(!msPass('rm-team',i.team))return false;
+    if(!msAny('rm-comp',(i.component||'').split(', ').map(function(c){return c.trim();})))return false;
+    if(!msPass('rm-fix',(i.fixVersion||'')))return false;
     if(rmShowAll)return true;
     return i.targetStart||i.targetEnd||i.piAssignment;
   });
@@ -2429,41 +2429,19 @@ function rRoadmap() {
   h+='<button class="btn btn-sm'+(rmSchedBy==='timeline'?' btn-ac':'')+'" onclick="rmSchedBy=\'timeline\';rRoadmap()">Timeline</button>';
   h+='<button class="btn btn-sm'+(rmSchedBy==='fixversion'?' btn-ac':'')+'" onclick="rmSchedBy=\'fixversion\';rRoadmap()">Fix Version</button></div>';
 
-  h+='<div style="display:flex;align-items:center;gap:6px">';
-  h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Type:</label>';
-  h+='<select class="fs" onchange="rmFType=this.value;rRoadmap()" style="padding:4px 8px">';
-  h+='<option value=""'+(rmFType===''?' selected':'')+'>All</option>';
-  h+='<option value="SAFe Epic"'+(rmFType==='SAFe Epic'?' selected':'')+'>SAFe Epic</option>';
-  h+='<option value="Epic"'+(rmFType==='Epic'?' selected':'')+'>Epic</option>';
-  h+='<option value="Feature"'+(rmFType==='Feature'?' selected':'')+'>Feature</option>';
-  h+='</select></div>';
+  h+=msW('rm-type','Type',['SAFe Epic','Epic','Feature'].filter(function(t){return D.some(function(i){return i.type===t;});}),rRoadmap);
 
-  h+='<div style="display:flex;align-items:center;gap:6px">';
-  h+='<label style="font-size:11px;color:var(--t2);font-weight:600">MoSCoW:</label>';
-  h+='<select class="fs" onchange="rmFMos=this.value;rRoadmap()" style="padding:4px 8px">';
-  h+='<option value=""'+(rmFMos===''?' selected':'')+'>All</option>';
-  h+='<option value="MUST"'+(rmFMos==='MUST'?' selected':'')+'>MUST</option>';
-  h+='<option value="SHOULD"'+(rmFMos==='SHOULD'?' selected':'')+'>SHOULD</option>';
-  h+='<option value="COULD"'+(rmFMos==='COULD'?' selected':'')+'>COULD</option>';
-  h+='<option value="WONT"'+(rmFMos==='WONT'?' selected':'')+'>WONT</option>';
-  h+='</select></div>';
+  h+=msW('rm-mos','MoSCoW',['MUST','SHOULD','COULD','WONT'],rRoadmap);
 
   const rmProjs=[...new Set(D.filter(i=>HT.includes(i.type)).map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-  if(rmProjs.length){
-  h+='<div style="display:flex;align-items:center;gap:6px">';
-  h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Project:</label>';
-  h+='<select class="fs" onchange="rmFProj=this.value;rRoadmap()" style="padding:4px 8px">';
-  h+='<option value=""'+(rmFProj===''?' selected':'')+'>All</option>';
-  rmProjs.forEach(p=>{h+='<option value="'+esc(p)+'"'+(rmFProj===p?' selected':'')+'>'+esc(p)+'</option>'});
-  h+='</select></div>';
-  }
+  if(rmProjs.length){h+=msW('rm-proj','Project',rmProjs,rRoadmap);}
 
   var rmTeams=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.team).filter(Boolean))].sort();
-  if(rmTeams.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Team:</label><select class="fs" onchange="rmFTeam=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFTeam===''?' selected':'')+'>All</option>';rmTeams.forEach(function(t){h+='<option value="'+esc(t)+'"'+(rmFTeam===t?' selected':'')+'>'+esc(t)+'</option>'});h+='</select></div>';}
+  if(rmTeams.length){h+=msW('rm-team','Team',rmTeams,rRoadmap);}
   var rmComps=[...new Set(D.filter(i=>!i.synthetic).flatMap(i=>(i.component||'').split(', ')).filter(Boolean))].sort();
-  if(rmComps.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Component:</label><select class="fs" onchange="rmFComp=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFComp===''?' selected':'')+'>All</option>';rmComps.forEach(function(c){h+='<option value="'+esc(c)+'"'+(rmFComp===c?' selected':'')+'>'+esc(c)+'</option>'});h+='</select></div>';}
+  if(rmComps.length){h+=msW('rm-comp','Component',rmComps,rRoadmap);}
   var rmFixes=[...new Set(D.filter(i=>!i.synthetic).map(i=>i.fixVersion).filter(Boolean))].sort();
-  if(rmFixes.length){h+='<div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;color:var(--t2);font-weight:600">Fix Version:</label><select class="fs" onchange="rmFFix=this.value;rRoadmap()" style="padding:4px 8px"><option value=""'+(rmFFix===''?' selected':'')+'>All</option>';rmFixes.forEach(function(fx){h+='<option value="'+esc(fx)+'"'+(rmFFix===fx?' selected':'')+'>'+esc(fx)+'</option>'});h+='</select></div>';}
+  if(rmFixes.length){h+=msW('rm-fix','Fix Version',rmFixes,rRoadmap);}
 
   h+='<div style="margin-left:auto;display:flex;gap:6px;align-items:center">';
   h+='<label style="font-size:11px;color:var(--t2);font-weight:600">Zoom:</label>';
@@ -2563,12 +2541,12 @@ function rRoadmap() {
   if(rmSchedBy==='fixversion'){
     var gi=D.filter(function(i){
       if(i.synthetic)return false;
-      if(rmFType&&i.type!==rmFType)return false;
-      if(rmFMos&&bkt(tot(i))!==rmFMos)return false;
-      if(rmFProj&&(i.projectKey||i.space||'')!==rmFProj)return false;
-      if(rmFTeam&&i.team!==rmFTeam)return false;
-      if(rmFComp&&!(i.component||'').split(', ').includes(rmFComp))return false;
-      if(rmFFix&&(i.fixVersion||'')!==rmFFix)return false;
+      if(!msPass('rm-type',i.type))return false;
+      if(!msPass('rm-mos',bkt(tot(i))))return false;
+      if(!msPass('rm-proj',(i.projectKey||i.space||'')))return false;
+      if(!msPass('rm-team',i.team))return false;
+      if(!msAny('rm-comp',(i.component||'').split(', ').map(function(c){return c.trim();})))return false;
+      if(!msPass('rm-fix',(i.fixVersion||'')))return false;
       return true;
     });
     var NOINC='No increment';
