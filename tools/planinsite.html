@@ -1133,7 +1133,7 @@ function aobGateCheck(){
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 <span id="licBadgeText">TRIAL</span>
 </span>
-            <button class="btn btn-secondary" onclick="exportData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">⬇ Export</button>
+            <button class="btn btn-secondary" onclick="openPlnImport('export')" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">⬇ Export</button>
             <button class="btn btn-primary" onclick="openPlnImport()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">📥 Import</button>
             <button class="btn btn-secondary" onclick="plnResetData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;color:var(--red);border-color:var(--red)">Reset Data</button>
             <button onclick="openConfig()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--t2);font-size:13px;display:flex;align-items:center;gap:5px;font-family:inherit" title="Configuration">&#9881; Config</button>
@@ -1155,8 +1155,8 @@ function aobGateCheck(){
     <div id="plnImpMod" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;overflow-y:auto;padding:24px 16px" onclick="if(event.target===this)closePlnImport()">
       <div style="background:var(--bg1);border-radius:12px;max-width:600px;margin:40px auto;padding:28px;box-shadow:var(--sh);position:relative">
         <button onclick="closePlnImport()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--t2);line-height:1">×</button>
-        <h2 style="margin:0 0 4px;font-size:18px;color:var(--t1)">Import Data</h2>
-        <p style="font-size:13px;color:var(--t2);margin:0 0 20px">Bring your backlog into PlanInSite from a Jira or Advanced Roadmaps CSV.</p>
+        <h2 style="margin:0 0 4px;font-size:18px;color:var(--t1)">Import &amp; Export Data</h2>
+        <p style="font-size:13px;color:var(--t2);margin:0 0 20px">Bring data into PlanInSite from a Jira or Advanced Roadmaps CSV, or export your plan as a backup or CSV.</p>
 
         <!-- Portfolio Suite Data card -->
         <div style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
@@ -1219,7 +1219,7 @@ function aobGateCheck(){
         <div id="importSummary" style="display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--t2);line-height:1.7"></div>
 
         <!-- Export your plan -->
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)">
+        <div id="exportSection" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)">
           <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:4px">⬇ Export your plan</div>
           <div id="exportContents" style="font-size:11.5px;color:var(--t3);margin-bottom:10px;line-height:1.6">Nothing loaded yet — import or build a plan first.</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
@@ -2562,11 +2562,14 @@ function aobGateCheck(){
         // PlanInSite uses historical velocity data to calculate team capacity only.
 
         // ============ THEME ============
-        function openPlnImport() {
+        function openPlnImport(focus) {
             document.getElementById('plnImpMod').style.display = 'block';
             document.body.style.overflow = 'hidden';
             setTimeout(checkSuiteDetect, 50);
             try { _refreshExportContents(); } catch(e){}
+            if (focus === 'export') {
+                setTimeout(() => { const el = document.getElementById('exportSection'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 90);
+            }
         }
         function closePlnImport() {
             document.getElementById('plnImpMod').style.display = 'none';
