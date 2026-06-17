@@ -2267,37 +2267,37 @@ function rAgeHelp(){
   h+='<p style="color:var(--t2);font-size:13px;margin-bottom:16px">The Health tab auto-detects the best view based on which date fields your data contains, or you can select manually.</p>';
   h+='<table class="gt"><thead><tr><th>Lens</th><th>Best When</th><th>What It Measures</th></tr></thead><tbody>';
   h+='<tr><td style="color:var(--ac);font-weight:700">Schedule Health</td><td style="color:var(--t2)">Target Start / End dates are mapped (e.g. Jira Advanced Roadmaps)</td><td style="color:var(--t2)">Compares target end dates to today. Overdue, At Risk (14 days), On Track, Not Started, No Target Date.</td></tr>';
-  h+='<tr><td style="color:var(--mid);font-weight:700">Backlog Residency</td><td style="color:var(--t2)">Created / Updated dates are mapped (e.g. full Jira CSV export)</td><td style="color:var(--t2)">How long items sit in the backlog. Fresh (\\u22647d), Warm (8-30d), Stale (31-90d), Rotten (90d+). Toggle Updated vs Created date.</td></tr>';
-  h+='<tr><td style="color:var(--epur);font-weight:700">Stalled &amp; At Risk</td><td style="color:var(--t2)">Works with any data \\u2014 no dates needed</td><td style="color:var(--t2)">Must-Haves stuck, unscored, no estimates, unassigned, In Progress with no target, high-risk Musts.</td></tr>';
+  h+='<tr><td style="color:var(--mid);font-weight:700">Backlog Residency</td><td style="color:var(--t2)">Created / Updated dates are mapped (e.g. full Jira CSV export)</td><td style="color:var(--t2)">How long items sit in the backlog. Fresh (≤7d), Warm (8-30d), Stale (31-90d), Rotten (90d+). Toggle Updated vs Created date.</td></tr>';
+  h+='<tr><td style="color:var(--epur);font-weight:700">Stalled &amp; At Risk</td><td style="color:var(--t2)">Works with any data — no dates needed</td><td style="color:var(--t2)">Must-Haves stuck, unscored, no estimates, unassigned, In Progress with no target, high-risk Musts.</td></tr>';
   h+='</tbody></table></div>';
 
-  h+='<div class="gs"><h3 style="color:var(--ac)">Schedule Health \\u2014 Categories</h3>';
+  h+='<div class="gs"><h3 style="color:var(--ac)">Schedule Health — Categories</h3>';
   h+='<table class="gt"><thead><tr><th>Category</th><th>Colour</th><th>Rule</th></tr></thead><tbody>';
-  h+='<tr><td style="color:var(--red);font-weight:700">Overdue</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--red);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end is past AND status \\u2260 Done</td></tr>';
-  h+='<tr><td style="color:var(--mid);font-weight:700">At Risk</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--mid);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end within 14 days AND status \\u2260 Done</td></tr>';
-  h+='<tr><td style="color:var(--hi);font-weight:700">On Track</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--hi);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end 14+ days away AND status \\u2260 Done</td></tr>';
+  h+='<tr><td style="color:var(--red);font-weight:700">Overdue</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--red);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end is past AND status ≠ Done</td></tr>';
+  h+='<tr><td style="color:var(--mid);font-weight:700">At Risk</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--mid);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end within 14 days AND status ≠ Done</td></tr>';
+  h+='<tr><td style="color:var(--hi);font-weight:700">On Track</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--hi);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target end 14+ days away AND status ≠ Done</td></tr>';
   h+='<tr><td style="color:var(--epur);font-weight:700">Not Started</td><td><span style="display:inline-block;width:14px;height:14px;background:var(--epur);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">Target start has passed, status still To Do / Backlog / Open</td></tr>';
   h+='<tr><td style="font-weight:700">No Target Date</td><td><span style="display:inline-block;width:14px;height:14px;background:rgba(148,163,184,.3);border-radius:3px;vertical-align:middle"></span></td><td style="color:var(--t2)">No target end date set</td></tr>';
   h+='</tbody></table></div>';
 
-  h+='<div class="gs"><h3 style="color:var(--mid)">Backlog Residency \\u2014 Buckets</h3>';
+  h+='<div class="gs"><h3 style="color:var(--mid)">Backlog Residency — Buckets</h3>';
   h+='<table class="gt"><thead><tr><th>Bucket</th><th>Age Range</th><th>What It Means</th></tr></thead><tbody>';
-  h+='<tr><td style="color:var(--hi);font-weight:700">Fresh</td><td style="font-family:JetBrains Mono">\\u2264 7 days</td><td style="color:var(--t2)">Recently created or updated \\u2014 active</td></tr>';
-  h+='<tr><td style="color:var(--mid);font-weight:700">Warm</td><td style="font-family:JetBrains Mono">8 \\u2013 30 days</td><td style="color:var(--t2)">Some activity within the last month</td></tr>';
-  h+='<tr><td style="color:var(--red);font-weight:700">Stale</td><td style="font-family:JetBrains Mono">31 \\u2013 90 days</td><td style="color:var(--t2)">No movement in over a month \\u2014 review needed</td></tr>';
-  h+='<tr><td style="color:#DC2626;font-weight:700">Rotten</td><td style="font-family:JetBrains Mono">90+ days</td><td style="color:var(--t2)">Untouched 3+ months \\u2014 likely dead weight</td></tr>';
+  h+='<tr><td style="color:var(--hi);font-weight:700">Fresh</td><td style="font-family:JetBrains Mono">≤ 7 days</td><td style="color:var(--t2)">Recently created or updated — active</td></tr>';
+  h+='<tr><td style="color:var(--mid);font-weight:700">Warm</td><td style="font-family:JetBrains Mono">8 – 30 days</td><td style="color:var(--t2)">Some activity within the last month</td></tr>';
+  h+='<tr><td style="color:var(--red);font-weight:700">Stale</td><td style="font-family:JetBrains Mono">31 – 90 days</td><td style="color:var(--t2)">No movement in over a month — review needed</td></tr>';
+  h+='<tr><td style="color:#DC2626;font-weight:700">Rotten</td><td style="font-family:JetBrains Mono">90+ days</td><td style="color:var(--t2)">Untouched 3+ months — likely dead weight</td></tr>';
   h+='</tbody></table>';
-  h+='<p style="color:var(--t3);font-size:12px;margin-top:12px">Date chain: Updated \\u2192 Created \\u2192 Target Start. Toggle mode to change which date drives the age.</p>';
+  h+='<p style="color:var(--t3);font-size:12px;margin-top:12px">Date chain: Updated → Created → Target Start. Toggle mode to change which date drives the age.</p>';
   h+='</div>';
 
-  h+='<div class="gs"><h3 style="color:var(--epur)">Stalled &amp; At Risk \\u2014 Signals</h3>';
+  h+='<div class="gs"><h3 style="color:var(--epur)">Stalled &amp; At Risk — Signals</h3>';
   h+='<table class="gt"><thead><tr><th>Signal</th><th>What It Catches</th><th>Why It Matters</th></tr></thead><tbody>';
   h+='<tr><td style="color:var(--red);font-weight:700">Must-Have Stuck</td><td style="color:var(--t2)">Must Have items still in To Do / Backlog</td><td style="color:var(--t2)">Top priority work not progressing</td></tr>';
-  h+='<tr><td style="font-weight:700">Unscored</td><td style="color:var(--t2)">No MoSCoW score</td><td style="color:var(--t2)">Can\\u2019t prioritise without scoring</td></tr>';
+  h+='<tr><td style="font-weight:700">Unscored</td><td style="color:var(--t2)">No MoSCoW score</td><td style="color:var(--t2)">Can’t prioritise without scoring</td></tr>';
   h+='<tr><td style="color:var(--mid);font-weight:700">No Estimate</td><td style="color:var(--t2)">Scored but no effort</td><td style="color:var(--t2)">No capacity planning or BfB without effort</td></tr>';
-  h+='<tr><td style="color:var(--epur);font-weight:700">Unassigned</td><td style="color:var(--t2)">No assignee</td><td style="color:var(--t2)">No owner \\u2014 risk of falling through cracks</td></tr>';
+  h+='<tr><td style="color:var(--epur);font-weight:700">Unassigned</td><td style="color:var(--t2)">No assignee</td><td style="color:var(--t2)">No owner — risk of falling through cracks</td></tr>';
   h+='<tr><td style="color:var(--ac);font-weight:700">In Progress, No Target</td><td style="color:var(--t2)">Work started, no end date</td><td style="color:var(--t2)">Active work with nothing to track against</td></tr>';
-  h+='<tr><td style="color:#DC2626;font-weight:700">High-Risk Musts</td><td style="color:var(--t2)">Must Have + Risk \\u2265 3</td><td style="color:var(--t2)">Critical + risky = double attention</td></tr>';
+  h+='<tr><td style="color:#DC2626;font-weight:700">High-Risk Musts</td><td style="color:var(--t2)">Must Have + Risk ≥ 3</td><td style="color:var(--t2)">Critical + risky = double attention</td></tr>';
   h+='</tbody></table></div>';
 
   h+='<div class="gs"><h3>Backlog Completeness Score</h3>';
@@ -2308,7 +2308,7 @@ function rAgeHelp(){
   h+='<tr><td style="font-weight:600">Assigned</td><td style="font-family:JetBrains Mono">25%</td><td style="color:var(--t2)">% of not-done items with an assignee</td></tr>';
   h+='<tr><td style="font-weight:600">Musts Progressing</td><td style="font-family:JetBrains Mono">25%</td><td style="color:var(--t2)">% of Must Haves past To Do status</td></tr>';
   h+='</tbody></table>';
-  h+='<p style="color:var(--t3);font-size:12px;margin-top:12px"><span style="color:var(--hi)">\\u226570% = Green</span> \\u00B7 <span style="color:var(--mid)">40-69% = Amber</span> \\u00B7 <span style="color:var(--red)">&lt;40% = Red</span></p>';
+  h+='<p style="color:var(--t3);font-size:12px;margin-top:12px"><span style="color:var(--hi)">≥70% = Green</span> · <span style="color:var(--mid)">40-69% = Amber</span> · <span style="color:var(--red)">&lt;40% = Red</span></p>';
   h+='</div>';
 
   h+='<div class="gs"><h3>Data Availability</h3>';
