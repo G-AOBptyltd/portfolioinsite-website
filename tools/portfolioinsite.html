@@ -1323,7 +1323,7 @@ function msW(id,label,opts,rr){
     out+='<div onclick="event.stopPropagation()" style="position:absolute;z-index:60;left:0;margin-top:4px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px;box-shadow:var(--sh);min-width:190px;max-height:300px;overflow:auto;padding:6px">';
     out+='<div style="display:flex;gap:6px;padding:0 2px 6px;border-bottom:1px solid var(--bdr);margin-bottom:4px"><button type="button" class="btn btn-sm" style="flex:1" onclick="msSet(\''+id+'\',1)">All</button><button type="button" class="btn btn-sm" style="flex:1" onclick="msSet(\''+id+'\',0)">Clear</button></div>';
     if(!opts.length)out+='<div style="font-size:11px;color:var(--t3);padding:4px">No values</div>';
-    opts.forEach(function(o){out+='<label style="display:flex;align-items:center;gap:7px;padding:3px 5px;font-size:12px;cursor:pointer;white-space:nowrap"><input type="checkbox" '+(e.set.has(o)?'checked':'')+' value="'+esc(o)+'" onchange="msPick(\''+id+'\',this.value,this.checked)">'+esc(o)+'</label>';});
+    opts.forEach(function(o){var ov=(o&&o.v!=null)?o.v:o;var ol=(o&&o.l!=null)?o.l:o;out+='<label style="display:flex;align-items:center;gap:7px;padding:3px 5px;font-size:12px;cursor:pointer;white-space:nowrap"><input type="checkbox" '+(e.set.has(ov)?'checked':'')+' value="'+esc(ov)+'" onchange="msPick(\''+id+'\',this.value,this.checked)">'+esc(ol)+'</label>';});
     out+='</div>';
   }
   return out+'</div>';
@@ -1331,7 +1331,7 @@ function msW(id,label,opts,rr){
 function msTog(id,ev){ if(ev)ev.stopPropagation(); _msOpen=(_msOpen===id?null:id); if(_msOpen)setTimeout(function(){document.addEventListener('click',msDocClose);},0); else document.removeEventListener('click',msDocClose); var e=MSEL[id]; if(e&&e.rr)e.rr(); }
 function msDocClose(){ var id=_msOpen; _msOpen=null; document.removeEventListener('click',msDocClose); if(id&&MSEL[id]&&MSEL[id].rr)MSEL[id].rr(); }
 function msPick(id,v,checked){ var e=msGet(id); if(checked)e.set.add(v); else e.set.delete(v); if(e.rr)e.rr(); }
-function msSet(id,all){ var e=msGet(id); e.set=all?new Set(e.opts||[]):new Set(); if(e.rr)e.rr(); }
+function msSet(id,all){ var e=msGet(id); e.set=all?new Set((e.opts||[]).map(function(o){return (o&&o.v!=null)?o.v:o;})):new Set(); if(e.rr)e.rr(); }
 function toggleSort(col){if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc'}else{sortCol=col;sortDir='asc'}render()}
 function render(){
   const c=document.getElementById('tblC');if(!c)return;
@@ -1558,7 +1558,7 @@ function rQuad(){
   let items=scored;
   if(quadFLevel==='ef')items=items.filter(i=>HT.includes(i.type));else if(quadFLevel==='story')items=items.filter(i=>!HT.includes(i.type));
   items=items.filter(i=>msPass('quad-type',i.type));
-  if(quadFMos)items=items.filter(i=>bkt(tot(i))===quadFMos);
+  items=items.filter(i=>msPass('quad-mos',bkt(tot(i))));
   items=items.filter(i=>msAny('quad-comp',(i.component||'').split(', ').map(function(c){return c.trim();})));
   items=items.filter(i=>msPass('quad-proj',(i.projectKey||i.space||'')));
   items=items.filter(i=>msPass('quad-team',i.team));
@@ -1649,7 +1649,7 @@ function rQuad(){
   h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
     <select class="fs" onchange="quadFLevel=this.value;rQuad()" title="Plot strategic units (Epics & Features) or drill to Stories"><option value="rollup"${quadFLevel==='rollup'?' selected':''}>Epic rollup</option><option value="ef"${quadFLevel==='ef'?' selected':''}>Epics & Features</option><option value="story"${quadFLevel==='story'?' selected':''}>Stories</option><option value="all"${quadFLevel==='all'?' selected':''}>All levels</option></select>
     ${msW('quad-type','Type',types,rQuad)}
-    <select class="fs" onchange="quadFMos=this.value;rQuad()"><option value="">All MoSCoW</option>${['MUST','SHOULD','COULD','WONT'].map(b=>`<option value="${b}" ${b===quadFMos?'selected':''}>${bucketLabelsMap[b]}</option>`).join('')}</select>
+    ${msW('quad-mos','MoSCoW',[{v:'MUST',l:'Must Have'},{v:'SHOULD',l:'Should Have'},{v:'COULD',l:'Could Have'},{v:'WONT',l:"Won't Have"}],rQuad)}
     ${comps.length?msW('quad-comp','Component',comps,rQuad):''}
     ${(()=>{const prjs=[...new Set(scored.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();return prjs.length?msW('quad-proj','Project',prjs,rQuad):''})()}
     ${(()=>{const tms=[...new Set(scored.map(i=>i.team).filter(Boolean))].sort();return tms.length?msW('quad-team','Team',tms,rQuad):''})()}
@@ -2901,22 +2901,10 @@ function rPO() {
       h+='</select>';
     }
     const poProjs=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-    if(poProjs.length){
-    h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Project:</span>';
-    h+='<select class="fs" onchange="poFProj=this.value;rPO()" style="padding:4px 8px">';
-    h+='<option value=""'+(poFProj===''?' selected':'')+'>All</option>';
-    poProjs.forEach(p=>{h+='<option value="'+esc(p)+'"'+(poFProj===p?' selected':'')+'>'+esc(p)+'</option>'});
-    h+='</select>';
-    }
+    if(poProjs.length){h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Project:</span>'+msW('po-proj','Project',poProjs,rPO);}
     // Type filter
     const poTypes=[...new Set(D.map(i=>i.type).filter(Boolean))].sort();
-    if(poTypes.length){
-    h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Type:</span>';
-    h+='<select class="fs" onchange="poFType=this.value;rPO()" style="padding:4px 8px">';
-    h+='<option value=""'+(poFType===''?' selected':'')+'>All</option>';
-    poTypes.forEach(t=>{h+='<option value="'+esc(t)+'"'+(poFType===t?' selected':'')+'>'+esc(t)+'</option>'});
-    h+='</select>';
-    }
+    if(poTypes.length){h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Type:</span>'+msW('po-type','Type',poTypes,rPO);}
     // Assignee filter
     const poAssignees=[...new Set(D.map(i=>i.assignee).filter(Boolean))].sort();
     h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Assignee:</span>';
@@ -2935,24 +2923,10 @@ function rPO() {
     h+='<option value="13+"'+(poFEffort==='13+'?' selected':'')+'>13+ pts</option>';
     h+='</select>';
     // MoSCoW filter
-    h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">MoSCoW:</span>';
-    h+='<select class="fs" onchange="poFMoscow=this.value;rPO()" style="padding:4px 8px">';
-    h+='<option value=""'+(poFMoscow===''?' selected':'')+'>All</option>';
-    h+='<option value="MUST"'+(poFMoscow==='MUST'?' selected':'')+'>Must Have</option>';
-    h+='<option value="SHOULD"'+(poFMoscow==='SHOULD'?' selected':'')+'>Should Have</option>';
-    h+='<option value="COULD"'+(poFMoscow==='COULD'?' selected':'')+'>Could Have</option>';
-    h+='<option value="WONT"'+(poFMoscow==='WONT'?' selected':'')+'>Won\'t Have</option>';
-    h+='<option value="UNSCORED"'+(poFMoscow==='UNSCORED'?' selected':'')+'>Unscored</option>';
-    h+='</select>';
+    h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">MoSCoW:</span>'+msW('po-mos','MoSCoW',[{v:'MUST',l:'Must Have'},{v:'SHOULD',l:'Should Have'},{v:'COULD',l:'Could Have'},{v:'WONT',l:"Won't Have"},{v:'UNSCORED',l:'Unscored'}],rPO);
     // Status filter
     const poStatuses=[...new Set(D.map(i=>i.status).filter(Boolean))].sort();
-    if(poStatuses.length){
-    h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Status:</span>';
-    h+='<select class="fs" onchange="poFStatus=this.value;rPO()" style="padding:4px 8px">';
-    h+='<option value=""'+(poFStatus===''?' selected':'')+'>All</option>';
-    poStatuses.forEach(s=>{h+='<option value="'+esc(s)+'"'+(poFStatus===s?' selected':'')+'>'+esc(s)+'</option>'});
-    h+='</select>';
-    }
+    if(poStatuses.length){h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:16px">Status:</span>'+msW('po-status','Status',poStatuses,rPO);}
     h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:auto">Sprint Cap:</span>';
     h+='<input type="number" value="'+poSprintCap+'" style="width:55px;padding:4px 6px;border-radius:4px;border:1px solid var(--bdr);background:var(--bgi);color:var(--t1);font-size:12px" onchange="poSprintCap=+this.value;rPO()">';
     h+='<span style="font-size:11px;color:var(--t3)">pts</span>';
@@ -2960,7 +2934,7 @@ function rPO() {
   }
 
   // Project-filtered dataset for PO tab
-  const PD=poFProj?D.filter(i=>(i.projectKey||i.space||'')===poFProj):D;
+  const PD=D.filter(i=>msPass('po-proj',(i.projectKey||i.space||'')));
 
   // === SECTION A: PO DASHBOARD ===
   if(poSection==='dashboard'){
@@ -2970,9 +2944,8 @@ function rPO() {
   const poDashProjs=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
   if(poDashProjs.length){
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">';
-  h+='<select class="fs" onchange="poFProj=this.value;rPO()"><option value="">All Projects</option>';
-  poDashProjs.forEach(p=>{h+='<option value="'+esc(p)+'"'+(poFProj===p?' selected':'')+'>'+esc(p)+'</option>'});
-  h+='</select></div>';
+  h+=msW('po-proj','Project',poDashProjs,rPO);
+  h+='</div>';
   }
 
   const scored=PD.filter(i=>tot(i)!=null);
@@ -3119,15 +3092,15 @@ function rPO() {
     // Apply backlog filters to PD
     const BL=PD.filter(item=>{
       if(item.synthetic)return false;
-      if(poFType&&item.type!==poFType)return false;
+      if(!msPass('po-type',item.type))return false;
       if(poFAssignee==='__none__'){if(item.assignee)return false}
       else if(poFAssignee&&item.assignee!==poFAssignee)return false;
       if(poFEffort==='none'&&item.effort>0)return false;
       if(poFEffort==='1-3'&&(!(item.effort>=1&&item.effort<=3)))return false;
       if(poFEffort==='5-8'&&(!(item.effort>=5&&item.effort<=8)))return false;
       if(poFEffort==='13+'&&(!(item.effort>=13)))return false;
-      if(poFMoscow&&bkt(tot(item))!==poFMoscow)return false;
-      if(poFStatus&&item.status!==poFStatus)return false;
+      if(!msPass('po-mos',bkt(tot(item))))return false;
+      if(!msPass('po-status',item.status))return false;
       return true;
     });
     BL.forEach(item=>{
@@ -3267,14 +3240,8 @@ function rPO() {
   plannerTeams.forEach(t=>{h+='<option value="'+esc(t)+'"'+(poPlannerTeam===t?' selected':'')+'>'+esc(t)+'</option>'});
   h+='</select>';
 
-  const plannerProjs=[...new Set(PD.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-  if(plannerProjs.length){
-  h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:8px">Project:</span>';
-  h+='<select class="fs" onchange="poFProj=this.value;rPO()" style="padding:4px 8px;font-size:12px">';
-  h+='<option value=""'+(poFProj===''?' selected':'')+'>All</option>';
-  plannerProjs.forEach(p=>{h+='<option value="'+esc(p)+'"'+(poFProj===p?' selected':'')+'>'+esc(p)+'</option>'});
-  h+='</select>';
-  }
+  const plannerProjs=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
+  if(plannerProjs.length){h+='<span style="font-size:11px;color:var(--t2);font-weight:600;margin-left:8px">Project:</span>'+msW('po-proj','Project',plannerProjs,rPO);}
   h+='<button class="btn btn-sm btn-g" onclick="poAutoFill()">Auto-fill PIs</button>';
   h+='<button class="btn btn-sm btn-d" onclick="poClearAssign()">Clear Assignments</button>';
   h+='<button class="btn btn-sm" onclick="poExpandedPIs.clear();rPO()" style="margin-left:8px">Collapse All</button>';
