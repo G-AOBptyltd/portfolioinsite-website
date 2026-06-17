@@ -348,6 +348,7 @@ Playbook
 <div class="tab" data-t="roadmap">Roadmap</div>
 <div class="tab" data-t="poview">Product Owner</div>
 <div class="tab" data-t="smview">Scrum Master</div>
+<div class="tab" data-t="baview">Business Analyst</div>
 <div class="tab" data-t="age">Backlog Health</div>
 <div class="tab" data-t="guide">Scoring Guide</div>
 <div class="tab" data-t="legend">Columns</div>
@@ -399,6 +400,7 @@ Playbook
       <option value="roadmap">Roadmap</option>
       <option value="poview">Product Owner</option>
       <option value="smview">Scrum Master</option>
+      <option value="baview">Business Analyst</option>
     </select>
   </div>
 
@@ -458,6 +460,7 @@ Playbook
 <div class="tp" id="p-roadmap"><div id="roadmapC"></div></div>
 <div class="tp" id="p-poview"><div id="poC"></div></div>
 <div class="tp" id="p-smview"><div id="smC"></div></div>
+<div class="tp" id="p-baview"><div id="baC"></div></div>
 <div class="tp" id="p-age"><div id="ageC"></div></div>
 <div class="tp" id="p-guide"><div id="guideC"></div></div>
 <div class="tp" id="p-legend"><div id="legC"></div></div>
@@ -1056,6 +1059,7 @@ function initTabSwitching() {
       else if (tabId === 'roadmap') rRoadmap();
       else if (tabId === 'poview') rPO();
       else if (tabId === 'smview') rSM();
+      else if (tabId === 'baview') rBA();
       else if (tabId === 'agehelp') rAgeHelp();
       else if (tabId === 'help') rHelp();
     });
@@ -1143,7 +1147,7 @@ function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_
 function setHiddenTabs(set){try{localStorage.setItem('ge_v13_hiddentabs',JSON.stringify([...set]));}catch(e){}}
 function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
 function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
-function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',smview:'Scrum Master',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
+function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',smview:'Scrum Master',baview:'Business Analyst',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
 function openPoiConfig() {
   const overlay = document.getElementById('poiCfgOverlay');
   const drawer = document.getElementById('poiCfgDrawer');
@@ -2899,6 +2903,144 @@ function smItemRow(i,extra){
     +'<span style="font-size:10px;color:var(--t3);min-width:90px;text-align:right">'+esc(i.assignee||'Unassigned')+'</span>'
     +(extra||('<span style="font-size:10px;color:var(--t3);min-width:46px;text-align:right">'+(age!=null?age+'d':'—')+'</span>'))
     +'</div>';
+}
+
+// ============================================================================
+// BUSINESS ANALYST COCKPIT — backlog readiness / Definition of Ready
+// ============================================================================
+function baIsEpic(i){var t=(i.type||'').toLowerCase();return t==='epic'||t==='safe epic'||t==='safe_epic';}
+function baRow(i,right){
+  return '<div onclick="smJump(\''+esc(i.id)+'\')" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,54,84,.3);font-size:12px;cursor:pointer">'
+    +'<span style="font-family:JetBrains Mono;font-size:10px;color:var(--ac);min-width:78px">'+esc(i.id)+'</span>'
+    +'<span style="flex:1;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(i.title||'')+'</span>'
+    +(right||'')+'</div>';
+}
+
+function rBA(){
+  const el=document.getElementById('baC');
+  if(!el)return;
+  if(!D.length){el.innerHTML='<div class="es"><h3>No Data</h3><p>Import items to see the Business Analyst view</p></div>';return}
+
+  const base=D.filter(i=>!i.synthetic);
+  const projs=[...new Set(base.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
+  const SP=base.filter(i=>msPass('ba-proj',(i.projectKey||i.space||'')));
+  const teams=[...new Set(SP.map(i=>i.team).filter(Boolean))].sort();
+  const fixes=[...new Set(SP.map(i=>i.fixVersion).filter(Boolean))].sort();
+  const BD=SP.filter(i=>msPass('ba-team',i.team||'')&&msPass('ba-fix',i.fixVersion||''));
+  const open=BD.filter(i=>!isDone(i));   // refinement is about not-yet-done work
+
+  let h='';
+  h+='<div style="position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 0 0;margin-bottom:16px;border-bottom:2px solid var(--bdr)">';
+  h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">';
+  h+='<h2 style="font-size:18px;margin:0">Business Analyst</h2>';
+  h+='<span style="font-size:12px;color:var(--t3)">Backlog readiness &amp; Definition of Ready for the upcoming increment</span>';
+  h+='</div></div>';
+
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center">';
+  h+='<span style="font-size:11px;color:var(--t2);font-weight:600">My scope:</span>';
+  if(projs.length)h+=msW('ba-proj','Project',projs,rBA);
+  if(teams.length)h+=msW('ba-team','Team',teams,rBA);
+  if(fixes.length)h+=msW('ba-fix','Increment',fixes,rBA);
+  h+='<span style="margin-left:auto;font-size:11px;color:var(--t3)">Definition of Ready = Estimated + Prioritised + Readiness scored + Linked to epic + Categorised</span>';
+  h+='</div>';
+
+  if(!open.length){el.innerHTML=h+'<div class="es"><h3>No open items in scope</h3><p>Adjust the filters, or everything in scope is already done.</p></div>';return}
+
+  // Definition of Ready criteria
+  const crit=[
+    {k:'Estimated',f:i=>!!(i.effort&&i.effort>0),app:i=>true},
+    {k:'Prioritised',f:i=>tot(i)!=null,app:i=>true},
+    {k:'Readiness scored',f:i=>i.scores&&i.scores.q5===5,app:i=>true},
+    {k:'Linked to epic',f:i=>!!i.parent,app:i=>!baIsEpic(i)},
+    {k:'Categorised',f:i=>!!i.component,app:i=>true}
+  ];
+  const baReady=i=>crit.every(c=>!c.app(i)||c.f(i));
+  const ready=open.filter(baReady);
+  const queue=open.filter(i=>!baReady(i));
+  const readyPct=open.length?Math.round(ready.length/open.length*100):0;
+  const unest=open.filter(i=>!i.effort||i.effort<=0);
+  const unprior=open.filter(i=>tot(i)==null);
+
+  // ---- KPI cards ----
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px">';
+  // Backlog readiness
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">BACKLOG READINESS</div>';
+  h+='<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px"><span style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(readyPct>=70?'var(--hi)':readyPct>=40?'var(--mid)':'var(--red)')+'">'+readyPct+'%</span><span style="font-size:11px;color:var(--t3)">meet DoR</span></div>';
+  h+='<div style="width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="width:'+readyPct+'%;height:100%;background:'+(readyPct>=70?'var(--hi)':readyPct>=40?'var(--mid)':'var(--red)')+'"></div></div>';
+  h+='<div style="font-size:11px;color:var(--t3)">'+ready.length+' of '+open.length+' open items ready</div></div>';
+  // Refinement queue
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">REFINEMENT QUEUE</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(queue.length?'var(--mid)':'var(--hi)')+';margin-bottom:4px">'+queue.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3)">items need grooming</div></div>';
+  // Unestimated
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">UNESTIMATED</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(unest.length?'var(--mid)':'var(--hi)')+';margin-bottom:4px">'+unest.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3)">open items, no estimate</div></div>';
+  // Unprioritised
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">UNPRIORITISED</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(unprior.length?'var(--mid)':'var(--hi)')+';margin-bottom:4px">'+unprior.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3)">open items, no score</div></div>';
+  h+='</div>';
+
+  // ---- DoR breakdown ----
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi);margin-bottom:20px">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">DEFINITION OF READY — COVERAGE</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:12px">Share of the open backlog meeting each criterion — shows where refinement effort should go</div>';
+  crit.forEach(function(c){
+    var app=open.filter(c.app),met=app.filter(c.f);
+    var pct=app.length?Math.round(met.length/app.length*100):100;
+    h+='<div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px">';
+    h+='<span style="min-width:130px;color:var(--t1)">'+c.k+'</span>';
+    h+='<div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+(pct>=70?'var(--hi)':pct>=40?'var(--mid)':'var(--red)')+'"></div></div>';
+    h+='<span style="min-width:88px;text-align:right;font-family:JetBrains Mono;font-size:11px;color:var(--t2)">'+pct+'% ('+met.length+'/'+app.length+')</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ---- Refinement queue table ----
+  const sortedQ=queue.slice().sort((a,b)=>{var ta=tot(a),tb=tot(b);if(ta==null&&tb==null)return 0;if(ta==null)return 1;if(tb==null)return -1;return tb-ta});
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi);margin-bottom:20px">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">REFINEMENT QUEUE</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:10px">Highest-value items not yet meeting DoR — chips show what each is missing. Click to open in Triage.</div>';
+  sortedQ.slice(0,20).forEach(function(i){
+    var miss=crit.filter(c=>c.app(i)&&!c.f(i)).map(c=>c.k);
+    var chips=miss.map(m=>'<span style="font-size:9px;padding:2px 6px;border-radius:10px;background:rgba(245,158,11,.14);color:var(--mid);white-space:nowrap">'+m+'</span>').join(' ');
+    h+='<div onclick="smJump(\''+esc(i.id)+'\')" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(42,54,84,.3);font-size:12px;cursor:pointer">';
+    h+='<span style="font-family:JetBrains Mono;font-size:10px;color:var(--ac);min-width:78px">'+esc(i.id)+'</span>';
+    h+='<span style="flex:1;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(i.title||'')+'</span>';
+    h+='<span style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:46%">'+chips+'</span>';
+    h+='</div>';
+  });
+  if(sortedQ.length>20)h+='<div style="font-size:10px;color:var(--t3);padding-top:8px">+ '+(sortedQ.length-20)+' more</div>';
+  if(!sortedQ.length)h+='<div style="font-size:12px;color:var(--hi);padding:8px 0">Whole backlog meets the Definition of Ready.</div>';
+  h+='</div>';
+
+  // ---- Traceability gaps ----
+  const orphans=open.filter(i=>!baIsEpic(i)&&!i.parent);
+  const epicsScope=BD.filter(baIsEpic);
+  const childless=epicsScope.filter(e=>!base.some(x=>x.parent===e.id));
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px">';
+  // Orphans
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">ORPHANED ITEMS ('+orphans.length+')</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:8px">Open stories/tasks with no parent epic — broken traceability</div>';
+  if(orphans.length){orphans.slice(0,10).forEach(function(i){h+=baRow(i,'<span style="font-size:9px;color:var(--t3);min-width:70px;text-align:right">'+esc(i.type||'')+'</span>')});if(orphans.length>10)h+='<div style="font-size:10px;color:var(--t3);padding-top:8px">+ '+(orphans.length-10)+' more</div>';}
+  else h+='<div style="font-size:12px;color:var(--hi);padding:6px 0">All open items trace to an epic.</div>';
+  h+='</div>';
+  // Childless epics
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">EPICS WITH NO CHILDREN ('+childless.length+')</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:8px">Epics in scope with nothing broken down beneath them — un-elaborated</div>';
+  if(childless.length){childless.slice(0,10).forEach(function(i){h+=baRow(i,'')});if(childless.length>10)h+='<div style="font-size:10px;color:var(--t3);padding-top:8px">+ '+(childless.length-10)+' more</div>';}
+  else h+='<div style="font-size:12px;color:var(--hi);padding:6px 0">Every epic has been broken down.</div>';
+  h+='</div>';
+  h+='</div>';
+
+  el.innerHTML=h;
 }
 
 function rSM(){
