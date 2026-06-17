@@ -1310,6 +1310,28 @@ function msCloser(e){ if(!e.target.closest('[id^="ms-"]')){ document.querySelect
 function msToggle(k,val,checked){ if(checked)MS[k].add(val); else MS[k].delete(val); var lbl=document.getElementById('ms-lbl-'+k); if(lbl){lbl.textContent=msLabel(k)+(MS[k].size?' ('+MS[k].size+')':''); var b=lbl.parentElement; if(b){b.style.borderColor=MS[k].size?'var(--ac)':''; b.style.color=MS[k].size?'var(--ac)':'';}} render(); }
 function msAll(k){ MS[k]=new Set(msOpts(k)); msBuild(); render(); }
 function msClear(k){ MS[k].clear(); msBuild(); render(); }
+// GENERIC MULTI-SELECT (reusable inline across views)
+var MSEL={}, _msOpen=null;
+function msGet(id){ if(!MSEL[id])MSEL[id]={set:new Set()}; return MSEL[id]; }
+function msPass(id,v){ var e=MSEL[id]; return !e||!e.set.size||e.set.has(v); }
+function msAny(id,arr){ var e=MSEL[id]; if(!e||!e.set.size)return true; return arr.some(function(x){return e.set.has(x);}); }
+function msW(id,label,opts,rr){
+  var e=msGet(id); e.opts=opts; e.rr=rr; var n=e.set.size; var open=(_msOpen===id);
+  var out='<div style="position:relative;display:inline-block">';
+  out+='<button type="button" class="fs" onclick="msTog(\''+id+'\',event)" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;width:auto'+(n?';border-color:var(--ac);color:var(--ac)':'')+'">'+esc(label)+(n?' ('+n+')':'')+'<span style="font-size:9px">▾</span></button>';
+  if(open){
+    out+='<div onclick="event.stopPropagation()" style="position:absolute;z-index:60;left:0;margin-top:4px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px;box-shadow:var(--sh);min-width:190px;max-height:300px;overflow:auto;padding:6px">';
+    out+='<div style="display:flex;gap:6px;padding:0 2px 6px;border-bottom:1px solid var(--bdr);margin-bottom:4px"><button type="button" class="btn btn-sm" style="flex:1" onclick="msSet(\''+id+'\',1)">All</button><button type="button" class="btn btn-sm" style="flex:1" onclick="msSet(\''+id+'\',0)">Clear</button></div>';
+    if(!opts.length)out+='<div style="font-size:11px;color:var(--t3);padding:4px">No values</div>';
+    opts.forEach(function(o){out+='<label style="display:flex;align-items:center;gap:7px;padding:3px 5px;font-size:12px;cursor:pointer;white-space:nowrap"><input type="checkbox" '+(e.set.has(o)?'checked':'')+' value="'+esc(o)+'" onchange="msPick(\''+id+'\',this.value,this.checked)">'+esc(o)+'</label>';});
+    out+='</div>';
+  }
+  return out+'</div>';
+}
+function msTog(id,ev){ if(ev)ev.stopPropagation(); _msOpen=(_msOpen===id?null:id); if(_msOpen)setTimeout(function(){document.addEventListener('click',msDocClose);},0); else document.removeEventListener('click',msDocClose); var e=MSEL[id]; if(e&&e.rr)e.rr(); }
+function msDocClose(){ var id=_msOpen; _msOpen=null; document.removeEventListener('click',msDocClose); if(id&&MSEL[id]&&MSEL[id].rr)MSEL[id].rr(); }
+function msPick(id,v,checked){ var e=msGet(id); if(checked)e.set.add(v); else e.set.delete(v); if(e.rr)e.rr(); }
+function msSet(id,all){ var e=msGet(id); e.set=all?new Set(e.opts||[]):new Set(); if(e.rr)e.rr(); }
 function toggleSort(col){if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc'}else{sortCol=col;sortDir='asc'}render()}
 function render(){
   const c=document.getElementById('tblC');if(!c)return;
@@ -1695,12 +1717,12 @@ function rEpics(){
 
   // Apply filters
   let eps=allEps;
-  if(epicFProj)eps=eps.filter(i=>(i.projectKey||i.space||'')===epicFProj);
-  if(epicFType)eps=eps.filter(i=>i.type===epicFType);
-  if(epicFStatus)eps=eps.filter(i=>i.status===epicFStatus);
-  if(epicFTeam)eps=eps.filter(i=>i.team===epicFTeam);
-  if(epicFPO)eps=eps.filter(i=>(i.productOwner||'')===epicFPO);
-  if(epicFFix)eps=eps.filter(i=>(i.fixVersion||'')===epicFFix);
+  eps=eps.filter(i=>msPass('epic-proj',(i.projectKey||i.space||'')));
+  eps=eps.filter(i=>msPass('epic-type',i.type));
+  eps=eps.filter(i=>msPass('epic-status',i.status));
+  eps=eps.filter(i=>msPass('epic-team',i.team));
+  eps=eps.filter(i=>msPass('epic-po',(i.productOwner||'')));
+  eps=eps.filter(i=>msPass('epic-fix',(i.fixVersion||'')));
   if(epicFAge==='fresh')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a<=7});
   else if(epicFAge==='warm')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>7&&a<=30});
   else if(epicFAge==='stale')eps=eps.filter(i=>{const a=agd(ageDate(i));return a!=null&&a>30&&a<=90});
@@ -1741,37 +1763,17 @@ function rEpics(){
   let h='<h2 style="font-size:20px;margin-bottom:8px">Epic & Feature Portfolio</h2>';
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">';
   // Type filter
-  h+='<select class="fs" onchange="epicFType=this.value;rEpics()"><option value="">All Types</option>';
-  types.forEach(t=>{h+='<option'+(t===epicFType?' selected':'')+'>'+esc(t)+'</option>'});
-  h+='</select>';
+  h+=msW('epic-type','Types',types,rEpics);
   // Status filter
-  h+='<select class="fs" onchange="epicFStatus=this.value;rEpics()"><option value="">All Statuses</option>';
-  statuses.forEach(s=>{h+='<option'+(s===epicFStatus?' selected':'')+'>'+esc(s)+'</option>'});
-  h+='</select>';
+  h+=msW('epic-status','Statuses',statuses,rEpics);
   // Project filter
-  if(prjs.length){
-    h+='<select class="fs" onchange="epicFProj=this.value;rEpics()"><option value="">All Projects</option>';
-    prjs.forEach(p=>{h+='<option'+(p===epicFProj?' selected':'')+'>'+esc(p)+'</option>'});
-    h+='</select>';
-  }
+  if(prjs.length){h+=msW('epic-proj','Projects',prjs,rEpics);}
   // Team filter
-  if(teams.length){
-    h+='<select class="fs" onchange="epicFTeam=this.value;rEpics()"><option value="">All Teams</option>';
-    teams.forEach(t=>{h+='<option'+(t===epicFTeam?' selected':'')+'>'+esc(t)+'</option>'});
-    h+='</select>';
-  }
+  if(teams.length){h+=msW('epic-team','Teams',teams,rEpics);}
   // Product Owner filter
-  if(pos.length){
-    h+='<select class="fs" onchange="epicFPO=this.value;rEpics()"><option value="">All POs</option>';
-    pos.forEach(p=>{h+='<option'+(p===epicFPO?' selected':'')+'>'+esc(p)+'</option>'});
-    h+='</select>';
-  }
+  if(pos.length){h+=msW('epic-po','POs',pos,rEpics);}
   // Fix Version filter
-  if(fixes.length){
-    h+='<select class="fs" onchange="epicFFix=this.value;rEpics()"><option value="">All Fix Versions</option>';
-    fixes.forEach(fx=>{h+='<option'+(fx===epicFFix?' selected':'')+'>'+esc(fx)+'</option>'});
-    h+='</select>';
-  }
+  if(fixes.length){h+=msW('epic-fix','Fix Versions',fixes,rEpics);}
   // Age filter
   h+='<select class="fs" onchange="epicFAge=this.value;rEpics()"><option value="">All Ages</option>';
   h+='<option value="fresh"'+(epicFAge==='fresh'?' selected':'')+'>Fresh (≤7d)</option>';
