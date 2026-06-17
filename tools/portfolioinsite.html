@@ -420,15 +420,15 @@ Playbook
 <div class="tb">
 <div class="sb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="sSrch" placeholder="Search ID, title, assignee, epic..." oninput="render()"></div>
 <div class="fg">
-<select class="fs" id="fTyp" onchange="render()"><option value="">All Types</option><option>SAFe Epic</option><option>Epic</option><option>Feature</option><option>Story</option><option>Task</option><option>Bug</option><option>Sub-task</option><option>Test</option><option>Risk</option><option>Dependency</option></select>
-<select class="fs" id="fSta" onchange="render()"><option value="">All Statuses</option><option>To Do</option><option>In Progress</option><option>Done</option></select>
+<div id="ms-type" class="msf"></div>
+<div id="ms-status" class="msf"></div>
 <select class="fs" id="fAsg" onchange="render()"><option value="">All Assignees</option></select>
-<select class="fs" id="fComp" onchange="render()"><option value="">All Components</option></select>
+<div id="ms-comp" class="msf"></div>
 <select class="fs" id="fEpic" onchange="render()"><option value="">All Epics</option></select>
 <select class="fs" id="fProj" onchange="render()"><option value="">All Projects</option></select>
-<select class="fs" id="fTeam" onchange="render()"><option value="">All Teams</option></select>
-<select class="fs" id="fPO" onchange="render()"><option value="">All POs</option></select>
-<select class="fs" id="fFix" onchange="render()"><option value="">All Fix Versions</option></select>
+<div id="ms-team" class="msf"></div>
+<div id="ms-po" class="msf"></div>
+<div id="ms-fix" class="msf"></div>
 <select class="fs" id="fDateField" onchange="render()" title="Filter by a date field within a range"><option value="">Date: any</option><option value="created">Created</option><option value="updated">Updated</option><option value="targetStart">Target start</option><option value="targetEnd">Target end</option></select>
 <input type="date" class="fs" id="fDateFrom" onchange="render()" title="From date" style="width:auto;padding:6px 8px">
 <input type="date" class="fs" id="fDateTo" onchange="render()" title="To date" style="width:auto;padding:6px 8px">
@@ -1282,6 +1282,34 @@ function toast(msg, type = 'inf') {
 
 // ============================================================================
 // ═══ TRIAGE TABLE ═══
+// MULTI-SELECT FACETS (Triage)
+var MS={type:new Set(),status:new Set(),comp:new Set(),team:new Set(),po:new Set(),fix:new Set()};
+function msLabel(k){return {type:'Types',status:'Statuses',comp:'Components',team:'Teams',po:'POs',fix:'Fix Versions'}[k];}
+function msOpts(k){
+  if(k==='type')return ['SAFe Epic','Epic','Feature','Story','Task','Bug','Sub-task','Test','Risk','Dependency'].filter(function(t){return D.some(function(i){return i.type===t;});});
+  if(k==='comp')return [...new Set(D.flatMap(function(i){return (i.component||'').split(', ');}).filter(Boolean))].sort();
+  var f={status:function(i){return i.status;},team:function(i){return i.team;},po:function(i){return i.productOwner;},fix:function(i){return i.fixVersion;}}[k];
+  return [...new Set(D.map(f).filter(Boolean))].sort();
+}
+function msBuild(){
+  ['type','status','comp','team','po','fix'].forEach(function(k){
+    var cont=document.getElementById('ms-'+k); if(!cont)return;
+    var opts=msOpts(k); var sel=MS[k]; var n=sel.size;
+    var lbl=msLabel(k)+(n?' ('+n+')':'');
+    var h='<button type="button" class="fs" onclick="msOpen(\''+k+'\',event)" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;width:auto'+(n?';border-color:var(--ac);color:var(--ac)':'')+'"><span id="ms-lbl-'+k+'">'+esc(lbl)+'</span><span style="font-size:9px">▾</span></button>';
+    h+='<div id="ms-panel-'+k+'" style="display:none;position:absolute;z-index:60;margin-top:4px;background:var(--bg1);border:1px solid var(--bdr);border-radius:8px;box-shadow:var(--sh);min-width:190px;max-height:300px;overflow:auto;padding:6px">';
+    h+='<div style="display:flex;gap:6px;padding:0 2px 6px;border-bottom:1px solid var(--bdr);margin-bottom:4px"><button type="button" class="btn btn-sm" style="flex:1" onclick="msAll(\''+k+'\')">All</button><button type="button" class="btn btn-sm" style="flex:1" onclick="msClear(\''+k+'\')">Clear</button></div>';
+    if(!opts.length){h+='<div style="font-size:11px;color:var(--t3);padding:4px">No values</div>';}
+    opts.forEach(function(o){h+='<label style="display:flex;align-items:center;gap:7px;padding:3px 5px;font-size:12px;cursor:pointer;white-space:nowrap"><input type="checkbox" '+(sel.has(o)?'checked':'')+' value="'+esc(o)+'" onchange="msToggle(\''+k+'\',this.value,this.checked)">'+esc(o)+'</label>';});
+    h+='</div>';
+    cont.style.position='relative'; cont.innerHTML=h;
+  });
+}
+function msOpen(k,ev){ if(ev)ev.stopPropagation(); var p=document.getElementById('ms-panel-'+k); if(!p)return; var open=p.style.display!=='none'; document.querySelectorAll('[id^="ms-panel-"]').forEach(function(x){x.style.display='none';}); if(!open){p.style.display='block'; setTimeout(function(){document.addEventListener('click',msCloser);},0);} }
+function msCloser(e){ if(!e.target.closest('[id^="ms-"]')){ document.querySelectorAll('[id^="ms-panel-"]').forEach(function(x){x.style.display='none';}); document.removeEventListener('click',msCloser); } }
+function msToggle(k,val,checked){ if(checked)MS[k].add(val); else MS[k].delete(val); var lbl=document.getElementById('ms-lbl-'+k); if(lbl){lbl.textContent=msLabel(k)+(MS[k].size?' ('+MS[k].size+')':''); var b=lbl.parentElement; if(b){b.style.borderColor=MS[k].size?'var(--ac)':''; b.style.color=MS[k].size?'var(--ac)':'';}} render(); }
+function msAll(k){ MS[k]=new Set(msOpts(k)); msBuild(); render(); }
+function msClear(k){ MS[k].clear(); msBuild(); render(); }
 function toggleSort(col){if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc'}else{sortCol=col;sortDir='asc'}render()}
 function render(){
   const c=document.getElementById('tblC');if(!c)return;
@@ -1316,6 +1344,12 @@ function render(){
   let f=D.filter((item,ri)=>{
     if(item.synthetic)return false;
     if(!showDone&&isDone(item))return false;
+    if(MS.type.size&&!MS.type.has(item.type))return false;
+    if(MS.status.size&&!MS.status.has(item.status))return false;
+    if(MS.comp.size&&!(item.component||'').split(', ').some(function(c){return MS.comp.has(c.trim());}))return false;
+    if(MS.team.size&&!MS.team.has(item.team))return false;
+    if(MS.po.size&&!MS.po.has(item.productOwner||''))return false;
+    if(MS.fix.size&&!MS.fix.has(item.fixVersion||''))return false;
     if(srch&&!item.id.toLowerCase().includes(srch)&&!item.title.toLowerCase().includes(srch)&&!item.assignee.toLowerCase().includes(srch)&&!(item.parent||'').toLowerCase().includes(srch))return false;
     if(fT&&item.type!==fT)return false;
     if(fS&&item.status!==fS)return false;
@@ -3858,7 +3892,7 @@ function importJson(){
       if(f.priority){const pn=(f.priority.name||'').toLowerCase();const pm={highest:5,high:5,medium:3,low:1,lowest:1};if(pm[pn])item.scores.q4=pm[pn]}
       D.push(item);existing.add(key);added++;
     });
-    synthesiseEpics();save();render();closeMod();
+    synthesiseEpics();save();render();msBuild();closeMod();
     toast('Imported '+added+(dupes?', '+dupes+' dupes skipped':''),'ok');
   }catch(e){toast('Parse error: '+e.message,'err')}
 }
@@ -3940,7 +3974,7 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.projectKey!=null)item.projectKey=row[mapping.projectKey]||'';
     D.push(item);existing.add(item.id);added++;
   }
-  synthesiseEpics();save();render();closeMod();
+  synthesiseEpics();save();render();msBuild();closeMod();
   toast('Imported '+added+' items'+(dupes?', '+dupes+' dupes':''),'ok');
   if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',added);
 }
@@ -4066,7 +4100,7 @@ function loadSample(){
     {id:'AIAOB-3019',title:'Executive dashboard and KPI tree — board reporting',assignee:'Tara Singh',reporter:'Elena Vasquez',component:'Analytics',effort:8,type:'Story',status:'Done',created:'2026-01-05T10:00:00Z',updated:'2026-02-20T10:00:00Z',parent:'AIAOB-3015',targetStart:'',targetEnd:'',team:'Orion',piAssignment:'PI FY26-Q1',fixVersion:'',labels:'reporting,kpi',scores:{q1:8,q2:0,q3:3,q4:1,q5:5}},
     {id:'AIAOB-3020',title:'Streaming pipeline — Kafka setup and CDC at scale',assignee:'Jack Moreau',reporter:'Ryan Park',component:'Infrastructure',effort:13,type:'Feature',status:'To Do',created:'2026-02-20T10:00:00Z',parent:'AIAOB-3009',targetStart:'2026-05-01',targetEnd:'2026-08-31',team:'Nexus',piAssignment:'PI FY26-Q2',fixVersion:'Q3 FY26',labels:'streaming,kafka',scores:{q1:13,q2:0,q3:5,q4:3,q5:0}}
   ];
-  save();render();toast('Loaded 20 sample items — 10 teams, AIAOB-3xxx','ok');
+  save();render();msBuild();toast('Loaded 20 sample items — 10 teams, AIAOB-3xxx','ok');
 }
 
 
@@ -4248,7 +4282,7 @@ async function activateLicence() {
 }
 
 // Init
-load();loadCfg();loadTheme();loadQLabels();initTabSwitching();applyTabVisibility();
+load();loadCfg();loadTheme();loadQLabels();initTabSwitching();applyTabVisibility();msBuild();
 // Apply default landing tab
 (function(){
   const def = localStorage.getItem('ge_v13_default_tab');
