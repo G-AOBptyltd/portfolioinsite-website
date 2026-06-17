@@ -347,6 +347,7 @@ Playbook
 <div class="tab" data-t="quadrant">Strategic Map</div>
 <div class="tab" data-t="roadmap">Roadmap</div>
 <div class="tab" data-t="poview">Product Owner</div>
+<div class="tab" data-t="smview">Scrum Master</div>
 <div class="tab" data-t="age">Backlog Health</div>
 <div class="tab" data-t="guide">Scoring Guide</div>
 <div class="tab" data-t="legend">Columns</div>
@@ -397,6 +398,7 @@ Playbook
       <option value="quadrant">Strategic Map</option>
       <option value="roadmap">Roadmap</option>
       <option value="poview">Product Owner</option>
+      <option value="smview">Scrum Master</option>
     </select>
   </div>
 
@@ -455,6 +457,7 @@ Playbook
 <div class="tp" id="p-quadrant"><div id="quadC"></div></div>
 <div class="tp" id="p-roadmap"><div id="roadmapC"></div></div>
 <div class="tp" id="p-poview"><div id="poC"></div></div>
+<div class="tp" id="p-smview"><div id="smC"></div></div>
 <div class="tp" id="p-age"><div id="ageC"></div></div>
 <div class="tp" id="p-guide"><div id="guideC"></div></div>
 <div class="tp" id="p-legend"><div id="legC"></div></div>
@@ -1052,6 +1055,7 @@ function initTabSwitching() {
       else if (tabId === 'legend') rLeg();
       else if (tabId === 'roadmap') rRoadmap();
       else if (tabId === 'poview') rPO();
+      else if (tabId === 'smview') rSM();
       else if (tabId === 'agehelp') rAgeHelp();
       else if (tabId === 'help') rHelp();
     });
@@ -1139,7 +1143,7 @@ function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_
 function setHiddenTabs(set){try{localStorage.setItem('ge_v13_hiddentabs',JSON.stringify([...set]));}catch(e){}}
 function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
 function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
-function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
+function renderCfgTabs(){var cont=document.getElementById('cfgTabs');if(!cont)return;var hidden=getHiddenTabs();var labels={triage:'Backlog Triage',epics:'Epics & Features',dash:'Dashboard',quadrant:'Strategic Map',roadmap:'Roadmap',poview:'Product Owner',smview:'Scrum Master',age:'Backlog Health',guide:'Scoring Guide',legend:'Columns',agehelp:'Health Guide',help:'Help Tips'};var html='';document.querySelectorAll('#navTabs .tab').forEach(function(t){var dt=t.getAttribute('data-t');var lbl=labels[dt]||dt;var checked=!hidden.has(dt);html+='<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--t1);cursor:pointer"><input type="checkbox" '+(checked?'checked':'')+' onchange="toggleTabVisible(\''+dt+'\',this.checked)" style="cursor:pointer">'+lbl+'</label>';});cont.innerHTML=html;}
 function openPoiConfig() {
   const overlay = document.getElementById('poiCfgOverlay');
   const drawer = document.getElementById('poiCfgDrawer');
@@ -2854,6 +2858,182 @@ function poExpandAllPIs(){
     poExpandedPIs.add('PI '+yr+'.'+(i+1));
   }
   rPO();
+}
+
+// ============================================================================
+// SCRUM MASTER COCKPIT
+// ============================================================================
+let smAgingDays=14;   // In Progress items older than this (days since last update) = aging WIP
+let smWipCap=3;       // per-person WIP item count above this = overloaded
+
+function smSetAging(v){var n=parseInt(v,10);if(!isNaN(n)&&n>0)smAgingDays=n;rSM();}
+function smSetWip(v){var n=parseInt(v,10);if(!isNaN(n)&&n>0)smWipCap=n;rSM();}
+
+// 3-bucket workflow category, generic across Scrum/Kanban
+function smCat(i){
+  if(isDone(i))return 'Done';
+  var sc=(i.statusCategory||'').trim().toLowerCase();
+  if(sc==='in progress'||sc==='indeterminate')return 'In Progress';
+  if(sc==='to do'||sc==='todo'||sc==='new')return 'To Do';
+  var st=(i.status||'').toLowerCase();
+  if(/progress|develop|implement|review|test|qa|doing|build|deploy|block|hold|imped|wait/.test(st))return 'In Progress';
+  return 'To Do';
+}
+function smBlocked(i){
+  var st=(i.status||'').toLowerCase(),l=(i.labels||'').toLowerCase();
+  return /block|imped|on.?hold|waiting/.test(st)||/blocked|blocker|impediment|flagged/.test(l);
+}
+function smJump(id){
+  document.querySelectorAll('#navTabs .tab').forEach(function(x){x.classList.remove('on')});
+  document.querySelectorAll('.tp').forEach(function(x){x.classList.remove('on')});
+  var t=document.querySelector('#navTabs .tab[data-t="triage"]');if(t)t.classList.add('on');
+  var p=document.getElementById('p-triage');if(p)p.classList.add('on');
+  render();
+  setTimeout(function(){var r=document.querySelector('tr[data-id="'+id+'"]');if(r){r.scrollIntoView({behavior:'smooth',block:'center'});r.style.outline='2px solid var(--ac)';setTimeout(function(){r.style.outline=''},3000)}},120);
+}
+function smItemRow(i,extra){
+  var age=agd(i.updated||i.created);
+  return '<div onclick="smJump(\''+esc(i.id)+'\')" style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,54,84,.3);font-size:12px;cursor:pointer">'
+    +'<span style="font-family:JetBrains Mono;font-size:10px;color:var(--ac);min-width:78px">'+esc(i.id)+'</span>'
+    +'<span style="flex:1;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(i.title||'')+'</span>'
+    +'<span style="font-size:10px;color:var(--t3);min-width:90px;text-align:right">'+esc(i.assignee||'Unassigned')+'</span>'
+    +(extra||('<span style="font-size:10px;color:var(--t3);min-width:46px;text-align:right">'+(age!=null?age+'d':'—')+'</span>'))
+    +'</div>';
+}
+
+function rSM(){
+  const el=document.getElementById('smC');
+  if(!el)return;
+  if(!D.length){el.innerHTML='<div class="es"><h3>No Data</h3><p>Import items to see the Scrum Master view</p></div>';return}
+
+  const base=D.filter(i=>!i.synthetic);
+  const projs=[...new Set(base.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
+  const SP=base.filter(i=>msPass('sm-proj',(i.projectKey||i.space||'')));
+  const teams=[...new Set(SP.map(i=>i.team).filter(Boolean))].sort();
+  const fixes=[...new Set(SP.map(i=>i.fixVersion).filter(Boolean))].sort();
+  const SD=SP.filter(i=>msPass('sm-team',i.team||'')&&msPass('sm-fix',i.fixVersion||''));
+
+  let h='';
+  h+='<div style="position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 0 0;margin-bottom:16px;border-bottom:2px solid var(--bdr)">';
+  h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">';
+  h+='<h2 style="font-size:18px;margin:0">Scrum Master</h2>';
+  h+='<span style="font-size:12px;color:var(--t3)">Flow, WIP &amp; impediments for your team’s increment</span>';
+  h+='</div></div>';
+
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center">';
+  h+='<span style="font-size:11px;color:var(--t2);font-weight:600">My scope:</span>';
+  if(projs.length)h+=msW('sm-proj','Project',projs,rSM);
+  if(teams.length)h+=msW('sm-team','Team',teams,rSM);
+  if(fixes.length)h+=msW('sm-fix','Increment',fixes,rSM);
+  h+='<span style="margin-left:auto;font-size:11px;color:var(--t2);display:inline-flex;align-items:center;gap:6px">Aging after <input type="number" min="1" value="'+smAgingDays+'" onchange="smSetAging(this.value)" style="width:52px;padding:4px 6px;border:1px solid var(--bdr);border-radius:6px;background:var(--bg2);color:var(--t1);font-size:11px"> days</span>';
+  h+='<span style="font-size:11px;color:var(--t2);display:inline-flex;align-items:center;gap:6px">WIP/person <input type="number" min="1" value="'+smWipCap+'" onchange="smSetWip(this.value)" style="width:46px;padding:4px 6px;border:1px solid var(--bdr);border-radius:6px;background:var(--bg2);color:var(--t1);font-size:11px"></span>';
+  h+='</div>';
+
+  if(!SD.length){el.innerHTML=h+'<div class="es"><h3>No items in scope</h3><p>Adjust the filters above to select your team and increment.</p></div>';return}
+
+  const todo=SD.filter(i=>smCat(i)==='To Do');
+  const wip=SD.filter(i=>smCat(i)==='In Progress');
+  const done=SD.filter(i=>smCat(i)==='Done');
+  const pts=arr=>arr.reduce((a,i)=>a+(i.effort||0),0);
+  const totPts=pts(SD),donePts=pts(done),wipPts=pts(wip);
+  const progPct=totPts?Math.round(donePts/totPts*100):(SD.length?Math.round(done.length/SD.length*100):0);
+  const blocked=SD.filter(smBlocked);
+  const agingWip=wip.filter(i=>{var a=agd(i.updated||i.created);return a!=null&&a>smAgingDays}).sort((a,b)=>(agd(b.updated||b.created)||0)-(agd(a.updated||a.created)||0));
+  const wipNoAssignee=wip.filter(i=>!i.assignee);
+  const wipNoEst=wip.filter(i=>!i.effort||i.effort<=0);
+
+  // ---- KPI cards ----
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px">';
+  // Increment progress
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">INCREMENT PROGRESS</div>';
+  h+='<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px"><span style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:var(--t1)">'+progPct+'%</span><span style="font-size:11px;color:var(--t3)">done by points</span></div>';
+  h+='<div style="width:100%;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="width:'+progPct+'%;height:100%;background:var(--hi)"></div></div>';
+  h+='<div style="font-size:11px;color:var(--t3)">'+donePts+' / '+totPts+' pts · '+done.length+' / '+SD.length+' items</div></div>';
+  // WIP
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">WORK IN PROGRESS</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:var(--ac);margin-bottom:4px">'+wip.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:4px">'+wipPts+' pts in flight</div>';
+  h+='<div style="font-size:11px;color:'+(agingWip.length?'var(--mid)':'var(--t3)')+'">'+agingWip.length+' aging (&gt;'+smAgingDays+'d)</div></div>';
+  // Impediments
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">IMPEDIMENTS</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(blocked.length?'var(--red)':'var(--hi)')+';margin-bottom:4px">'+blocked.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3)">blocked / on hold</div>';
+  h+='<div style="font-size:11px;color:'+(wipNoAssignee.length?'var(--mid)':'var(--t3)')+'">'+wipNoAssignee.length+' WIP unassigned</div></div>';
+  // Aging WIP
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">AGING WIP</div>';
+  h+='<div style="font-size:28px;font-weight:700;font-family:JetBrains Mono;color:'+(agingWip.length>3?'var(--red)':agingWip.length?'var(--mid)':'var(--hi)')+';margin-bottom:4px">'+agingWip.length+'</div>';
+  h+='<div style="font-size:11px;color:var(--t3)">in progress &gt;'+smAgingDays+'d</div>';
+  h+='<div style="font-size:11px;color:'+(wipNoEst.length?'var(--mid)':'var(--t3)')+'">'+wipNoEst.length+' WIP unestimated</div></div>';
+  h+='</div>';
+
+  // ---- Workflow snapshot ----
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi);margin-bottom:20px">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">WORKFLOW SNAPSHOT</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:12px">Board state across the increment</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
+  [['To Do',todo,'var(--t3)'],['In Progress',wip,'var(--ac)'],['Done',done,'var(--hi)']].forEach(function(col){
+    var nm=col[0],arr=col[1],c=col[2];
+    var w=SD.length?Math.round(arr.length/SD.length*100):0;
+    h+='<div style="padding:12px;background:var(--bg);border-radius:var(--r)">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:11px;font-weight:600;color:'+c+'">'+nm+'</span><span style="font-size:20px;font-weight:700;font-family:JetBrains Mono;color:var(--t1)">'+arr.length+'</span></div>';
+    h+='<div style="width:100%;height:6px;background:var(--bgi);border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="width:'+w+'%;height:100%;background:'+c+'"></div></div>';
+    h+='<div style="font-size:10px;color:var(--t3)">'+pts(arr)+' pts · '+w+'%</div></div>';
+  });
+  h+='</div></div>';
+
+  // ---- Aging WIP table ----
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi);margin-bottom:20px">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">AGING WORK IN PROGRESS</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:10px">In Progress items untouched for more than '+smAgingDays+' days — your daily-standup radar</div>';
+  if(agingWip.length){
+    h+='<div style="display:flex;align-items:center;gap:10px;padding:0 0 4px 0;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em"><span style="min-width:78px">Key</span><span style="flex:1">Summary</span><span style="min-width:90px;text-align:right">Assignee</span><span style="min-width:46px;text-align:right">Idle</span></div>';
+    agingWip.slice(0,15).forEach(function(i){h+=smItemRow(i)});
+    if(agingWip.length>15)h+='<div style="font-size:10px;color:var(--t3);padding-top:8px">+ '+(agingWip.length-15)+' more</div>';
+  } else {
+    h+='<div style="font-size:12px;color:var(--hi);padding:8px 0">No aging WIP — flow looks healthy.</div>';
+  }
+  h+='</div>';
+
+  // ---- Team load ----
+  const byA={};
+  wip.forEach(function(i){var k=i.assignee||'Unassigned';if(!byA[k])byA[k]={n:0,p:0};byA[k].n++;byA[k].p+=(i.effort||0)});
+  const loadRows=Object.keys(byA).map(function(k){return {who:k,n:byA[k].n,p:byA[k].p}}).sort((a,b)=>b.n-a.n);
+  const maxN=loadRows.reduce((m,r)=>Math.max(m,r.n),1);
+  h+='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi);margin-bottom:20px">';
+  h+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:4px">TEAM LOAD (WIP)</div>';
+  h+='<div style="font-size:11px;color:var(--t3);margin-bottom:12px">In-progress items per person — amber over '+smWipCap+'/person</div>';
+  if(loadRows.length){
+    loadRows.forEach(function(r){
+      var over=r.who!=='Unassigned'&&r.n>smWipCap;
+      var w=Math.round(r.n/maxN*100);
+      h+='<div style="display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px">';
+      h+='<span style="min-width:120px;color:var(--t1)'+(r.who==='Unassigned'?';color:var(--t3);font-style:italic':'')+'">'+esc(r.who)+'</span>';
+      h+='<div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:'+w+'%;height:100%;background:'+(over?'var(--mid)':'var(--ac)')+'"></div></div>';
+      h+='<span style="min-width:80px;text-align:right;font-family:JetBrains Mono;font-size:11px;color:'+(over?'var(--mid)':'var(--t2)')+'">'+r.n+' / '+r.p+'pts</span>';
+      h+='</div>';
+    });
+  } else { h+='<div style="font-size:12px;color:var(--t3)">No work in progress.</div>'; }
+  h+='</div>';
+
+  // ---- Impediments & risks ----
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px">';
+  function riskCard(title,arr,emptyMsg){
+    var o='<div class="sc" style="padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)">';
+    o+='<div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:10px">'+title+' ('+arr.length+')</div>';
+    if(arr.length){arr.slice(0,8).forEach(function(i){o+=smItemRow(i)});if(arr.length>8)o+='<div style="font-size:10px;color:var(--t3);padding-top:8px">+ '+(arr.length-8)+' more</div>';}
+    else o+='<div style="font-size:12px;color:var(--hi);padding:6px 0">'+emptyMsg+'</div>';
+    return o+'</div>';
+  }
+  h+=riskCard('BLOCKED / ON HOLD',blocked,'Nothing blocked.');
+  h+=riskCard('WIP — UNASSIGNED',wipNoAssignee,'All WIP owned.');
+  h+=riskCard('WIP — UNESTIMATED',wipNoEst,'All WIP estimated.');
+  h+='</div>';
+
+  el.innerHTML=h;
 }
 
 function rPO() {
