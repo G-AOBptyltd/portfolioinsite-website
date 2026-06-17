@@ -651,6 +651,8 @@
     <a class="sb-link" href="#dashboard" onclick="setActive(this)"><span class="sb-icon">📊</span> Dashboard <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#roadmap" onclick="setActive(this)"><span class="sb-icon">🗓️</span> Roadmap <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#product-owner" onclick="setActive(this)"><span class="sb-icon">👤</span> Product Owner <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#scrum-master" onclick="setActive(this)"><span class="sb-icon">🏃</span> Scrum Master <span class="sb-lock">🔒</span></a>
+    <a class="sb-link" href="#business-analyst" onclick="setActive(this)"><span class="sb-icon">📝</span> Business Analyst <span class="sb-lock">🔒</span></a>
     <a class="sb-link" href="#backlog-health" onclick="setActive(this)"><span class="sb-icon">❤️</span> Backlog Health <span class="sb-lock">🔒</span></a>
 
     <div class="sb-label">Reference</div>
@@ -670,8 +672,8 @@
       <h1 class="hero-title">Know What Matters.<br><span>Cut What Doesn't.</span></h1>
       <p class="hero-sub">Everything you need to score your backlog with MoSCoW, map value vs effort on the strategic quadrant, manage epics and features, and visualise your roadmap — all in the browser, no install required.</p>
       <div class="hero-meta">
-        <span class="hero-stat"><strong>10</strong> modules covered</span>
-        <span class="hero-stat"><strong>3</strong> role-specific guides</span>
+        <span class="hero-stat"><strong>12</strong> modules covered</span>
+        <span class="hero-stat"><strong>3</strong> role cockpits — PO · SM · BA</span>
         <span class="hero-stat">Jira · ServiceNow · Azure DevOps · Any CSV</span>
         <span class="hero-stat">100% browser-based, no install</span>
       </div>
@@ -756,23 +758,23 @@
         </div>
       </div>
 
-      <p class="pub-overview">PortfolioInSite Web is designed for three distinct roles. Each brings different intent to the same dataset — understanding which lens you're working from helps you focus on the right modules and avoid drowning in data not relevant to your decisions.</p>
+      <p class="pub-overview">PortfolioInSite Web ships with three dedicated role cockpits. Each brings a different intent to the same dataset, and each scopes to your team and the increment you're planning — so you focus on the decisions that are yours to make and avoid drowning in data that isn't.</p>
 
       <div class="role-cards">
         <div class="role-card po">
-          <div class="role-emoji">🧩</div>
-          <h4>Product Owner / BA</h4>
-          <p>Your primary home is Backlog Triage. Score items, manage MoSCoW bands, and maintain the Strategic Map. Focus: getting the right things to the top of the backlog for the next sprint.</p>
-        </div>
-        <div class="role-card pm">
-          <div class="role-emoji">📋</div>
-          <h4>Portfolio / Programme Manager</h4>
-          <p>Use Epics & Features and the Roadmap for cross-team visibility. Your goal is ensuring the portfolio is aligned to strategy, and the right epics are being prioritised for PI planning.</p>
+          <div class="role-emoji">👤</div>
+          <h4>Product Owner</h4>
+          <p>Your home is the Product Owner cockpit — value and readiness. A readiness ring, a sprint forecast against your capacity, and a prioritised top-5 (Bang-for-Buck or WSJF) answer one question: what is my team's ready, highest-value work for the next increment?</p>
         </div>
         <div class="role-card dm">
-          <div class="role-emoji">🔍</div>
-          <h4>Delivery / Scrum Master</h4>
-          <p>Backlog Health is your primary signal. Monitor stagnation, age, and assignee load. Use the Dashboard to track sprint-over-sprint velocity and MoSCoW distribution trends.</p>
+          <div class="role-emoji">🏃</div>
+          <h4>Scrum Master</h4>
+          <p>Your home is the Scrum Master cockpit — flow and impediments. Increment progress, work-in-progress, aging-WIP and an impediment radar tell you exactly what to unblock before stand-up, with team load flagged when anyone is over capacity.</p>
+        </div>
+        <div class="role-card pm">
+          <div class="role-emoji">📝</div>
+          <h4>Business Analyst</h4>
+          <p>Your home is the Business Analyst cockpit — backlog readiness. Score the open backlog against a Definition of Ready, see exactly what each item is missing, and close the traceability gaps so refinement effort goes where it moves the needle.</p>
         </div>
       </div>
 
@@ -1071,22 +1073,23 @@
       <div class="mod-header">
         <div class="mod-icon purple">👤</div>
         <div class="mod-meta">
-          <h2 class="mod-title">Product Owner View</h2>
+          <h2 class="mod-title">Product Owner Cockpit</h2>
           <div class="mod-badges">
             <span class="badge badge-po">Product Owner</span>
           </div>
         </div>
       </div>
 
-      <p class="pub-overview">The Product Owner view gives POs a personal workspace — a prioritised list of their own items ranked by MoSCoW score, with sprint assignment controls and a capacity bar showing how much of their PI commitment is Must Have vs Could Have.</p>
+      <p class="pub-overview">The Product Owner cockpit is your home for getting the right work to the top — scoped to your team and the increment you're planning. A readiness ring, a sprint forecast against your capacity, and a prioritised top-5 answer one question: what is my team's ready, highest-value work for the next increment?</p>
 
       <div class="gate-wrap">
         <div class="gate-inner">
           <div class="gated-steps">
             <h4>Product Owner capabilities</h4>
-            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Personal backlog view</h5><p>Filtered automatically to items assigned to the current PO — reducing noise from cross-team items while keeping the full portfolio context available.</p></div></div>
-            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Sprint assignment</h5><p>Drag items into sprint buckets directly from this view — changes reflect immediately in the Backlog Triage table.</p></div></div>
-            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>PI capacity bar</h5><p>Visual bar showing Must/Should/Could/Won't item counts and story points against the PI capacity ceiling — immediate visual confirmation of over-commitment.</p></div></div>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>My scope — Project / Team / Increment</h5><p>Every card recomputes to your squad and the increment you're planning, so you're never reading another team's noise. Leave a filter empty to see everything.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Readiness &amp; sprint forecast</h5><p>The readiness ring shows how much of your scoped backlog is ready to pull; the sprint forecast packs your highest-priority items into your sprint capacity and flags over-commitment.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Prioritised top-5 — Bang-for-Buck or WSJF</h5><p>Rank by Bang-for-Buck (total score ÷ effort) or WSJF (value + risk + readiness ÷ effort) to defend your sequencing in planning conversations.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Backlog &amp; PI Planner</h5><p>Group your backlog by epic, team, component or feature, then drag items into program increments with per-team capacity — all from the one cockpit.</p></div></div>
           </div>
         </div>
         <div class="gate-fade"></div>
@@ -1094,6 +1097,82 @@
           <div class="gate-lock">🔒</div>
           <h3>Product Owner guide is in the licensed playbook</h3>
           <p>Unlock sprint assignment workflows, capacity planning tips, and PI review preparation guides.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ SCRUM MASTER (LOCKED) ════════ -->
+    <section class="module-section" id="scrum-master">
+      <div class="mod-header">
+        <div class="mod-icon indigo">🏃</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Scrum Master Cockpit</h2>
+          <div class="mod-badges">
+            <span class="badge badge-dm">Scrum Master</span>
+            <span class="badge badge-new">New</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Scrum Master cockpit is a flow and impediment lens — scoped to your team and increment. It answers "how is the work moving?" with increment progress, work-in-progress, aging WIP and an impediment radar, so you walk into stand-up knowing exactly what to unblock.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Scrum Master capabilities</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Flow at a glance</h5><p>Increment progress by points, a live work-in-progress count, and a To Do / In Progress / Done workflow snapshot across the whole increment.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>Aging-WIP radar</h5><p>In-progress items untouched beyond your threshold (default 14 days), sorted by idle time — your daily stand-up worklist. Click straight through to the item.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Impediments</h5><p>Blocked and on-hold items, plus in-progress work that is unassigned or unestimated and therefore can't be forecast — the things to clear first.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Team load</h5><p>Work-in-progress items and points per person, flagged when anyone exceeds your WIP-per-person limit, so you can rebalance before overburden bites.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Scrum Master guide is in the licensed playbook</h3>
+          <p>Unlock flow-coaching playbooks, WIP-limit calibration, and stand-up and retrospective facilitation guides.</p>
+          <a href="/pricing" class="btn-unlock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Unlock Full Playbook
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ BUSINESS ANALYST (LOCKED) ════════ -->
+    <section class="module-section" id="business-analyst">
+      <div class="mod-header">
+        <div class="mod-icon teal">📝</div>
+        <div class="mod-meta">
+          <h2 class="mod-title">Business Analyst Cockpit</h2>
+          <div class="mod-badges">
+            <span class="badge badge-po">Business Analyst</span>
+            <span class="badge badge-new">New</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="pub-overview">The Business Analyst cockpit is a backlog-readiness lens. It scores your open backlog against a Definition of Ready, shows exactly what each item is missing, and surfaces traceability gaps — so refinement effort goes where it moves the needle.</p>
+
+      <div class="gate-wrap">
+        <div class="gate-inner">
+          <div class="gated-steps">
+            <h4>Business Analyst capabilities</h4>
+            <div class="step"><div class="step-num">1</div><div class="step-body"><h5>Definition of Ready</h5><p>Every open item is checked against five criteria — estimated, prioritised, readiness-scored, linked to an epic, and categorised. A backlog-readiness percentage tells you how close you are to sprint-ready.</p></div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><h5>DoR coverage</h5><p>A bar per criterion shows what share of the backlog meets it, so you target the weakest dimension first instead of refining at random.</p></div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><h5>Refinement queue</h5><p>Your highest-value not-ready items, each tagged with the exact criteria it fails. Click straight through to fix it in Backlog Triage.</p></div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><h5>Traceability gaps</h5><p>Orphaned stories with no parent epic, and epics with no children — the structural holes that break portfolio roll-ups and PI planning.</p></div></div>
+          </div>
+        </div>
+        <div class="gate-fade"></div>
+        <div class="gate-card">
+          <div class="gate-lock">🔒</div>
+          <h3>Business Analyst guide is in the licensed playbook</h3>
+          <p>Unlock Definition-of-Ready templates, refinement-session facilitation, and requirements-traceability checklists.</p>
           <a href="/pricing" class="btn-unlock">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Unlock Full Playbook
