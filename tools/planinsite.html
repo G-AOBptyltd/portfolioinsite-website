@@ -1133,7 +1133,7 @@ function aobGateCheck(){
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 <span id="licBadgeText">TRIAL</span>
 </span>
-            <button class="btn btn-secondary" onclick="exportData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">⬇ Export</button>
+            <button class="btn btn-secondary" onclick="openPlnImport('export')" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">⬇ Export</button>
             <button class="btn btn-primary" onclick="openPlnImport()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0">📥 Import</button>
             <button class="btn btn-secondary" onclick="plnResetData()" style="padding:6px 14px;font-size:13px;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;color:var(--red);border-color:var(--red)">Reset Data</button>
             <button onclick="openConfig()" style="background:none;border:1px solid var(--bdr);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--t2);font-size:13px;display:flex;align-items:center;gap:5px;font-family:inherit" title="Configuration">&#9881; Config</button>
@@ -1155,8 +1155,8 @@ function aobGateCheck(){
     <div id="plnImpMod" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;overflow-y:auto;padding:24px 16px" onclick="if(event.target===this)closePlnImport()">
       <div style="background:var(--bg1);border-radius:12px;max-width:600px;margin:40px auto;padding:28px;box-shadow:var(--sh);position:relative">
         <button onclick="closePlnImport()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--t2);line-height:1">×</button>
-        <h2 style="margin:0 0 4px;font-size:18px;color:var(--t1)">Import Data</h2>
-        <p style="font-size:13px;color:var(--t2);margin:0 0 20px">Bring your backlog into PlanInSite from a Jira or Advanced Roadmaps CSV.</p>
+        <h2 style="margin:0 0 4px;font-size:18px;color:var(--t1)">Import &amp; Export Data</h2>
+        <p style="font-size:13px;color:var(--t2);margin:0 0 20px">Bring data into PlanInSite from a Jira or Advanced Roadmaps CSV, or export your plan as a backup or CSV.</p>
 
         <!-- Portfolio Suite Data card -->
         <div style="background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.3);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
@@ -1171,16 +1171,35 @@ function aobGateCheck(){
           </div>
         </div>
 
-        <!-- Drop zone -->
-        <div class="drop-zone" id="dropZone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" onclick="document.getElementById('fileInput').click()">
-          <div class="drop-zone-icon">📄</div>
-          <div class="drop-zone-text">Drop CSV files here or click to browse</div>
-          <div class="drop-zone-hint">Supports Jira and Advanced Roadmaps formats</div>
+        <!-- Two-zone import: backlog vs velocity -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px">① PI planning data <span style="font-weight:500;color:var(--t3)">(backlog)</span></div>
+            <div class="drop-zone" id="dropZoneBacklog" ondrop="handleZoneDrop(event,'backlog')" ondragover="handleZoneDragOver(event,'backlog')" ondragleave="handleZoneDragLeave(event,'backlog')" onclick="document.getElementById('fileInputBacklog').click()" style="padding:20px 14px">
+              <div class="drop-zone-icon">🎯</div>
+              <div class="drop-zone-text" style="font-size:13px">Drop planning items here</div>
+              <div class="drop-zone-hint">Epics / Features to commit</div>
+            </div>
+            <input type="file" id="fileInputBacklog" accept=".csv,.json" style="display:none;" onchange="handleZoneSelect(event,'backlog')">
+            <div id="backlogStatus" style="display:none;font-size:11.5px;color:var(--t2);margin-top:8px;line-height:1.5"></div>
+            <button class="btn btn-primary" id="backlogImportBtn" onclick="importBacklog()" style="width:100%;margin-top:8px;display:none">📥 Import planning items</button>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:6px">② Team &amp; velocity data <span style="font-weight:500;color:var(--t3)">(history)</span></div>
+            <div class="drop-zone" id="dropZoneVelocity" ondrop="handleZoneDrop(event,'velocity')" ondragover="handleZoneDragOver(event,'velocity')" ondragleave="handleZoneDragLeave(event,'velocity')" onclick="document.getElementById('fileInputVelocity').click()" style="padding:20px 14px">
+              <div class="drop-zone-icon">👥</div>
+              <div class="drop-zone-text" style="font-size:13px">Drop completed sprint history here</div>
+              <div class="drop-zone-hint">Sets each team's capacity</div>
+            </div>
+            <input type="file" id="fileInputVelocity" accept=".csv,.json" style="display:none;" onchange="handleZoneSelect(event,'velocity')">
+            <div id="velocityStatus" style="display:none;font-size:11.5px;color:var(--t2);margin-top:8px;line-height:1.5"></div>
+            <button class="btn btn-primary" id="velocityImportBtn" onclick="importVelocity()" style="width:100%;margin-top:8px;display:none">👥 Import teams &amp; velocity</button>
+          </div>
         </div>
-        <input type="file" id="fileInput" accept=".csv,.json" style="display:none;" onchange="handleFileSelect(event)">
+        <p style="font-size:11.5px;color:var(--t3);margin:10px 0 0;line-height:1.6">Two purposes, two exports: planning items become your plannable backlog; completed sprint history sets team capacity. Drop a <strong>.json backup</strong> on either zone to restore everything. Queries are in <strong>Help Tips → JQL Query Library</strong>.</p>
 
         <!-- Import settings -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
           <div class="form-group">
             <label class="form-label">Import Mode</label>
             <select id="importMode">
@@ -1197,7 +1216,18 @@ function aobGateCheck(){
             </select>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="importData();closePlnImport()" style="width:100%;margin-top:14px">📥 Import Items</button>
+        <div id="importSummary" style="display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--t2);line-height:1.7"></div>
+
+        <!-- Export your plan -->
+        <div id="exportSection" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)">
+          <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:4px">⬇ Export your plan</div>
+          <div id="exportContents" style="font-size:11.5px;color:var(--t3);margin-bottom:10px;line-height:1.6">Nothing loaded yet — import or build a plan first.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <button class="btn btn-secondary" onclick="exportData()" style="font-size:12px" title="Full backup — teams, PI plan and config in one file you can re-import">💾 Full backup (JSON)</button>
+            <button class="btn btn-secondary" onclick="exportTeamsCSV()" style="font-size:12px" title="Teams, members, velocity and PI capacity as a CSV">👥 Teams (CSV)</button>
+            <button class="btn btn-secondary" onclick="exportPiPlanCSV()" style="font-size:12px" title="Committed features per team as a CSV">🎯 PI plan (CSV)</button>
+          </div>
+        </div>
 
         <!-- Demo data -->
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bdr)">
@@ -1435,6 +1465,32 @@ function aobGateCheck(){
             </div>
 
             <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">✅ What PlanInSite helps with — and what it doesn't</div>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:14px;">PlanInSite suits some ways of working better than others. It assumes you run on Jira and plan in <strong>sprints</strong>. Read this before you import so you know what to expect.</p>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;">
+                <div style="background:var(--bg2);border:1px solid rgba(16,185,129,.25);border-radius:8px;padding:12px 14px;">
+                  <div style="font-size:13px;font-weight:700;color:#10b981;margin-bottom:8px;">Designed for</div>
+                  <ul style="margin:0;padding-left:16px;color:var(--t2);font-size:12.5px;line-height:1.7;">
+                    <li>Scrum and SAFe teams running PI / quarterly planning</li>
+                    <li>Forecasting commitment against capacity derived from historical sprint velocity</li>
+                    <li>Backlog refinement, MoSCoW prioritisation and PI loading at the Feature / Epic level</li>
+                  </ul>
+                </div>
+                <div style="background:var(--bg2);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:12px 14px;">
+                  <div style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:8px;">Use with care</div>
+                  <ul style="margin:0;padding-left:16px;color:var(--t2);font-size:12.5px;line-height:1.7;">
+                    <li><strong>Kanban / flow teams</strong> — no sprints means no calculated velocity. You can still plan items, but enter each team's capacity manually (Teams &amp; Capacity → Edit → tick Lock).</li>
+                    <li><strong>No completed-sprint history</strong> — if your export has no Done items across past sprints, velocity can't be calculated; set it manually.</li>
+                    <li><strong>Day-to-day sprint scheduling</strong> — PlanInSite plans at the commitment level, not detailed sprint execution.</li>
+                  </ul>
+                </div>
+              </div>
+              <div style="border-top:1px solid var(--bdr);margin-top:12px;padding-top:10px;">
+                <p style="font-size:12.5px;color:var(--t2);line-height:1.7;"><strong>Your hierarchy is yours.</strong> Every organisation models work differently, so PlanInSite doesn't assume your structure. The two most variable things in Jira — <strong>issue-type names</strong> and <strong>workflow statuses</strong> — are yours to map, once: tell PI Loading which levels are planning items in <strong>Config → PI Loading Levels</strong>, and let your export's Status column mark what's done. Everything downstream follows that.</p>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:20px;">
               <div class="card-title" style="margin-bottom:14px;">📋 Tab Overview</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">📥 Import Data</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">Upload CSV from Jira or Advanced Roadmaps. Auto-maps standard column names.</div></div>
@@ -1446,10 +1502,46 @@ function aobGateCheck(){
             </div>
 
             <div class="card" style="margin-bottom:20px;">
-              <div class="card-title" style="margin-bottom:10px;">🟠 Jira CSV Export — Recommended JQL</div>
-              <p style="font-size:13px;color:var(--t2);margin-bottom:8px;">In Jira, go to <strong>Issues → Search for Issues</strong>, switch to Advanced search, paste the query below (replace <code style="font-size:12px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">&lt;project name&gt;</code> with your project key), then export via <strong>Export → CSV (all fields)</strong>:</p>
-              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:14px 18px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:10px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;project name&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) AND updated &gt;= -16w ORDER BY created DESC</pre>
-              <p style="font-size:12px;color:var(--t3);margin-top:4px;">The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits results to items updated in the last 16 weeks. Adjust to control export size.</p>
+              <div class="card-title" style="margin-bottom:10px;">🟠 Jira CSV Export — JQL Query Library</div>
+              <p style="font-size:13px;color:var(--t2);margin-bottom:6px;">In Jira: <strong>Issues → Search for Issues</strong> → switch to JQL / Advanced → paste a query (replace <code style="font-size:12px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;">&lt;KEY&gt;</code> with your project key) → <strong>Export → CSV (all fields)</strong>.</p>
+              <p style="font-size:13px;color:var(--t2);margin-bottom:12px;">There are two distinct things you may bring in. <strong>The backlog</strong> answers <em>"what could we commit?"</em> The <strong>velocity history</strong> answers <em>"how much can each team take?"</em> They are usually two separate exports — pick the query that matches what you need.</p>
+
+              <div style="font-size:12.5px;font-weight:700;color:var(--fg);margin:4px 0 4px;">1 · Backlog — planning items to commit (PI Loading)</div>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:12px 16px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:6px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;KEY&gt; AND issuetype in (Epic, Feature) AND statusCategory != Done ORDER BY Rank ASC</pre>
+              <p style="font-size:11.5px;color:var(--t3);margin:2px 0 8px;">SAFe hierarchy — add the levels you plan at:</p>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:12px 16px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:6px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;KEY&gt; AND issuetype in ("SAFe Epic", Capability, Feature, Epic) AND statusCategory != Done ORDER BY Rank ASC</pre>
+
+              <div style="font-size:12.5px;font-weight:700;color:var(--fg);margin:14px 0 4px;">2 · Velocity — completed work that sets each team's capacity</div>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:12px 16px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:6px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;KEY&gt; AND sprint in closedSprints() AND statusCategory = Done AND "Story Points[Number]" &gt; 0 ORDER BY updated DESC</pre>
+              <p style="font-size:11.5px;color:var(--t3);margin:2px 0 8px;">Scoping to one team's board often gives the cleanest velocity:</p>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:12px 16px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:6px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;KEY&gt; AND "Team[Team]" = &lt;team&gt; AND sprint in closedSprints() AND statusCategory = Done ORDER BY Sprint ASC</pre>
+
+              <div style="font-size:12.5px;font-weight:700;color:var(--fg);margin:14px 0 4px;">3 · Everything — quick single-file start</div>
+              <pre style="background:#0d1424;color:#e2e8f0;border-radius:8px;padding:12px 16px;font-size:12.5px;font-family:'JetBrains Mono',monospace;overflow-x:auto;margin:6px 0;border:1px solid rgba(255,255,255,0.08);white-space:pre-wrap;">project = &lt;KEY&gt; AND sprint in (futureSprints(), openSprints(), closedSprints()) AND updated &gt;= -16w ORDER BY created DESC</pre>
+              <p style="font-size:12px;color:var(--t3);margin-top:6px;">Brings in backlog and recent sprint history together. The <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">-16w</code> filter limits to the last 16 weeks — widen it if a team needs 6–12 sprints of history for a stable velocity. The importer reads up to 9 Sprint columns and a Team / Team Name column automatically.</p>
+            </div>
+
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">📄 CSV Column Template</div>
+              <p style="font-size:13px;color:var(--t2);margin-bottom:10px;">Exporting all fields is easiest, but PlanInSite only needs a handful of columns. Any of these names (or Jira's defaults) are auto-detected and <strong>column order doesn't matter</strong>. Download a ready-made template to see the shape:</p>
+              <div style="overflow-x:auto;margin-bottom:12px;">
+                <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+                  <thead><tr style="text-align:left;color:var(--t3);border-bottom:1px solid var(--bdr);">
+                    <th style="padding:6px 10px;font-weight:600;">Column</th><th style="padding:6px 10px;font-weight:600;">Needed for</th><th style="padding:6px 10px;font-weight:600;">Notes</th>
+                  </tr></thead>
+                  <tbody style="color:var(--t2);line-height:1.6;">
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Issue key</code></td><td style="padding:6px 10px;color:#ef4444;font-weight:600;">Required</td><td style="padding:6px 10px;">Unique ID, e.g. PROJ-1234. Rows without a key are skipped.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Summary</code></td><td style="padding:6px 10px;color:#ef4444;font-weight:600;">Required</td><td style="padding:6px 10px;">Item title.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Issue Type</code></td><td style="padding:6px 10px;color:#ef4444;font-weight:600;">Required</td><td style="padding:6px 10px;">Epic, Feature, SAFe Epic, Story… drives which items appear in PI Loading.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Story Points</code></td><td style="padding:6px 10px;color:#f59e0b;font-weight:600;">Velocity</td><td style="padding:6px 10px;">Numeric. Needed to calculate delivered velocity and to size items.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Sprint</code></td><td style="padding:6px 10px;color:#f59e0b;font-weight:600;">Velocity</td><td style="padding:6px 10px;">Past sprint name(s). Up to 9 repeated Sprint columns supported.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Status</code></td><td style="padding:6px 10px;color:var(--t3);">Recommended</td><td style="padding:6px 10px;">Done / Resolved / Closed work counts toward velocity.</td></tr>
+                    <tr style="border-bottom:1px solid var(--bdr);"><td style="padding:6px 10px;"><code style="font-size:11.5px;">Team</code> / <code style="font-size:11.5px;">Team Name</code></td><td style="padding:6px 10px;color:var(--t3);">Recommended</td><td style="padding:6px 10px;">Groups velocity and capacity by team. A "Group - Aurora" style value becomes "Aurora".</td></tr>
+                    <tr><td style="padding:6px 10px;"><code style="font-size:11.5px;">Epic Link / Parent, Priority, Components, Labels, Fix Version, Due Date</code></td><td style="padding:6px 10px;color:var(--t3);">Optional</td><td style="padding:6px 10px;">Used in refinement, hierarchy and filtering.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn btn-p" onclick="downloadCsvTemplate()" style="font-size:13px;">⬇ Download CSV template</button>
             </div>
 
             <div class="card" style="margin-bottom:20px;">
@@ -1459,7 +1551,7 @@ function aobGateCheck(){
                 Team Velocity = total completed team SP ÷ number of relevant historical sprints<br>
                 PI Capacity = Team Velocity × PI sprint count
               </div>
-              <p style="color:var(--t2);font-size:13px;margin-bottom:8px;"><strong>Example:</strong> Vanguard velocity = 110 SP/sprint × 5 sprints = <strong>550 SP PI capacity</strong>. Only completed (Done/Resolved/Closed) work counts toward velocity.</p>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:8px;"><strong>Example:</strong> Aurora velocity = 110 SP/sprint × 5 sprints = <strong>550 SP PI capacity</strong>. Only completed (Done/Resolved/Closed) work counts toward velocity.</p>
               <div style="background:var(--bg2);border-radius:6px;padding:10px 14px;margin-bottom:8px">
                 <p style="font-size:12px;font-weight:700;color:var(--fg);margin-bottom:5px;">🔑 Sprint divisor vs Sprints per PI — they are different</p>
                 <p style="color:var(--t2);font-size:12px;line-height:1.7;">The <strong>sprint divisor</strong> (Velocity Baseline) is the historical averaging window — how many past sprints you divide delivered points by to get average velocity. <strong>Sprints per PI</strong> (Config) is the forward planning horizon that multiplies velocity into PI capacity. Setting one no longer changes the other.</p>
@@ -1489,12 +1581,28 @@ function aobGateCheck(){
               </div>
             </div>
 
+            <div class="card" style="margin-bottom:20px;">
+              <div class="card-title" style="margin-bottom:10px;">🔎 After you import — check what landed</div>
+              <p style="color:var(--t2);font-size:13px;margin-bottom:10px;">Importing is two outcomes in one step. Confirm both so you know what the tool could and couldn't use:</p>
+              <div style="border-top:1px solid var(--bdr);padding-top:10px;margin-bottom:8px;">
+                <p style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px;">① Items — did they all arrive?</p>
+                <p style="color:var(--t2);font-size:12.5px;line-height:1.7;">Open <strong>Backlog Refinement</strong> — the row count should match your export. Every planning-eligible type is available to <strong>PI Loading</strong> whether or not it has a team or a sprint. <strong>Unassigned items are expected</strong> — giving them a team and committing them is the planning job, not an import error.</p>
+              </div>
+              <div style="border-top:1px solid var(--bdr);padding-top:10px;margin-bottom:8px;">
+                <p style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px;">② Velocity — did each team get a capacity?</p>
+                <p style="color:var(--t2);font-size:12.5px;line-height:1.7;">A team only gets a <em>calculated</em> velocity if your export contains its <strong>completed (Done) sprint history with story points</strong>. Teams with no history show <strong>0</strong> — that's not a bug, there was nothing to average. Set their capacity by hand in <strong>Teams &amp; Capacity → Edit</strong> and tick <strong>Lock</strong> so a later baseline recalculation won't wipe it.</p>
+              </div>
+              <div style="background:var(--bg2);border-radius:6px;padding:10px 14px;">
+                <p style="color:var(--t2);font-size:12.5px;line-height:1.7;"><strong>Rule of thumb:</strong> a backlog export answers <em>"what could we do?"</em>; a velocity export answers <em>"how much can each team take?"</em> If your single file has plenty of items but no completed sprints, you'll see a full backlog and empty capacities — pull a velocity export (query 2 above) or enter capacity manually.</p>
+              </div>
+            </div>
+
             <div class="card">
               <div class="card-title" style="margin-bottom:14px;">💡 Tips &amp; Support</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">💾 Export often.</strong> All data is browser-only — clearing site data resets the tool. Use Download → JSON to save your PI plan.</div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔃 Import flow.</strong> Import first → configure Teams &amp; Capacity → load PI Board. The board uses your velocity config to calculate capacity lines.</div>
-                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔗 Clickable issue keys.</strong> Add your Jira Site URL in Config (e.g. <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">https://yourco.atlassian.net</code>) and every DA-1234 key becomes a direct link to the issue in Jira.</div>
+                <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">🔗 Clickable issue keys.</strong> Add your Jira Site URL in Config (e.g. <code style="font-size:11px;background:rgba(255,255,255,.07);padding:1px 4px;border-radius:3px;">https://yourco.atlassian.net</code>) and every PROJ-1234 key becomes a direct link to the issue in Jira.</div>
                 <div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;"><strong style="color:var(--fg);">📧 Support.</strong> Contact <a href="mailto:support@portfolioinsite.com.au" style="color:var(--ac);">support@portfolioinsite.com.au</a> or visit <a href="https://portfolioinsite.com.au" target="_blank" rel="noopener" style="color:var(--ac);">portfolioinsite.com.au</a>.</div>
               </div>
             </div>
@@ -2454,10 +2562,14 @@ function aobGateCheck(){
         // PlanInSite uses historical velocity data to calculate team capacity only.
 
         // ============ THEME ============
-        function openPlnImport() {
+        function openPlnImport(focus) {
             document.getElementById('plnImpMod').style.display = 'block';
             document.body.style.overflow = 'hidden';
             setTimeout(checkSuiteDetect, 50);
+            try { _refreshExportContents(); } catch(e){}
+            if (focus === 'export') {
+                setTimeout(() => { const el = document.getElementById('exportSection'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 90);
+            }
         }
         function closePlnImport() {
             document.getElementById('plnImpMod').style.display = 'none';
@@ -2863,7 +2975,7 @@ function aobGateCheck(){
                 let points = parseFloat(get('storyPoints')) || 0;
                 if (points > 10000) points = 0;
 
-                // Team: from explicit Team column (supports Jira native "Team Name": "DO - Vanguard" → "Vanguard")
+                // Team: from explicit Team column (supports Jira native "Team Name": "Group - Aurora" → "Aurora")
                 let team = _normaliseTeamName(get('team'));
 
                 items.push({
@@ -2956,6 +3068,97 @@ function aobGateCheck(){
                 console.log('CSV DIAGNOSTIC:', { colMap: parsed.colMap, headers: parsed.headers, missing, samplePts });
             };
             reader.readAsText(file);
+        }
+
+        // ===== Two-zone differentiated import =====
+        function _zoneEl(zone){ return document.getElementById(zone === 'velocity' ? 'dropZoneVelocity' : 'dropZoneBacklog'); }
+        function handleZoneDragOver(e, zone){ e.preventDefault(); e.stopPropagation(); _zoneEl(zone).classList.add('dragover'); }
+        function handleZoneDragLeave(e, zone){ _zoneEl(zone).classList.remove('dragover'); }
+        function handleZoneDrop(e, zone){ e.preventDefault(); e.stopPropagation(); _zoneEl(zone).classList.remove('dragover'); const f = e.dataTransfer.files[0]; if (f) routeZoneFile(f, zone); }
+        function handleZoneSelect(e, zone){ const f = e.target.files[0]; if (f) routeZoneFile(f, zone); }
+
+        // A .json backup dropped on either zone restores everything; a CSV is parsed for that zone's purpose.
+        function routeZoneFile(file, zone){
+            const isJson = /\.json$/i.test(file.name) || file.type === 'application/json';
+            if (isJson){ restoreJSONFile(file); closePlnImport(); return; }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const csv = ev.target.result;
+                window._suiteRawCsv = csv; window._suiteRawCsvName = file.name;
+                const parsed = parseCSVContent(csv);
+                if (!parsed.items.length){ showToast('No valid rows found. Check the CSV has a Key column.', 'error'); return; }
+                window._pendingParsedItems = parsed.items;
+                displayPreview(parsed.headers, parsed.items.slice(0, 10));
+                if (zone === 'velocity'){
+                    window._pendingVelocity = parsed.items;
+                    try { renderVelocityPreview(parsed.items, getVelocityConfig(loadData())); } catch(e){}
+                    const completed = parsed.items.filter(i => _isDoneStatus(i.statusCategory || i.status)).length;
+                    _setZoneStatus('velocity', parsed.items.length, completed);
+                } else {
+                    window._pendingBacklog = parsed.items;
+                    _setZoneStatus('backlog', parsed.items.length, null);
+                }
+                console.log('CSV DIAGNOSTIC (' + zone + '):', { colMap: parsed.colMap, headers: parsed.headers });
+            };
+            reader.readAsText(file);
+        }
+
+        function _isDoneStatus(s){
+            if (!s) return false;
+            const u = String(s).toUpperCase();
+            return u.includes('DONE') || u.includes('CLOSED') || u.includes('RESOLVED') || u.includes('COMPLETE')
+                || u === 'RELEASED' || u === 'ACCEPTED' || u === 'DEPLOYED' || u === 'VERIFIED';
+        }
+
+        function _setZoneStatus(zone, total, completed){
+            if (zone === 'velocity'){
+                const el = document.getElementById('velocityStatus'); const btn = document.getElementById('velocityImportBtn');
+                el.innerHTML = 'Parsed <strong>' + total + '</strong> rows · <strong>' + completed + '</strong> completed (count toward velocity).'
+                    + (completed === 0 ? ' <span style="color:var(--red)">No completed items — this file can\'t set velocity.</span>' : '');
+                el.style.display = 'block'; btn.style.display = '';
+            } else {
+                const el = document.getElementById('backlogStatus'); const btn = document.getElementById('backlogImportBtn');
+                el.innerHTML = 'Parsed <strong>' + total + '</strong> planning items, ready to add to the backlog.';
+                el.style.display = 'block'; btn.style.display = '';
+            }
+        }
+
+        // Zone ①: add plannable items only — no team/velocity creation.
+        function importBacklog(){
+            const items = window._pendingBacklog;
+            if (!items || !items.length){ showToast('Drop a planning-items CSV first.', 'warning'); return; }
+            const mode = document.getElementById('importMode').value;
+            const data = loadData();
+            finalizeImport(items, mode, data);
+            window._pendingBacklog = null;
+            const btn = document.getElementById('backlogImportBtn'); if (btn) btn.style.display = 'none';
+            const st = document.getElementById('backlogStatus'); if (st) st.style.display = 'none';
+            _showImportSummary();
+        }
+
+        // Zone ②: create teams + velocity from completed history — does NOT add items to the plannable backlog.
+        function importVelocity(){
+            const items = window._pendingVelocity;
+            if (!items || !items.length){ showToast('Drop a completed sprint-history CSV first.', 'warning'); return; }
+            window._pendingParsedItems = items;
+            window._importIntent = 'velocity';
+            importData();
+        }
+
+        function _showImportSummary(){
+            const el = document.getElementById('importSummary');
+            if (!el) return;
+            const data = loadData();
+            const items = (data.items || []).length;
+            const teams = (data.teams || []);
+            const withVel = teams.filter(t => (t.velocity || 0) > 0).length;
+            const noVel = teams.length - withVel;
+            el.innerHTML = '<strong>In PlanInSite now:</strong> ' + items + ' planning item(s) · ' + teams.length + ' team(s)'
+                + (teams.length ? (' — ' + withVel + ' with velocity'
+                    + (noVel ? ', <span style="color:#f59e0b">' + noVel + ' need manual capacity (Teams &amp; Capacity → Edit)</span>' : '')) : '')
+                + '.';
+            el.style.display = 'block';
+            try { _refreshExportContents(); } catch(e){}
         }
 
         function displayPreview(headers, items) {
@@ -3277,10 +3480,11 @@ function aobGateCheck(){
         }
 
         function showTeamDetectionModal(teamKeys, teamDetails, totalItems) {
+            const _iv = window._importIntent === 'velocity';
             let html = '<div id="teamDetectModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000">';
             html += '<div style="background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:32px;width:90%;max-width:700px;max-height:85vh;overflow-y:auto">';
             html += '<h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Teams Auto-Detected</h2>';
-            html += '<p style="color:var(--t2);font-size:13px;margin-bottom:20px">PlanInSite detected teams from sprint name prefixes. Select which to import.</p>';
+            html += '<p style="color:var(--t2);font-size:13px;margin-bottom:20px">' + (_iv ? 'Detected from completed sprint history. Select which teams to set up with calculated velocity — no backlog items are added here.' : 'PlanInSite detected teams from sprint name prefixes. Select which to import.') + '</p>';
             html += '<div style="background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.3);border-radius:8px;padding:12px;margin-bottom:16px">';
             html += '<strong style="color:var(--ac2)">Scan complete:</strong> <span style="color:var(--t2)">' + totalItems + ' items, ' + teamKeys.length + ' team(s) detected</span></div>';
             html += '<div style="max-height:380px;overflow-y:auto;margin-bottom:16px">';
@@ -3310,9 +3514,9 @@ function aobGateCheck(){
 
             html += '</div>';
             html += '<div style="display:flex;gap:8px">';
-            html += '<button class="btn btn-primary" onclick="confirmTeamImport()" style="flex:1">Import Selected Teams & Items</button>';
-            html += '<button class="btn btn-secondary" onclick="skipTeamImport()" style="padding:10px 20px">Skip — Items Only</button>';
-            html += '<button class="btn btn-secondary" onclick="document.getElementById(\'teamDetectModal\').remove()" style="padding:10px 20px;color:var(--t3)">Cancel</button>';
+            html += '<button class="btn btn-primary" onclick="confirmTeamImport()" style="flex:1">' + (_iv ? 'Import Selected Teams' : 'Import Selected Teams & Items') + '</button>';
+            if (!_iv) html += '<button class="btn btn-secondary" onclick="skipTeamImport()" style="padding:10px 20px">Skip — Items Only</button>';
+            html += '<button class="btn btn-secondary" onclick="window._importIntent=null;document.getElementById(\'teamDetectModal\').remove()" style="padding:10px 20px;color:var(--t3)">Cancel</button>';
             html += '</div></div></div>';
 
             document.body.insertAdjacentHTML('beforeend', html);
@@ -3331,6 +3535,7 @@ function aobGateCheck(){
             setTimeout(() => {
                 try {
                     const mode = document.getElementById('importMode').value;
+                    const intent = window._importIntent;
                     const data = loadData();
                     const velocityConfig = getVelocityConfig(data);
                     const selected = [...document.querySelectorAll('.team-detect-cb:checked')].map(cb => cb.value);
@@ -3342,7 +3547,7 @@ function aobGateCheck(){
                     });
 
                     // Create teams — use IAV data to calculate velocity per planned sprint
-                    if (mode === 'replace') { data.teams = []; data.items = []; }
+                    if (mode === 'replace') { data.teams = []; if (intent !== 'velocity') data.items = []; }
                     const existingNames = data.teams.map(t => t.name);
                     selected.forEach(team => {
                         if (!existingNames.includes(team)) {
@@ -3425,20 +3630,29 @@ function aobGateCheck(){
                         });
                     });
 
-                    if (mode === 'replace') { data.items = newItems; }
-                    else { data.items = [...data.items, ...newItems]; }
+                    if (intent !== 'velocity') {
+                        if (mode === 'replace') { data.items = newItems; }
+                        else { data.items = [...data.items, ...newItems]; }
+                    }
 
                     saveData(data);
                     window._pendingParsedItems = null;
                     window._pendingTeamDetails = null;
                     document.getElementById('teamDetectModal')?.remove();
-                    console.log('IMPORT: ' + newItems.length + ' items, teams: ' + selected.join(', '), 'Sample keys:', newItems.slice(0,5).map(i=>i.key), 'MEM_ITEMS:', MEM_ITEMS.length);
-                    showToast('Imported ' + newItems.length + ' items + ' + selected.length + ' teams', 'success');
+                    console.log('IMPORT (' + (intent || 'combined') + '): ' + newItems.length + ' items, teams: ' + selected.join(', '), 'MEM_ITEMS:', MEM_ITEMS.length);
+                    showToast(intent === 'velocity' ? ('Imported ' + selected.length + ' team(s) + velocity') : ('Imported ' + newItems.length + ' items + ' + selected.length + ' teams'), 'success');
                     if(window._suiteRawCsv)writeSuiteShare(window._suiteRawCsv,window._suiteRawCsvName||'jira-export.csv',newItems.length);
+                    window._importIntent = null;
+                    if (intent === 'velocity') {
+                        window._pendingVelocity = null;
+                        const vb = document.getElementById('velocityImportBtn'); if (vb) vb.style.display = 'none';
+                        const vs = document.getElementById('velocityStatus'); if (vs) vs.style.display = 'none';
+                    }
                     updateUI();
                     renderBacklog();
                     renderCapacity();
                     renderMoscowAnalysis();
+                    if (typeof _showImportSummary === 'function') _showImportSummary();
                 } catch(err) {
                     console.error('Import error:', err);
                     showToast('Import error: ' + err.message, 'error');
@@ -4420,14 +4634,75 @@ function aobGateCheck(){
                 showToast('Nothing to export yet — add teams, commit features, or import a CSV first', 'error');
                 return;
             }
+            const teamsN = (data.teams || []).length;
+            const itemsN = items.length;
+            const commitsN = data.piCommitments ? Object.values(data.piCommitments).reduce((s,a)=>s+(Array.isArray(a)?a.length:0),0) : 0;
+            // Self-describing manifest so you can see what's in the file without opening the app.
+            data._meta = {
+                tool: 'PlanInSite',
+                schema: 'planinsite_data_v3',
+                version: 'v3',
+                exportedAt: new Date().toISOString(),
+                contents: { planningItems: itemsN, teams: teamsN, committedFeatures: commitsN, includesConfig: true }
+            };
             const json = JSON.stringify(data, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
+            const d = new Date().toISOString().split('T')[0];
             a.href = url;
-            a.download = `planinsite-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `planinsite-plan-${d}-${itemsN}items-${teamsN}teams.json`;
             a.click();
-            showToast('Data exported', 'success');
+            URL.revokeObjectURL(url);
+            showToast(`Exported full backup — ${itemsN} items, ${teamsN} teams, ${commitsN} committed features, config included`, 'success');
+        }
+
+        // CSV helpers + targeted exports (teams and PI plan as their own files)
+        function _csvCell(v){ v = (v == null ? '' : String(v)); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+        function _downloadCSV(filename, rows){
+            const csv = rows.map(r => r.map(_csvCell).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+        function exportTeamsCSV(){
+            const data = loadData();
+            const teams = data.teams || [];
+            if (!teams.length){ showToast('No teams to export yet', 'error'); return; }
+            const rows = [['Team','Members','Avg Velocity (pts/sprint)','Sprints per PI','PI Capacity (pts)','Historical Sprints']];
+            teams.forEach(t => {
+                const sprintsPerPI = typeof t.sprints === 'number' ? t.sprints : 5;
+                const vel = t.velocity || 0;
+                rows.push([t.name, (t.members || []).join('; '), vel, sprintsPerPI, vel * sprintsPerPI, t.historicalSprints || '']);
+            });
+            _downloadCSV(`planinsite-teams-${new Date().toISOString().split('T')[0]}.csv`, rows);
+            showToast('Teams exported (' + teams.length + ')', 'success');
+        }
+        function exportPiPlanCSV(){
+            const data = loadData();
+            const commits = data.piCommitments || {};
+            const rows = [['Team','Key','Summary','Type','Story Points','Size','Sprint']];
+            let n = 0;
+            Object.entries(commits).forEach(([team, arr]) => {
+                (Array.isArray(arr) ? arr : []).forEach(c => {
+                    rows.push([team, c.key || '', c.summary || '', c.type || '', (c.points != null ? c.points : ''), c.size || c.tshirtSize || '', c.sprint || '']);
+                    n++;
+                });
+            });
+            if (!n){ showToast('No committed PI items to export yet', 'error'); return; }
+            _downloadCSV(`planinsite-pi-plan-${new Date().toISOString().split('T')[0]}.csv`, rows);
+            showToast('PI plan exported (' + n + ' items)', 'success');
+        }
+        function _refreshExportContents(){
+            const el = document.getElementById('exportContents');
+            if (!el) return;
+            const data = loadData();
+            const itemsN = (data.items || []).length;
+            const teamsN = (data.teams || []).length;
+            const commitsN = data.piCommitments ? Object.values(data.piCommitments).reduce((s,a)=>s+(Array.isArray(a)?a.length:0),0) : 0;
+            if (!itemsN && !teamsN && !commitsN){ el.textContent = 'Nothing loaded yet — import or build a plan first.'; return; }
+            el.innerHTML = 'Full backup will contain: <strong>' + itemsN + '</strong> planning items · <strong>' + teamsN + '</strong> teams · <strong>' + commitsN + '</strong> committed features · config.';
         }
 
         function importJSON() {
@@ -4821,6 +5096,24 @@ function aobGateCheck(){
     </script>
 
 <script>
+/* Help: download a minimal, correctly-shaped import template */
+function downloadCsvTemplate() {
+  const rows = [
+    'Issue Type,Issue key,Summary,Story Points,Sprint,Status,Team,Epic Link,Priority',
+    'Epic,PROJ-900,Account management platform,,,In Progress,Aurora,,High',
+    'Feature,PROJ-101,Single sign-on integration,,,Backlog,Aurora,PROJ-900,High',
+    'Feature,PROJ-102,Notification preferences redesign,8,Aurora Sprint 12,Done,Aurora,PROJ-900,Medium',
+    'Feature,PROJ-103,Search relevance improvements,5,Aurora Sprint 12,Done,Aurora,PROJ-900,Medium'
+  ].join('\n');
+  const blob = new Blob([rows], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'planinsite-import-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  if (typeof showToast === 'function') showToast('CSV template downloaded', 'success');
+}
+
 /* v2: Demo Data — loads 30-item PI plan across all 10 teams */
 function loadSampleData() {
   const csv = `Key,Summary,Assignee,Issue Type,Story Points,Sprint,Status,Team,Epic Link
@@ -4863,6 +5156,7 @@ AIAOB-1030,Anomaly detection and automated alerting,Kofi Mensah,Story,13,PI FY26
   window._pendingParsedItems = parsed.items;
   const modeEl = document.getElementById('importMode');
   if (modeEl) modeEl.value = 'replace';
+  window._importIntent = null;
   importData();
   const el = document.getElementById('sampleStatus');
   if (el) {
@@ -4902,9 +5196,11 @@ AIAOB-1030,Anomaly detection and automated alerting,Kofi Mensah,Story,13,PI FY26
           const parsed=parseCSVContent(sh.raw);
           if(!parsed.items||!parsed.items.length){showToast('Detected data appears empty','error');return;}
           window._pendingParsedItems=parsed.items;
+          window._pendingBacklog=parsed.items;
           displayPreview(parsed.headers,parsed.items.slice(0,10));
+          _setZoneStatus('backlog', parsed.items.length, null);
           dismissSuiteDetect();
-          showToast(parsed.items.length+' items ready from '+sh.source+' — click Import Items to load','success');
+          showToast(parsed.items.length+' items ready from '+sh.source+' — click "Import planning items"','success');
           writeSuiteShare(sh.raw,sh.filename,parsed.items.length);
         }
         // ────────────────────────────────────────────────────────────────
