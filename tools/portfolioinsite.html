@@ -2940,18 +2940,22 @@ function rPO() {
   if(poSection==='dashboard'){
   h+='<div style="margin-bottom:32px">';
 
-  // Add project filter to dashboard too
+  // Scope filters: Project / Team / Increment (Fix Version) — the PO's "my team, this increment" lens
   const poDashProjs=[...new Set(D.map(i=>i.projectKey||i.space||'').filter(Boolean))].sort();
-  if(poDashProjs.length){
+  const poDashTeams=[...new Set(PD.map(i=>i.team).filter(Boolean))].sort();
+  const poDashFixes=[...new Set(PD.map(i=>i.fixVersion).filter(Boolean))].sort();
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">';
-  h+=msW('po-proj','Project',poDashProjs,rPO);
+  h+='<span style="font-size:11px;color:var(--t2);font-weight:600">My scope:</span>';
+  if(poDashProjs.length)h+=msW('po-proj','Project',poDashProjs,rPO);
+  if(poDashTeams.length)h+=msW('po-team','Team',poDashTeams,rPO);
+  if(poDashFixes.length)h+=msW('po-fix','Increment',poDashFixes,rPO);
   h+='</div>';
-  }
 
-  const scored=PD.filter(i=>tot(i)!=null);
-  const withEffort=PD.filter(i=>i.effort!=null&&i.effort>0);
-  const ready=PD.filter(i=>i.scores.q5===5);
-  const readyPct=PD.length?Math.round(ready.length/PD.length*100):0;
+  const POD=PD.filter(i=>msPass('po-team',i.team||'')&&msPass('po-fix',i.fixVersion||''));
+  const scored=POD.filter(i=>tot(i)!=null);
+  const withEffort=POD.filter(i=>i.effort!=null&&i.effort>0);
+  const ready=POD.filter(i=>i.scores.q5===5);
+  const readyPct=POD.length?Math.round(ready.length/POD.length*100):0;
 
   const circumference=2*Math.PI*40;
   const readyOffset=circumference-(readyPct/100)*circumference;
@@ -2961,7 +2965,7 @@ function rPO() {
   // Card 1: Readiness
   h+='<div class="sc" style="text-align:center;padding:16px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--bgi)"><div class="sl" style="font-weight:600;font-size:12px;color:var(--ac);margin-bottom:12px">READINESS SCORE</div>';
   h+='<svg width="100" height="100" style="margin:8px auto;display:block"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg)" stroke-width="8"/><circle cx="50" cy="50" r="40" fill="none" stroke="'+(readyPct>=70?'var(--hi)':readyPct>=40?'var(--mid)':'var(--red)')+'" stroke-width="8" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+readyOffset+'" transform="rotate(-90 50 50)" stroke-linecap="round"/><text x="50" y="55" text-anchor="middle" fill="var(--t1)" font-size="20" font-weight="700" font-family="JetBrains Mono">'+readyPct+'%</text></svg>';
-  h+='<div class="ss" style="font-size:12px;color:var(--t3)">'+ready.length+' of '+PD.length+' items ready</div></div>';
+  h+='<div class="ss" style="font-size:12px;color:var(--t3)">'+ready.length+' of '+POD.length+' items ready</div></div>';
 
   // Card 2: Sprint Forecast
   const sprintItems=scored.filter(i=>i.effort&&i.effort>0).sort((a,b)=>{
@@ -3019,9 +3023,9 @@ function rPO() {
   h+='</div>'; // close po-grid
 
   // === BACKLOG HEALTH ===
-  const pctScored=PD.length?Math.round(scored.length/PD.length*100):0;
-  const pctEffort=PD.length?Math.round(withEffort.length/PD.length*100):0;
-  const mustItems=PD.filter(i=>bkt(tot(i))==='MUST');
+  const pctScored=POD.length?Math.round(scored.length/POD.length*100):0;
+  const pctEffort=POD.length?Math.round(withEffort.length/POD.length*100):0;
+  const mustItems=POD.filter(i=>bkt(tot(i))==='MUST');
   const avgMustAge=mustItems.length?Math.round(mustItems.reduce((s,i)=>(s+(agd(ageDate(i))||0)),0)/mustItems.length):0;
   const healthScore=Math.round((pctScored*0.3+pctEffort*0.3+readyPct*0.2+Math.max(0,100-avgMustAge)*0.2));
 
