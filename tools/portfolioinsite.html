@@ -1143,7 +1143,7 @@ function setTheme(mode) {
 
 // ── POI Config Drawer ──────────────────────────────────────────────────────
 
-function getHiddenTabs(){try{return new Set(JSON.parse(localStorage.getItem('ge_v13_hiddentabs')||'[]'));}catch(e){return new Set();}}
+function getHiddenTabs(){try{var raw=localStorage.getItem('ge_v13_hiddentabs');if(raw==null)return new Set(['guide','legend','agehelp']);return new Set(JSON.parse(raw));}catch(e){return new Set(['guide','legend','agehelp']);}}
 function setHiddenTabs(set){try{localStorage.setItem('ge_v13_hiddentabs',JSON.stringify([...set]));}catch(e){}}
 function applyTabVisibility(){var hidden=getHiddenTabs();document.querySelectorAll('#navTabs .tab').forEach(function(t){t.style.display=hidden.has(t.getAttribute('data-t'))?'none':'';});var active=document.querySelector('#navTabs .tab.on');if(active&&active.style.display==='none'){var first=Array.prototype.find.call(document.querySelectorAll('#navTabs .tab'),function(t){return t.style.display!=='none';});if(first)first.click();}}
 function toggleTabVisible(dt,show){var h=getHiddenTabs();if(show)h.delete(dt);else h.add(dt);setHiddenTabs(h);applyTabVisibility();}
@@ -2164,8 +2164,7 @@ function rAge(){
 }
 
 // ═══ SCORING GUIDE ═══
-function rGuide(){
-  const el=document.getElementById('guideC');
+function guideHTML(){
   let h=`<h2 style="font-size:20px;margin-bottom:16px">MoSCoW Scoring Guide</h2>`;
   h+=`<div class="bt" style="margin-bottom:24px">
     <div class="thc t-must"><div class="tl" style="color:var(--must)">Must Have</div><div class="tr2">31–41</div><div class="td2">Non-negotiable</div></div>
@@ -2181,29 +2180,28 @@ function rGuide(){
   h+=`<tr><td style="color:#4AAED9;font-weight:700">RDY</td><td>Ready to Execute</td><td>Yes / No</td><td>Yes=5, No=0</td><td>5</td></tr>`;
   h+=`</tbody></table></div>`;
   h+=`<div class="gs"><h3>Scoring Logic</h3><p style="color:var(--t2);font-size:13px;line-height:1.6"><strong>Bang-for-Buck (BfB)</strong> = Total Score ÷ Effort. Higher BfB = more value per unit of work.</p></div>`;
-  el.innerHTML=h;
+  return h;
 }
+function rGuide(){var el=document.getElementById('guideC');if(el)el.innerHTML=guideHTML();}
 
 // ═══ COLUMN LEGEND ═══
-function rLeg(){
-  const el=document.getElementById('legC');
+function legHTML(){
   const cols=[['ID','Issue Key','Jira/ServiceNow key — clickable if site URL set'],['Type','Issue Type','Epic, Feature, Story, Task, Bug, Sub-task'],['Title','Summary','Description of work item'],['Epic','Parent','Parent issue key'],['Assignee','Owner','Person assigned'],['Status','Workflow Status','To Do, In Progress, Done'],['Age','Days Since Created','Calendar days'],['Team','Team','Delivery team'],['PI','Program Increment','PI assignment for SAFe planning'],['Target Start','Planned Start','Start date for roadmap'],['Target End','Planned End','End date for roadmap']];
   Q.forEach(q=>{let desc=q.d;if(q.type==='fib')desc+=' (Fibonacci 0-21, Score: 21-value)';else if(q.type==='yesno')desc+=' (Yes=5/No=0)';else if(q.type==='lmh')desc+=' (L=1/M=3/H=5)';cols.push([q.s,q.f,desc])});
   cols.push(['TOT','Total Score',`Sum of 5 criteria (max ${MAX_SCORE})`],['MoSCoW','Priority Bucket','Must(31+), Should(21-30), Could(11-20), Won\'t(0-10)'],['BfB','Bang-for-Buck','Total ÷ Effort']);
   let h=`<div class="gs"><h3>Column Reference</h3><table class="gt"><thead><tr><th>Abbr</th><th>Full Name</th><th>Description</th></tr></thead><tbody>`;
   cols.forEach(c=>{h+=`<tr><td style="color:var(--ac)">${c[0]}</td><td style="font-weight:600">${c[1]}</td><td style="color:var(--t2)">${c[2]}</td></tr>`});
   h+=`</tbody></table></div>`;
-  el.innerHTML=h;
+  return h;
 }
+function rLeg(){var el=document.getElementById('legC');if(el)el.innerHTML=legHTML();}
 
 // ═══ HEALTH GUIDE ═══
 
 // ══ HELP TAB ══════════════════════════════════════════════
-function rHelp(){
-  const el=document.getElementById('helpC');
-  if(!el)return;
+function helpTipsHTML(){
   const tip=(ic,ti,bo)=>`<div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:10px;padding:14px 16px;"><div style="font-size:13px;font-weight:700;margin-bottom:5px;">${ic} ${ti}</div><div style="font-size:12.5px;color:var(--t2);line-height:1.6;">${bo}</div></div>`;
-  el.innerHTML=`
+  return `
     <div style="max-width:900px;padding:16px 0;">
       <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:6px;">❓ PortfolioInSite Web Help Tips</h2>
       <p style="color:var(--t2);font-size:14px;margin-bottom:24px;">AI-native portfolio governance for enterprise delivery teams. Score your backlog with MoSCoW, map value vs effort on the Strategic Map, track Epics, and govern health — all browser-based, no install required.</p>
@@ -2216,10 +2214,10 @@ function rHelp(){
           ['📊','Dashboard','Portfolio KPIs — MoSCoW distribution, score spread, and completion rates.'],
           ['🗺️','Strategic Map','Value vs Effort quadrant. Bubble chart with zoom, cluster detection, and click-through.'],
           ['📅','Roadmap','Date-driven roadmap bars driven by start/end dates on each item.'],
-          ['👤','Product Owner','PO-focused view — sprint assignment, priority ranking, and backlog grooming.'],
+          ['👤','Product Owner','Value and readiness — readiness ring, sprint forecast, and prioritised top-5, scoped to your team and increment.'],
+          ['🏃','Scrum Master','Flow and impediments — increment progress, WIP, aging-WIP radar, and team load.'],
+          ['📝','Business Analyst','Backlog readiness — Definition of Ready, refinement queue, and traceability gaps.'],
           ['🏥','Backlog Health','Age analysis, zombie detection, and RAG status across your portfolio.'],
-          ['📖','Scoring Guide','MoSCoW scoring criteria and Fibonacci effort reference.'],
-          ['🏷️','Columns','CSV column mapping reference — shows which fields were detected in your import.'],
         ].map(([ic,nm,ds])=>`<div style="background:var(--bg2,#1e293b);border:1px solid var(--bdr,rgba(255,255,255,.1));border-radius:8px;padding:11px 13px;"><div style="font-size:13px;font-weight:600;margin-bottom:4px;">${ic} ${nm}</div><div style="font-size:12px;color:var(--t2);line-height:1.5;">${ds}</div></div>`).join('')}
       </div>
 
@@ -2258,8 +2256,21 @@ function rHelp(){
     </div>`;
 }
 
-function rAgeHelp(){
-  const el=document.getElementById('ageHelpC');
+let helpSection='tips';
+function helpNav(sec){helpSection=sec;rHelp();}
+function rHelp(){
+  var el=document.getElementById('helpC');
+  if(!el)return;
+  var subs=[['tips','❓ Help Tips'],['guide','📖 Scoring Guide'],['columns','🏷️ Columns'],['health','🏥 Health Guide']];
+  var nav='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--bdr);margin-bottom:18px;padding-bottom:10px">';
+  subs.forEach(function(sb){var on=helpSection===sb[0];nav+='<button onclick="helpNav(\''+sb[0]+'\')" style="padding:6px 12px;font-size:12px;font-weight:'+(on?'700':'500')+';color:'+(on?'var(--ac)':'var(--t2)')+';background:'+(on?'var(--bgi)':'transparent')+';border:1px solid '+(on?'var(--ac)':'var(--bdr)')+';border-radius:6px;cursor:pointer">'+sb[1]+'</button>';});
+  nav+='<a href="https://portfolioinsite.com.au/pages/portfolioinsite-playbook.html" target="_blank" rel="noopener" style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ac);text-decoration:none;padding:6px 12px;border:1px solid var(--ac);border-radius:6px">Open full Playbook ↗</a>';
+  nav+='</div>';
+  var body=helpSection==='guide'?guideHTML():helpSection==='columns'?legHTML():helpSection==='health'?ageHelpHTML():helpTipsHTML();
+  el.innerHTML=nav+body;
+}
+
+function ageHelpHTML(){
   let h='<h2 style="font-size:20px;margin-bottom:4px">Backlog Health Guide</h2>';
   h+='<p style="color:var(--t2);font-size:13px;margin-bottom:24px">How the Backlog Health tab measures and reports on your portfolio.</p>';
 
@@ -2315,8 +2326,9 @@ function rAgeHelp(){
   h+='<p style="color:var(--t2);font-size:13px">Badges at the top of the Health tab show which date columns were found. Green tick = available, grey cross = missing. This tells you which lenses will work best and whether re-importing with more columns mapped would help.</p>';
   h+='</div>';
 
-  el.innerHTML=h;
+  return h;
 }
+function rAgeHelp(){var el=document.getElementById('ageHelpC');if(el)el.innerHTML=ageHelpHTML();}
 // Roadmap state
 let rmGroupBy='epic'; // 'epic', 'team', 'component'
 let rmSchedBy='timeline'; // 'timeline' | 'fixversion'
