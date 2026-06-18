@@ -4303,13 +4303,18 @@ function importFromParsedCsv(parsed, mapping){
     if(mapping.priority!=null){const pn=(row[mapping.priority]||'').toLowerCase();const pm={highest:5,high:5,critical:5,medium:3,moderate:3,low:1,lowest:1,minor:1};if(pm[pn])item.scores.q4=pm[pn]}
     // Effort rollup fallback: if individual effort is empty, use roll-up value
     if(!item.effort&&mapping.effortRollup!=null){const v=nearFib(row[mapping.effortRollup]);if(v!=null){item.effort=v;item.scores.q1=v}}
-    // MoSCoW pre-scored: map text values to score presets
+    // MoSCoW pre-scored: map text values to score presets.
+    // The four value criteria cap at 20/41, so without an effort score a "Must"
+    // could never reach the Must bucket (31+). We seed the effort CRITERION (q1)
+    // for Must/Should ONLY when effort wasn't mapped — so the imported label lands
+    // in the right column. item.effort is never set here, so BfB stays blank until
+    // a real effort/story-point value is known.
     if(mapping.moscow!=null){
       const mv=(row[mapping.moscow]||'').trim().toLowerCase();
-      if(mv==='must have'||mv==='must'){item.scores.q2=5;item.scores.q3=5;item.scores.q4=5;item.scores.q5=5}
-      else if(mv==='should have'||mv==='should'){item.scores.q2=0;item.scores.q3=5;item.scores.q4=3;item.scores.q5=5}
-      else if(mv==='could have'||mv==='could'){item.scores.q2=0;item.scores.q3=3;item.scores.q4=1;item.scores.q5=0}
-      else if(mv==="won't have"||mv==='wont have'||mv==='wont'||mv==="won't"){item.scores.q2=0;item.scores.q3=1;item.scores.q4=1;item.scores.q5=0}
+      if(mv==='must have'||mv==='must'){if(item.scores.q1==null)item.scores.q1=5;item.scores.q2=5;item.scores.q3=5;item.scores.q4=5;item.scores.q5=5}        // ~36 -> Must
+      else if(mv==='should have'||mv==='should'){if(item.scores.q1==null)item.scores.q1=8;item.scores.q2=0;item.scores.q3=5;item.scores.q4=5;item.scores.q5=5} // ~28 -> Should
+      else if(mv==='could have'||mv==='could'){item.scores.q2=0;item.scores.q3=5;item.scores.q4=3;item.scores.q5=5}                                            // 13 -> Could
+      else if(mv==="won't have"||mv==='wont have'||mv==='wont'||mv==="won't"){item.scores.q2=0;item.scores.q3=1;item.scores.q4=1;item.scores.q5=0}             // 2 -> Won't
     }
     if(mapping.space!=null)item.space=row[mapping.space]||'';
     if(mapping.projectKey!=null)item.projectKey=row[mapping.projectKey]||'';
