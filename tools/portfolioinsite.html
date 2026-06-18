@@ -2266,7 +2266,7 @@ function helpTipsHTML(){
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px;margin-bottom:24px;">
         ${[
           ['🗂️','Backlog Triage','Import and score your backlog. MoSCoW inline scoring with Fibonacci effort.'],
-          ['🏛️','Epics & Features','Group items by Epic, track feature completion and health.'],
+          ['🏛️','Epics & Features','Group items by Epic, track feature completion and health. Use the PO / SM / BA lens to highlight the fields each role scans first.'],
           ['📊','Dashboard','Portfolio KPIs — MoSCoW distribution, score spread, and completion rates.'],
           ['🗺️','Strategic Map','Value vs Effort quadrant. Bubble chart with zoom, cluster detection, and click-through.'],
           ['📅','Roadmap','Date-driven roadmap bars driven by start/end dates on each item.'],
@@ -2305,6 +2305,8 @@ function helpTipsHTML(){
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px;">
         ${tip('💡','Jira URL import','Paste your Jira board or backlog URL directly into the Import modal — PortfolioInSite fetches and maps the data automatically.')}
+        ${tip('⚖️','MoSCoW column auto-buckets','If your export has a MoSCoW field (e.g. a Jira custom field), map it on import — items pre-tagged Must / Should / Could / Won&#39;t are scored straight into the matching band. Items with no MoSCoW value stay scored on Priority alone until you triage them.')}
+        ${tip('🔎','Board lens (PO / SM / BA)','On Epics & Features, switch the lens to highlight the chips each role reads first — PO sees Score, BfB, Fix Version; SM sees Status, Age, Owner, Team; BA sees Ready, Reg, Target. Long titles are clamped to two lines — click More to expand.')}
         ${tip('📏','Story Points = Effort axis','The Strategic Map X axis (effort) is driven by Story Points. Items without points plot at X=0 — score effort before using the quadrant.')}
         ${tip('💾','Export often','All data is browser-only. Use Export CSV or JSON regularly — clearing site data will reset the tool.')}
         ${tip('📧','Support','Contact <a href="mailto:support@portfolioinsite.com.au" style="color:var(--ac);">support@portfolioinsite.com.au</a> or visit <a href="https://portfolioinsite.com.au" target="_blank" style="color:var(--ac);">portfolioinsite.com.au</a>.')}
