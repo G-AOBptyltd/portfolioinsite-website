@@ -105,6 +105,16 @@ table.dt{width:100%;border-collapse:collapse;font-size:13px}
 .hmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .ec{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;transition:var(--tr);position:relative;overflow:hidden}.ec:hover{border-color:var(--epur)}.ec::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
 .ec.h-g::before{background:var(--hi)}.ec.h-a::before{background:var(--mid)}.ec.h-r::before{background:var(--red)}
+.ec-ttl{font-weight:600;font-size:13px;line-height:1.4;margin-bottom:8px;color:var(--t1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.ec-ttl.open{-webkit-line-clamp:unset;display:block}
+.ec-more{border:none;background:transparent;color:var(--ac);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;padding:0 0 8px 0;display:inline-flex;align-items:center;gap:3px}.ec-more:hover{text-decoration:underline}
+.ec-chips{display:flex;flex-wrap:wrap;gap:5px}
+.mchip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--bgi);color:var(--t3);white-space:nowrap;border:1px solid transparent}
+.mchip.hot{background:rgba(14,165,233,.12);color:var(--ac);border-color:rgba(14,165,233,.25)}
+.mchip .mk{color:var(--t3);font-weight:500}.mchip.hot .mk{color:var(--ac);opacity:.8}
+.lens-bar{display:inline-flex;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.lens-bar button{border:none;background:transparent;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;cursor:pointer;transition:var(--tr)}
+.lens-bar button:hover{color:var(--t1)}.lens-bar button.on{background:rgba(14,165,233,.15);color:var(--ac)}
 .agb{display:flex;height:32px;border-radius:6px;overflow:hidden;margin-bottom:8px}.agb div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
 .cr{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
 .til{display:flex;flex-direction:column;gap:8px}
@@ -725,6 +735,25 @@ function esc(s) {
 function siteUrl() {
   const inp = document.getElementById('siteUrl');
   return inp ? inp.value.trim() : '';
+}
+
+// DISPLAY-ONLY text cleaner. Strips Jira wiki markup, [+..+|url] links, {{..}},
+// hN. headers, ---- rules and encoded-URL noise so card titles read like a summary.
+// NEVER mutates stored item.title — only the text shown on a card.
+function cleanText(s) {
+  if (!s) return '';
+  let t = String(s);
+  t = t.replace(/\[[^\]|]*\|[^\]]*\]/g, ' ');      // [label|url] link macros
+  t = t.replace(/\[\+?([^\]|+]*?)\+?\]/g, '$1');     // [+text+] / [text] residue
+  t = t.replace(/https?:\/\/[^\s)|\]]+/g, ' ');      // bare URLs
+  t = t.replace(/\{\{([^}]*)\}\}/g, '$1');           // {{monospace}}
+  t = t.replace(/\{[^}]*\}/g, ' ');                  // {panel}/{code} blocks
+  t = t.replace(/(^|\s)h[1-6]\.\s*/g, '$1');         // h2. headers
+  t = t.replace(/\*([^*\n]+)\*/g, '$1');             // *bold*
+  t = t.replace(/%[0-9A-Fa-f]{2}/g, ' ');            // %3D etc url-encode noise
+  t = t.replace(/[-=_]{3,}/g, ' ');                  // ---- ==== rules
+  t = t.replace(/\s{2,}/g, ' ').trim();
+  return t;
 }
 
 function idLink(id) {
@@ -1448,7 +1477,7 @@ function render(){
       <td style="color:var(--t3);font-size:11px">${st+idx+1}</td>
       <td>${idLink(item.id)}</td>
       <td><span class="tyb ${tyCl(item.type)}">${esc(item.type)||'—'}</span></td>
-      <td class="title-cell"><input class="ti" value="${esc(item.title)}" onchange="uf(${ri},'title',this.value)"></td>
+      <td class="title-cell"><input class="ti" value="${esc(cleanText(item.title)||item.title)}" data-raw="${esc(item.title)}" data-clean="${esc(cleanText(item.title)||item.title)}" title="${esc(cleanText(item.title))}" onfocus="this.value=this.dataset.raw" onblur="if(this.value===this.dataset.raw)this.value=this.dataset.clean" onchange="uf(${ri},'title',this.value)"></td>
       <td>${item.parent?idLink(item.parent):'<span style="color:var(--t3)">—</span>'}</td>
       <td><input class="ti" style="width:120px" value="${esc(item.assignee)}" onchange="uf(${ri},'assignee',this.value)"></td>
       <td><span class="stb ${stCl(item.status)}">${esc(item.status)||'—'}</span></td>
@@ -1710,6 +1739,37 @@ function rQuad(){
 
 // ═══ EPICS ═══
 let epicFProj='',epicFType='',epicFStatus='',epicFAge='',epicFTeam='',epicFPO='',epicFFix='',epicSort='default',epicView='columns';
+// Board lens: which role's fields get highlighted on cards
+let epicLens='PO';
+const LENS_KEYS={PO:['score','bfb','fix','status'],SM:['status','age','who','team'],BA:['rdy','reg','status','end']};
+const LENS_LABELS={PO:'Product Owner',SM:'Scrum Master',BA:'Business Analyst'};
+// Build the metadata chip row for a card, highlighting the active lens's fields
+function epicChips(e){
+  const t=tot(e),bf=e.effort>0?bfb(t,e.effort):null,ad=agd(ageDate(e));
+  const rdy=e.scores&&e.scores.q5!=null?(+e.scores.q5===5?'Yes':'No'):'—';
+  const reg=e.scores&&e.scores.q2!=null?(+e.scores.q2===5?'Yes':'No'):'—';
+  const defs={
+    status:['Status',e.status||'—'],
+    age:['Age',ad!=null?ad+'d'+(ad>90?' · stale':''):'No date'],
+    score:['Score',t!=null?t+'/'+MAX_SCORE:'—'],
+    bfb:['BfB',bf!=null?bf:'—'],
+    fix:['Fix',e.fixVersion||'No version'],
+    team:['Team',e.team||'—'],
+    who:['Owner',e.assignee||'Unassigned'],
+    end:['Target',e.targetEnd||'No date'],
+    rdy:['Ready',rdy],
+    reg:['Reg',reg]
+  };
+  const hot=LENS_KEYS[epicLens]||[];
+  const order=hot.concat(Object.keys(defs).filter(k=>!hot.includes(k)));
+  return order.map(k=>{const d=defs[k];if(!d)return'';return '<span class="mchip'+(hot.includes(k)?' hot':'')+'"><span class="mk">'+d[0]+'</span> '+esc(String(d[1]))+'</span>'}).join('');
+}
+function pinToggleClamp(btn){
+  const ttl=btn.previousElementSibling;
+  if(!ttl)return;
+  const open=ttl.classList.toggle('open');
+  btn.innerHTML=open?'Less ▲':'More ▼';
+}
 function rEpics(){
   const el=document.getElementById('epicC');
   const allEps=D.filter(i=>HT.includes(i.type));
@@ -1745,24 +1805,16 @@ function rEpics(){
 
   // Helper to build a single card
   function epicCard(e){
-    const t=tot(e),b=bkt(t),ad=agd(ageDate(e)),hc=t==null?'h-a':t>=31?'h-g':t>=21?'h-a':'h-r';
+    const t=tot(e),b=bkt(t),hc=t==null?'h-a':t>=31?'h-g':t>=21?'h-a':'h-r';
     const children=D.filter(i=>i.parent===e.id);
     const childDone=children.filter(i=>i.status==='Done').length;
     const pct=children.length?Math.round(childDone/children.length*100):0;
-    const ef=e.effort||'—';
-    const bfbVal=e.effort>0?bfb(t,e.effort):'—';
-    const wsjfVal=e.effort>0?((((e.scores.q3||0)+(e.scores.q4||0)+(e.scores.q5||0))/e.effort).toFixed(1)):'—';
+    const ttl=cleanText(e.title)||esc(e.title)||'(no title)';
     let c=`<div class="ec ${hc}" style="break-inside:avoid"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span class="tyb ${tyCl(e.type)}" style="font-size:9px">${e.type}</span>${idLink(e.id)}<span class="bb b-${b}" style="font-size:9px;margin-left:auto">${bktLabel(b)}</span></div>`;
-    c+=`<div style="font-weight:600;font-size:13px;margin-bottom:8px;line-height:1.3">${esc(e.title)}</div>`;
-    c+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;font-size:11px;color:var(--t2)">`;
-    c+=`<div>Status: <span class="stb ${stCl(e.status)}" style="font-size:9px">${e.status||'—'}</span></div>`;
-    c+=`<div>Age: <span class="ab ${agCl(ad)}">${ad!=null?ad+'d':'—'}</span></div>`;
-    c+=`<div>Score: <span class="scb ${scCl(t)}">${t!=null?t+'/'+MAX_SCORE:'—'}</span></div>`;
-    c+=`<div>Effort: <span style="font-family:JetBrains Mono;font-size:10px">${ef}</span></div>`;
-    c+=`<div>BfB: <span style="font-family:JetBrains Mono;font-size:10px;color:var(--mid)">${bfbVal}</span></div>`;
-    c+=`<div>WSJF: <span style="font-family:JetBrains Mono;font-size:10px;color:var(--ac)">${wsjfVal}</span></div>`;
-    c+=`</div>`;
-    if(children.length){c+=`<div style="margin-top:6px"><div style="display:flex;align-items:center;gap:8px;font-size:10px;color:var(--t3);margin-bottom:3px"><span>Progress (${children.length})</span><span style="margin-left:auto">${pct}%</span></div><div style="height:4px;background:var(--bgi);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--hi);border-radius:2px"></div></div></div>`}
+    c+=`<div class="ec-ttl" title="${esc(ttl)}">${esc(ttl)}</div>`;
+    c+=`<button class="ec-more" onclick="pinToggleClamp(this)">More ▼</button>`;
+    c+=`<div class="ec-chips">${epicChips(e)}</div>`;
+    if(children.length){c+=`<div style="margin-top:8px"><div style="display:flex;align-items:center;gap:8px;font-size:10px;color:var(--t3);margin-bottom:3px"><span>Progress (${children.length})</span><span style="margin-left:auto">${pct}%</span></div><div style="height:4px;background:var(--bgi);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--hi);border-radius:2px"></div></div></div>`}
     c+=`</div>`;
     return c;
   }
@@ -1797,8 +1849,12 @@ function rEpics(){
   h+='<option value="age"'+(epicSort==='age'?' selected':'')+'>Sort: Age ↓</option>';
   h+='<option value="score"'+(epicSort==='score'?' selected':'')+'>Sort: Score ↓</option>';
   h+='</select>';
+  // Lens selector — highlights the active role's fields on each card
+  h+='<div style="display:flex;align-items:center;gap:6px;margin-left:auto"><span style="font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Lens</span><div class="lens-bar">';
+  ['PO','SM','BA'].forEach(L=>{h+='<button class="'+(epicLens===L?'on':'')+'" onclick="epicLens=\''+L+'\';rEpics()" title="'+LENS_LABELS[L]+'">'+L+'</button>'});
+  h+='</div></div>';
   // View toggle
-  h+='<div style="margin-left:auto;display:flex;gap:2px">';
+  h+='<div style="display:flex;gap:2px">';
   h+='<button class="btn btn-sm'+(epicView==='columns'?' btn-ac':'')+'" onclick="epicView=\'columns\';rEpics()" style="font-size:10px;padding:3px 10px">Columns</button>';
   h+='<button class="btn btn-sm'+(epicView==='grid'?' btn-ac':'')+'" onclick="epicView=\'grid\';rEpics()" style="font-size:10px;padding:3px 10px">Grid</button>';
   h+='</div>';
