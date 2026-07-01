@@ -1,0 +1,10 @@
+{
+  "date": "2026-07-01",
+  "program": "PortfolioInSite",
+  "financial_year": "FY27",
+  "status": "no eligible R&D activity — 2026-07-01 (FY27 first day)",
+  "method": "git log --all --since='24 hours ago' on portfolioinsite-website: 0 commits (last commit 0b235f7, 2026-06-18). No PortfolioInSite build/dev work in any session. FY27 commences today. Automated daily log capture.",
+  "experiments_today": [],
+  "eligible_hours_net_new": 0,
+  "note": "FY27 FIRST DAY (2026-07-01). FY26 closed yesterday. PortfolioInSite RDTI program is SEPARATE from VillageFirst and SurveyInSite — never co-mingle. Update .rdti/config.json to FY27 dates when next eligible R&D begins. Registration deadline: 30 Apr 2027."
+}
