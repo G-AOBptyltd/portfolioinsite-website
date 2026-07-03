@@ -119,6 +119,63 @@ if (waitlistForm) {
   });
 }
 
+// Jira Forge interest form — dual-write:
+//  1) Netlify Forms (AJAX submit, same pattern as waitlist-form above) — backup record
+//  2) /api/lead-capture — writes straight into Notion Contacts & Leads (primary, no Zapier delay)
+const jiraInterestForm = document.getElementById('jira-interest-form');
+if (jiraInterestForm) {
+  const jiraStatusEl = document.getElementById('jira-interest-status');
+  jiraInterestForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = jiraInterestForm.email.value.trim();
+    if (!email) return;
+
+    const btn = jiraInterestForm.querySelector('button[type="submit"]');
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const formData = new FormData(jiraInterestForm);
+
+    // Backup copy — Netlify Forms dashboard (fire-and-forget, doesn't block the primary write)
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    }).catch(() => {});
+
+    // Primary — Notion Contacts & Leads
+    fetch('/api/lead-capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        source: 'portfolioinsite-jira-interest',
+        brand: 'PortfolioInSite',
+        notes: 'Registered interest — PortfolioInSite Jira Forge app (Atlassian Marketplace review).'
+      })
+    })
+    .then((response) => {
+      if (!response.ok) throw new Error('Lead capture failed');
+      jiraInterestForm.style.display = 'none';
+      if (jiraStatusEl) {
+        jiraStatusEl.style.display = 'block';
+        jiraStatusEl.style.color = '#06b6d4';
+        jiraStatusEl.textContent = "Thanks — we'll email you the moment PortfolioInSite is live on the Marketplace.";
+      }
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.textContent = origText;
+      if (jiraStatusEl) {
+        jiraStatusEl.style.display = 'block';
+        jiraStatusEl.style.color = '#f87171';
+        jiraStatusEl.textContent = 'Something went wrong — please try again or email support@agilityops.com.au.';
+      }
+    });
+  });
+}
+
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {

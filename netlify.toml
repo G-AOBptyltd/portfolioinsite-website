@@ -1,5 +1,9 @@
 [build]
   publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
 
 [[headers]]
   for = "/*"
@@ -14,6 +18,13 @@
 [[redirects]]
   from = "/api/cms"
   to = "https://api.agilityops.com.au/api/cms"
+  status = 200
+  force = true
+
+# Lead-capture function — writes register-interest form submissions to Notion
+[[redirects]]
+  from = "/api/lead-capture"
+  to = "/.netlify/functions/lead-capture"
   status = 200
   force = true
 
