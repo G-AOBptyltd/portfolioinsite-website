@@ -3301,6 +3301,10 @@
     "numPIs": 4,
     "fyStartMonth": 7,
     "currency": "AUD",
-    "currencySymbol": "$"
+    "currencySymbol": "$",
+    "currentPI": "PI 26.3",
+    "currentPIStart": "2026-07-06",
+    "currentPIEnd": "2026-09-25",
+    "projectName": "Harbour Financial Group \u2014 Digital Lending Transformation"
   }
 }
