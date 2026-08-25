@@ -17,6 +17,7 @@ squad (Northwind [EXT]), running PIs 26.1–26.4 across calendar 2026.
 | File | What it is |
 |------|-----------|
 | `forecastinsite-sample-jira-export.csv` | Jira-style export, 73 rows: 4 Themes, 8 Initiatives/SAFe Epics, 55 Epics/Features, plus 6 Story/Task/Bug rows that the importer deliberately skips |
+| `forecastinsite-import-template.csv` | Blank fill-in template for financial controllers: the exact columns the importer reads plus four EXAMPLE rows showing formats (delete them before/after import). One row per Epic or Feature; teams and budgets are configured in-tool afterwards |
 | `forecastinsite-sample-full-state.json` | Complete ForecastInSite backup: the same 55 features **with teams assigned**, plus members and cost rates, PI budgets, 4 PIs of velocity history, licences, AI agents, RAID log, milestones, dependencies and scenarios |
 
 ## Two ways to use it

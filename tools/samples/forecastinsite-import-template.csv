@@ -1,0 +1,5 @@
+"Summary","Issue key","Issue Type","Status","Story Points","PI","Business Value","WSJF","Projected Revenue","Actual Revenue","OKR Target","OKR Actual"
+"EXAMPLE - Digital onboarding revamp","PROJ-1","Epic","In Progress",55,"PI 26.3",8,12.5,250000,0,"Lift online completion rate to 65%",""
+"EXAMPLE - Regulatory reporting uplift","PROJ-2","Feature","To Do",34,"PI 26.4",7,9.8,0,0,"Zero findings at next compliance audit",""
+"EXAMPLE - Customer analytics dashboard","PROJ-3","Feature","Done",21,"PI 26.2",6,7.4,90000,84000,"Reduce ad-hoc report requests by 35%","41% reduction achieved"
+"EXAMPLE - Payments platform upgrade (no PI yet - backlog)","PROJ-4","Epic","To Do",89,"",9,15.0,600000,0,"",""
