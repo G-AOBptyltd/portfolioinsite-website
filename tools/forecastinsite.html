@@ -1162,7 +1162,7 @@ function aobGateCheck(){
       <button onclick="startupChoice('demo')" style="background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:20px 12px;cursor:pointer;color:var(--t1);text-align:center;transition:var(--tr)" onmouseover="this.style.background='var(--bg2h)'" onmouseout="this.style.background='var(--bg2)'">
         <div style="font-size:28px;margin-bottom:8px">🎯</div>
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">Load Demo</div>
-        <div style="font-size:11px;color:var(--t3)">Explore with realistic sample data</div>
+        <div style="font-size:11px;color:var(--t3)">Harbour Financial Group — a fully configured demo portfolio</div>
       </button>
       <button onclick="startupChoice('fresh')" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.3);border-radius:10px;padding:20px 12px;cursor:pointer;color:var(--t1);text-align:center;transition:var(--tr)" onmouseover="this.style.background='rgba(14,165,233,.12)'" onmouseout="this.style.background='rgba(14,165,233,.06)'">
         <div style="font-size:28px;margin-bottom:8px">✨</div>
@@ -1369,6 +1369,14 @@ function aobGateCheck(){
           <button onclick="useDetectedData()" style="padding:8px 18px;background:#06b6d4;border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use this dataset →</button>
         </div>
       </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:16px;background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.3);border-radius:10px;flex-wrap:wrap">
+        <span style="font-size:20px;flex-shrink:0">🏦</span>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px">Demo portfolio — Harbour Financial Group</div>
+          <div style="font-size:11px;color:var(--t3);line-height:1.6">Fully configured synthetic lender: 6 teams, 4 PIs of velocity, budgets, RAID &amp; scenarios. Or download the <a href="/tools/samples/forecastinsite-sample-jira-export.csv" download style="color:var(--ac)">sample Jira CSV</a> / <a href="/tools/samples/forecastinsite-sample-full-state.json" download style="color:var(--ac)">full JSON</a>.</div>
+        </div>
+        <button onclick="loadDemoPortfolio()" style="padding:8px 18px;background:var(--ac);border:none;border-radius:6px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0">Load demo portfolio →</button>
+      </div>
       <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
         <button class="iop sel" data-m="json" onclick="selImpMode('json')" style="padding:8px 18px;border:1px solid var(--ac);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:rgba(14,165,233,.1);color:var(--t1);transition:var(--tr)">JSON Backup</button>
         <button class="iop" data-m="csv" onclick="selImpMode('csv')" style="padding:8px 18px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;background:transparent;color:var(--t2);transition:var(--tr)">Jira CSV</button>
@@ -1395,6 +1403,7 @@ function aobGateCheck(){
           <div style="font-size:11px;color:var(--t3);margin-top:4px">Jira CSV export — ForecastInSite imports Theme → Feature level items. Stories, Tasks, and Bugs are automatically skipped.</div>
           <input type="file" id="impCsvInput" accept=".csv,.tsv" onchange="handleImpCsvFile(this)" style="display:none">
         </div>
+        <div style="font-size:11px;color:var(--t3);margin-top:8px;text-align:center">No export handy? <a href="/tools/samples/forecastinsite-sample-jira-export.csv" download style="color:var(--ac);font-weight:600">Download the sample Jira CSV</a> — a synthetic 73-row portfolio; importing it reports 67 items in, 6 skipped.</div>
         <div id="impCsvPreview" style="display:none;margin-top:12px;padding:12px;background:var(--bgi);border-radius:var(--r);font-size:12px;color:var(--t2)"></div>
       </div>
 
@@ -10780,17 +10789,54 @@ function suPickRole(role) {
   });
 }
 
+// --- Demo portfolio (Harbour Financial Group sample pack) ---
+// Served from /tools/samples/ alongside the tool; same dataset the playbook links.
+const DEMO_PACK_URL = '/tools/samples/forecastinsite-sample-full-state.json';
+
+function applyDemoPack(data) {
+  ['teams','members','features','budgets','licences','aiAgents','transitions',
+   'velocityHistory','featurePatterns','referenceLibrary','reporting',
+   'raid','milestones','dependencies','scenarios'].forEach(k => { if (data[k]) STATE[k] = data[k]; });
+  if (data.config) STATE.config = { ...STATE.config, ...data.config };
+  ensureV5State();
+  save();
+}
+
+function loadDemoPortfolio() {
+  if (STATE.features.length && !confirm('Load the demo portfolio? This will replace ALL current data — export a JSON backup first if you need to keep it.')) return;
+  fetch(DEMO_PACK_URL)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      applyDemoPack(data);
+      try { closeImportModal(); } catch(e) {}
+      renderAll();
+      toast('Demo portfolio loaded — Harbour Financial Group: 6 teams, 4 PIs, budgets, RAID and scenarios.', 'ok');
+    })
+    .catch(() => toast('Could not fetch the demo portfolio — check your connection and try again.', 'err'));
+}
+
 function startupChoice(choice) {
   const overlay = document.getElementById('startupOverlay');
   STATE.ui.role = _suRole;
   if (choice === 'demo') {
     overlay.style.display = 'none';
-    initSampleData();   // populate STATE in-memory (avoids reload loop)
-    ensureV5State();    // ensure v5 arrays exist
-    save();             // persist to localStorage so startup won't re-show on next load
-    setRole(_suRole);   // apply the role chosen in the startup screen
-    renderAll();        // render immediately
-    toast('Demo data loaded — explore all 6 teams and 4 PIs.', 'ok');
+    fetch(DEMO_PACK_URL)
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(data => {
+        applyDemoPack(data);
+        setRole(_suRole);   // apply the role chosen in the startup screen
+        renderAll();
+        toast('Demo portfolio loaded — Harbour Financial Group: 6 teams and 4 PIs to explore.', 'ok');
+      })
+      .catch(() => {
+        // Offline / fetch-failed fallback: the built-in sample dataset
+        initSampleData();
+        ensureV5State();
+        save();
+        setRole(_suRole);
+        renderAll();
+        toast('Demo data loaded — explore all 6 teams and 4 PIs.', 'ok');
+      });
     return;
   }
   if (choice === 'fresh') {
